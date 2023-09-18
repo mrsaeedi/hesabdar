@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hesabdar/components/themes.dart';
+import 'package:hesabdar/test.dart';
+import 'package:hesabdar/view/add_new-payment.dart';
 import 'package:hesabdar/view/home.dart';
+import 'package:hesabdar/view/test.dart';
 
 void main() {
   runApp(const Hesabdart());
@@ -13,11 +17,17 @@ class Hesabdart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const HomePage(),
+      debugShowCheckedModeBanner: false,
+      // getPages: Routes.page,
+      // initialRoute: '/homeScreen',
+      // supportedLocales: const [
+      //   Locale('en', 'US'),
+      // ],
+      locale: const Locale("fa", "IR"),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.light,
+      home: NewPaymentPage(),
     );
   }
 }
