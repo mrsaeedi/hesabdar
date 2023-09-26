@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hesabdar/view/payments.dart';
+import 'package:hesabdar/view/result_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

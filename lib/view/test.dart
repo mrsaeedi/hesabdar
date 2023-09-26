@@ -99,12 +99,6 @@ class CardItemGet extends StatelessWidget {
               ),
             ),
             if (isOpen)
-              // const Divider(
-              //   endIndent: 15,
-              //   indent: 15,
-              //   height: 1,
-              //   color: Color.fromARGB(143, 187, 187, 187),
-              // ),
               AnimatedContainer(
                 width: Get.width,
                 duration: Duration(milliseconds: 200),
