@@ -1,54 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hesabdar/data/category_items.dart';
 import 'package:hesabdar/model/category_items_mode.dart';
 
-import 'dart:collection';
-
 class CategoryItemsController extends GetxController {
-  late RxMap<String, List<ListOfcat>> myMap = {
-    'بهداشتی': [
-      ListOfcat(
-        name: 'دارو',
-        catIcon: Icon(Icons.account_tree_rounded),
-      ),
-      ListOfcat(
-        name: 'بیمارستان',
-        catIcon: Icon(Icons.account_tree_rounded),
-      ),
-      ListOfcat(
-        name: 'ازمایش',
-        catIcon: Icon(Icons.account_tree_rounded),
-      ),
-    ].obs,
-    'غذا': [
-      ListOfcat(
-        name: 'تنقلات',
-        catIcon: Icon(Icons.account_tree_rounded),
-      ),
-      ListOfcat(
-        name: 'شام',
-        catIcon: Icon(Icons.account_tree_rounded),
-      ),
-      ListOfcat(
-        name: 'ناهار',
-        catIcon: Icon(Icons.account_tree_rounded),
-      ),
-    ].obs,
-    'کرایه': [
-      ListOfcat(
-        name: 'اتبوس',
-        catIcon: Icon(Icons.account_tree_rounded),
-      ),
-      ListOfcat(
-        name: 'قطار',
-        catIcon: Icon(Icons.account_tree_rounded),
-      ),
-      ListOfcat(
-        name: 'اژانس',
-        catIcon: Icon(Icons.account_tree_rounded),
-      ),
-    ].obs,
-  }.obs;
+  final RxMap<String, List<ListOfcat>> d = RxMap();
+
+  RxMap<String, List<ListOfcat>> myMap = categoryData.value.obs;
+
+  RxList<ListOfcat> recentlyUsedCat = <ListOfcat>[].obs;
+
+  void addItem(item) {
+    // اگر لیست پر است، ایتم قدیمی را حذف کنید
+    if (recentlyUsedCat.length == 10) {
+      recentlyUsedCat.removeAt(0);
+    }
+
+    // اگر ایتم تکراری است، آن را قبول نکنید
+    if (recentlyUsedCat.contains(item)) {
+      // ایتم قدیمی را پیدا کنید
+      int index = recentlyUsedCat.indexOf(item);
+
+      // ایتم قدیمی را حذف کنید
+      recentlyUsedCat.removeAt(index);
+
+      // ایتم جدید را در ایندکس 0 قرار دهید
+      recentlyUsedCat.insert(recentlyUsedCat.length, item);
+    } else {
+      // ایتم جدید را اضافه کنید
+      recentlyUsedCat.add(item);
+    }
+  }
 
   // for add new item to the map
   void addTextToMap(String name, int index) {
@@ -64,18 +46,8 @@ class CategoryItemsController extends GetxController {
     myMap.refresh();
   }
 
-  CircularList recentlyUsedCat = CircularList(10);
-
-// recently used categorys
-  // RxList<CircularList> recentlyUsedCat= <CircularList>;
-  // asset of icons used at drobDownButton in add new item
   final RxList<Icon> assetsOfIcons = RxList<Icon>(
-    [
-      Icon(Icons.home),
-      Icon(Icons.add_a_photo_sharp),
-      Icon(Icons.payment),
-      Icon(Icons.no_crash_rounded),
-    ],
+    [...assetsOfIconsData],
   );
   Rx<Icon?> selectedIcon = Rx<Icon?>(null);
   void upDateSelectedIcon(Icon value) {

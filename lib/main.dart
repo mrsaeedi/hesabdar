@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/themes.dart';
+import 'package:hesabdar/view/add_new-payment.dart';
 
 import 'package:hesabdar/view/payment_cat.dart';
+import 'package:hesabdar/view/result_page.dart';
 
 void main() {
   runApp(const Hesabdart());
@@ -25,7 +27,7 @@ class Hesabdart extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
-      home: PaymentCat(),
+      home: RsuletPage(),
     );
   }
 }

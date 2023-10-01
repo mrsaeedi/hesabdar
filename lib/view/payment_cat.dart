@@ -1,6 +1,9 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:hesabdar/controller/add_new_peyment_controller.dart';
 import 'package:hesabdar/controller/category_items_controller.dart';
 
 import 'package:hesabdar/model/category_items_mode.dart';
@@ -9,7 +12,11 @@ class PaymentCat extends StatelessWidget {
   static CategoryItemsController catController = CategoryItemsController();
   TextEditingController addTextController = TextEditingController();
   TextEditingController editingController = TextEditingController();
-  RxBool _showClearIcon = false.obs;
+  final AddNewPeymentController addNewPeymentController =
+      Get.put(AddNewPeymentController());
+  final RxBool _showClearIcon = false.obs;
+
+  PaymentCat({super.key});
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -24,7 +31,7 @@ class PaymentCat extends StatelessWidget {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            titleTextContainer(context, 'آخرین اتخاب'),
+            titleTextContainer(context, 'آخرین انتخاب'),
 //! Recently selected items
             Container(
               height: 80,
@@ -32,12 +39,48 @@ class PaymentCat extends StatelessWidget {
                 itemCount: catController.recentlyUsedCat.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
-                  return Container(
-                    padding: EdgeInsets.all(15),
-                    height: 80,
-                    child: Text(
-                      'data',
-                      style: Theme.of(context).textTheme.bodyLarge,
+                  List<ListOfcat> categoryItems =
+                      catController.myMap.values.toList()[index];
+                  return InkWell(
+                    onTap: () {
+                      addNewPeymentController.selectedCategoryName.value =
+                          catController.recentlyUsedCat.value.reversed
+                              .toList()[index]
+                              .name!;
+                      addNewPeymentController.selectedCategoryIcon.value =
+                          catController.recentlyUsedCat.value.reversed
+                              .toList()[index]
+                              .catIcon!;
+
+                      Get.back();
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      height: 80,
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        height: 60,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            border: Border.all(
+                                width: 1,
+                                color: Color.fromARGB(255, 138, 138, 138),
+                                style: BorderStyle.solid)),
+                        child: Row(
+                          children: [
+                            catController.recentlyUsedCat.reversed
+                                .toList()[index]
+                                .catIcon!,
+                            Text(
+                              catController.recentlyUsedCat.reversed
+                                  .toList()[index]
+                                  .name!,
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   );
                 },
@@ -45,7 +88,7 @@ class PaymentCat extends StatelessWidget {
             ),
             titleTextContainer(context, 'دسته بندی'),
             Expanded(
-//! list view of items
+//! sub lists in list view
               child: Obx(() => ListView.builder(
                     itemCount: catController.myMap.length,
                     itemBuilder: (context, index) {
@@ -54,132 +97,136 @@ class PaymentCat extends StatelessWidget {
                       List<ListOfcat> categoryItems =
                           catController.myMap.values.toList()[index];
 
-                      return ExpansionTile(
-                          title: Text(categoryName),
-                          children: [
-//! add new item
-                            ListTile(
-                              onTap: () {
-                                //add new item in dialog box
-                                Get.defaultDialog(
-                                  barrierDismissible: false,
-                                  title: 'اضافه کن',
-                                  textCancel: 'لغو', onCancel: () => Get.back(),
-                                  textConfirm: 'ذخیره',
-                                  onConfirm: () {
-                                    if (addTextController.text.isNotEmpty &&
-                                        catController.selectedIcon.value !=
-                                            null) {
-                                      catController.addTextToMap(
-                                          addTextController.text, index);
-                                      //show added result in snackBar
-                                      Future.delayed(
-                                          const Duration(milliseconds: 100),
-                                          () {
-                                        Get.showSnackbar(
-                                          GetSnackBar(
-                                            message: 'آیتم جدید اضافه شد',
-                                            icon: const Icon(
-                                              Icons.check,
-                                              color: Colors.green,
-                                            ),
-                                            duration:
-                                                const Duration(seconds: 2),
-                                          ),
-                                        );
-                                      });
-                                      Get.back();
-                                    } else {
+                      return Card(
+                        child:
+                            ExpansionTile(title: Text(categoryName), children: [
+                          //! add new item
+                          ListTile(
+                            onTap: () {
+                              //add new item in dialog box
+                              Get.defaultDialog(
+                                barrierDismissible: false,
+                                title: 'اضافه کن',
+                                textCancel: 'لغو',
+                                textConfirm: 'ذخیره',
+                                onConfirm: () {
+                                  if (addTextController.text.isNotEmpty &&
+                                      catController.selectedIcon.value !=
+                                          null) {
+                                    catController.addTextToMap(
+                                        addTextController.text, index);
+                                    //show added result in snackBar
+                                    Future.delayed(
+                                        const Duration(milliseconds: 100), () {
                                       Get.showSnackbar(
                                         GetSnackBar(
-                                          message:
-                                              'لطفا متن و آیکون را انتخاب کنید',
+                                          message: 'آیتم جدید اضافه شد',
                                           icon: const Icon(
                                             Icons.check,
                                             color: Colors.green,
                                           ),
-                                          duration: const Duration(
-                                              milliseconds: 1500),
+                                          duration: const Duration(seconds: 2),
                                         ),
                                       );
-                                    }
-                                  },
-                                  // get name and icon about new item
-                                  content: Row(
-                                    children: [
-                                      Expanded(
-                                        // get text for items title
-                                        flex: 5,
-                                        child: Obx(() => TextField(
-                                              onChanged: (value) {
-                                                _showClearIcon.value =
-                                                    value.isEmpty;
-                                              },
-                                              controller: addTextController,
-                                              decoration: InputDecoration(
-                                                  suffixIcon: _showClearIcon
-                                                          .value
-                                                      ? null
-                                                      : IconButton(
-                                                          padding:
-                                                              EdgeInsets.zero,
-                                                          onPressed: () {
-                                                            addTextController
-                                                                .clear();
-                                                            _showClearIcon
-                                                                .value = true;
-                                                          },
-                                                          icon: Icon(
-                                                              Icons.clear))),
-                                              autofocus: true,
-                                            )),
+                                    });
+                                    Get.back();
+                                  } else {
+                                    Get.showSnackbar(
+                                      GetSnackBar(
+                                        message:
+                                            'لطفا متن و آیکون را انتخاب کنید',
+                                        icon: const Icon(
+                                          Icons.check,
+                                          color: Colors.green,
+                                        ),
+                                        duration:
+                                            const Duration(milliseconds: 1500),
                                       ),
-                                      // choose icon for items
-                                      Expanded(
-                                        flex: 2,
-                                        child: Obx(() => DropdownButton(
-                                              hint: Text('آیکون'),
-                                              underline: SizedBox(),
-                                              elevation: 2,
-                                              isExpanded: true,
-                                              padding: EdgeInsets.all(10),
-                                              value: catController
-                                                  .selectedIcon.value,
-                                              items: [
-                                                ...catController.assetsOfIcons
-                                                    .map<
-                                                        DropdownMenuItem<Icon>>(
-                                                  (Icon value) {
-                                                    return DropdownMenuItem(
-                                                      value: value,
-                                                      child: value,
-                                                    );
-                                                  },
-                                                )
-                                              ],
-                                              onChanged: (newvalue) {
-                                                catController
-                                                    .upDateSelectedIcon(
-                                                        newvalue!);
-                                              },
-                                            )),
-                                      )
-                                    ],
-                                  ),
-                                  // add changes and show result
-                                );
+                                    );
+                                  }
+                                },
+                                // get name and icon about new item
+                                content: Row(
+                                  children: [
+                                    Expanded(
+                                      // get text for items title
+                                      flex: 5,
+                                      child: Obx(() => TextField(
+                                            onChanged: (value) {
+                                              _showClearIcon.value =
+                                                  value.isEmpty;
+                                            },
+                                            controller: addTextController,
+                                            decoration: InputDecoration(
+                                                suffixIcon: _showClearIcon.value
+                                                    ? null
+                                                    : IconButton(
+                                                        padding:
+                                                            EdgeInsets.zero,
+                                                        onPressed: () {
+                                                          addTextController
+                                                              .clear();
+                                                          _showClearIcon.value =
+                                                              true;
+                                                        },
+                                                        icon:
+                                                            Icon(Icons.clear))),
+                                            autofocus: true,
+                                          )),
+                                    ),
+                                    // choose icon for items
+                                    Expanded(
+                                      flex: 2,
+                                      child: Obx(() => DropdownButton(
+                                            hint: Text('آیکون'),
+                                            underline: SizedBox(),
+                                            elevation: 2,
+                                            isExpanded: true,
+                                            padding: EdgeInsets.all(10),
+                                            value: catController
+                                                .selectedIcon.value,
+                                            items: [
+                                              ...catController.assetsOfIcons
+                                                  .map<DropdownMenuItem<Icon>>(
+                                                (Icon value) {
+                                                  return DropdownMenuItem(
+                                                    value: value,
+                                                    child: value,
+                                                  );
+                                                },
+                                              )
+                                            ],
+                                            onChanged: (newvalue) {
+                                              catController.upDateSelectedIcon(
+                                                  newvalue!);
+                                            },
+                                          )),
+                                    )
+                                  ],
+                                ),
+                                // add changes and show result
+                              );
 
-                                addTextController.clear();
-                                catController.selectedIcon.value = null;
-                              },
-                              title: Text('افزودن جدید'),
-                              leading: Icon(
-                                Icons.add_circle_outline,
-                                color: Colors.blue,
-                              ),
+                              addTextController.clear();
+                              catController.selectedIcon.value = null;
+                            },
+                            title: Text('افزودن جدید'),
+                            leading: Icon(
+                              Icons.add_circle_outline,
+                              color: Colors.blue,
                             ),
-                            ...categoryItems.map<Widget>((item) {
-                              return ListTile(
+                          ),
+
+                          ...categoryItems.map<Widget>((item) {
+                            //!  list view of items
+                            return Container(
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      top: BorderSide(
+                                          width: 1,
+                                          color: Color.fromARGB(
+                                              104, 201, 201, 201)))),
+                              child: ListTile(
                                 onLongPress: () {
                                   editingController.text = item.name!;
                                   Get.defaultDialog(
@@ -295,19 +342,26 @@ class PaymentCat extends StatelessWidget {
                                         );
                                       });
                                       catController.removeTextMap(index, item);
-
-                                      Get.back();
                                     },
                                   );
                                 },
                                 onTap: () {
-                                  catController.recentlyUsedCat.add(item);
+                                  addNewPeymentController
+                                      .selectedCategoryName.value = item.name!;
+
+                                  addNewPeymentController.selectedCategoryIcon
+                                      .value = item.catIcon;
+
+                                  catController.addItem(item);
+                                  Get.back();
                                 },
                                 title: Text(item.name!),
                                 leading: item.catIcon,
-                              );
-                            }).toList(),
-                          ]);
+                              ),
+                            );
+                          }).toList(),
+                        ]),
+                      );
                     },
                   )),
             )

@@ -61,9 +61,18 @@ class PersianNumberFormatter extends TextInputFormatter {
 }
 
 // یک متد برای تکست ها که تغییر میده شماره را به فارسی
-String replaseingNumers(String input) {
-  const enList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
-  const faList = ['۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹', '۰'];
+String replaseingNumersFaToEn(String input) {
+  const enList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ''];
+  const faList = ['۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹', '۰', '،'];
+  for (int i = 0; i < enList.length; i++) {
+    input = input.replaceAll(faList[i], enList[i]);
+  }
+  return input;
+}
+
+String replaseingNumersEnToFa(String input) {
+  const enList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '،'];
+  const faList = ['۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹', '۰', ''];
   for (int i = 0; i < enList.length; i++) {
     input = input.replaceAll(enList[i], faList[i]);
   }
