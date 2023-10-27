@@ -1,8 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hesabdar/controller/add_new_peyment_controller.dart';
-import 'package:hesabdar/view/add_new-payment.dart';
+import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
+import 'package:hesabdar/model/financial_models/money.dart';
+import 'package:hive/hive.dart';
+import 'package:hive/hive.dart';
+
+import 'add_new-payment.dart';
 
 class CardItemGet extends StatelessWidget {
   final int selectedItem;
@@ -24,7 +28,9 @@ class CardItemGet extends StatelessWidget {
                       : addNewPeymentController.addBudget.length,
               itemBuilder: (context, index) {
                 return Card(
-                  color: Color.fromARGB(255, 240, 240, 240),
+                  color: Get.isDarkMode
+                      ? Color.fromARGB(57, 197, 197, 197)
+                      : Color.fromARGB(255, 240, 240, 240),
                   child: Column(
                     children: [
                       InkWell(
@@ -47,8 +53,8 @@ class CardItemGet extends StatelessWidget {
                         child: Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 3, horizontal: 10),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -62,7 +68,15 @@ class CardItemGet extends StatelessWidget {
                                             : '${addNewPeymentController.addBudget[index].price}',
 
                                     style: TextStyle(
-                                        fontSize: 16, color: Colors.red),
+                                        fontSize: 17,
+                                        color: (selectedItem == 0)
+                                            ? Color.fromARGB(255, 255, 110, 100)
+                                            : (selectedItem == 1)
+                                                ? Colors.green
+                                                : (Get.isDarkMode)
+                                                    ? Colors.white
+                                                    : Color.fromARGB(
+                                                        192, 0, 0, 0)),
                                   ),
                                   Text(
                                     // frome...
@@ -72,8 +86,7 @@ class CardItemGet extends StatelessWidget {
                                             ? '${addNewPeymentController.addGetMoney[index].frome}'
                                             : '${addNewPeymentController.addBudget[index].frome}',
 
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.red),
+                                    style: Get.textTheme.bodyMedium,
                                   ),
                                   Row(
                                     children: [
@@ -85,8 +98,7 @@ class CardItemGet extends StatelessWidget {
                                                 ? '${addNewPeymentController.addGetMoney[index].time ?? ''}'
                                                 : '${addNewPeymentController.addBudget[index].time ?? ''}',
 
-                                        style: TextStyle(
-                                            fontSize: 16, color: Colors.red),
+                                        style: Get.textTheme.bodySmall,
                                       ),
                                       Icon(
                                         //tiem icon
@@ -101,7 +113,7 @@ class CardItemGet extends StatelessWidget {
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  vertical: 3, horizontal: 10),
+                                  vertical: 2, horizontal: 10),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -120,8 +132,7 @@ class CardItemGet extends StatelessWidget {
                                                 .addBudget[index]
                                                 .listOfcat
                                                 .name,
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.red),
+                                    style: Get.textTheme.bodyMedium,
                                   ),
                                   Text(
                                     // result...
@@ -130,8 +141,7 @@ class CardItemGet extends StatelessWidget {
                                         : (selectedItem == 1)
                                             ? '${addNewPeymentController.addGetMoney[index].price ?? '0'}: باقی مانده '
                                             : '${addNewPeymentController.addBudget[index].price ?? '0'}: باقی مانده ',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.red),
+                                    style: Get.textTheme.bodySmall,
                                   ),
                                 ],
                               ),
@@ -190,10 +200,15 @@ class CardItemGet extends StatelessWidget {
 
   deleteMoneyItems(index) {
     if (selectedItem == 0) {
+      Hive.box<AddNewPay>('payBox').deleteAt(index);
       addNewPeymentController.addedPayData.removeAt(index);
     } else if (selectedItem == 1) {
+      Hive.box<AddNewGet>('getBox').deleteAt(index);
+
       addNewPeymentController.addGetMoney.removeAt(index);
     } else if (selectedItem == 2) {
+      Hive.box<AddNewBudget>('budgetBox').deleteAt(index);
+
       addNewPeymentController.addBudget.removeAt(index);
     }
   }

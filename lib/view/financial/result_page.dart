@@ -1,15 +1,12 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hesabdar/components/date_picker.dart';
-import 'package:hesabdar/controller/add_new_peyment_controller.dart';
-import 'package:hesabdar/controller/home_page_controller.dart';
+import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
+import 'package:hesabdar/controller/financial_controllers/home_page_controller.dart';
 import 'package:hesabdar/data/constants.dart';
-import 'package:hesabdar/view/add_new-payment.dart';
-import 'package:hesabdar/view/test.dart';
+import 'package:hesabdar/view/financial/add_new-payment.dart';
+import 'package:hesabdar/view/financial/test.dart';
 
-class RsuletPage extends StatelessWidget {
+class RsultPage extends StatelessWidget {
   final ResultPageController resultPageController =
       Get.put(ResultPageController());
   final AddNewPeymentController addNewPeymentController =
@@ -29,6 +26,8 @@ class RsuletPage extends StatelessWidget {
       child: Scaffold(
           floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
           floatingActionButton: FloatingActionButton(
+              elevation: 0,
+              backgroundColor: AllColors.primaryColor,
               onPressed: () {
                 addNewPeymentController.controllerPrice.clear();
                 addNewPeymentController.describtionController.clear();
@@ -41,6 +40,7 @@ class RsuletPage extends StatelessWidget {
                 Get.to(() => NewPaymentPage());
               },
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Obx(() => Text(
                   //       resultPageController.controller.value.index == 0
@@ -56,15 +56,15 @@ class RsuletPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               //! header part
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 10.0, horizontal: 20.0),
-                child: Container(
-                  child: CustomDatePicker(
-                    seletedAction: 1,
-                  ),
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(
+              //       vertical: 10.0, horizontal: 20.0),
+              //   child: Container(
+              //     child: CustomDatePicker(
+              //       seletedAction: 1,
+              //     ),
+              //   ),
+              // ),
 
               //! total part
               Padding(
@@ -73,9 +73,11 @@ class RsuletPage extends StatelessWidget {
                   decoration: BoxDecoration(
                       border: Border.all(
                           width: 2,
-                          color: Color.fromARGB(255, 192, 192, 192),
+                          color: Color.fromARGB(144, 192, 192, 192),
                           style: BorderStyle.solid),
-                      color: Color.fromARGB(255, 255, 255, 255),
+                      color: Get.isDarkMode
+                          ? Color.fromARGB(101, 0, 0, 0)
+                          : AllColors.kWhite,
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -109,7 +111,7 @@ class RsuletPage extends StatelessWidget {
               //! nav
               Container(
                 decoration: const BoxDecoration(
-                  color: Colors.white,
+                  color: Color.fromARGB(0, 255, 255, 255),
                   border: Border(
                     bottom: BorderSide(
                       color: Color.fromARGB(255, 212, 212, 212), // رنگ border

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/data/constants.dart';
-import 'package:hesabdar/model/category_items_mode.dart';
+import 'package:hesabdar/model/financial_models/money.dart';
+import 'package:hive/hive.dart';
+
+import '../../model/financial_models/category_items_model.dart';
 
 class AddNewPeymentController extends GetxController {
   RxList addedPayData = <MoneyModell>[].obs; // List of amount spent
@@ -16,6 +19,8 @@ class AddNewPeymentController extends GetxController {
     }
   }
 
+  List myMapList = [];
+
   int? editIndex;
 
   bool editMode = false;
@@ -23,7 +28,7 @@ class AddNewPeymentController extends GetxController {
   final TextEditingController describtionController = TextEditingController();
   RxString dateValue = 'تاریخ'.obs;
 
-  Rx<Icon?> selectedCategoryIcon = Rx<Icon?>(null);
+  Rx<IconData?> selectedCategoryIcon = Rx<IconData?>(null);
   RxString selectedCategoryName = categoryNameTitle.obs;
 
   // select
@@ -36,5 +41,32 @@ class AddNewPeymentController extends GetxController {
   var selectedAssetsOfMoney = ''.obs;
   void upDateSelectedAssets(String value) {
     selectedAssetsOfMoney.value = value;
+  }
+
+  void addMoneyItemToRxLists() {
+    final payItems = Hive.box<AddNewPay>('payBox').values.toList();
+    final getItems = Hive.box<AddNewGet>('getBox').values.toList();
+    final budgetItems = Hive.box<AddNewBudget>('budgetBox').values.toList();
+    addedPayData.clear();
+    addGetMoney.clear();
+    addBudget.clear();
+    addedPayData.value = payItems;
+    addGetMoney.value = getItems;
+    addBudget.value = budgetItems;
+  }
+
+  @override
+  void onInit() {
+    addMoneyItemToRxLists();
+    Hive.box<AddNewPay>('payBox').watch().listen((event) {
+      addMoneyItemToRxLists();
+    });
+    Hive.box<AddNewGet>('getBox').watch().listen((event) {
+      addMoneyItemToRxLists();
+    });
+    Hive.box<AddNewBudget>('budgetBox').watch().listen((event) {
+      addMoneyItemToRxLists();
+    });
+    super.onInit();
   }
 }

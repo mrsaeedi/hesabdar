@@ -1,10 +1,9 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hesabdar/components/change_number_to_persion.dart';
+import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/components/papular_components.dart';
+import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
-import 'package:hesabdar/controller/add_new_peyment_controller.dart';
 
 class CustomDatePicker extends StatelessWidget {
   final int seletedAction;
@@ -67,7 +66,7 @@ class CustomDatePicker extends StatelessWidget {
             child: Obx(() => Container(
                   child: Text(
                     dateValue.value,
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: Get.textTheme.titleLarge,
                   ),
                 )))
 
@@ -106,7 +105,7 @@ class CustomDatePicker extends StatelessWidget {
               ),
               Obx(() => Text(
                     '${getPersianWeekDay(_pickedDate.value)} __ ${replaseingNumersEnToFa(_pickedDate.value.year.toString())}/${replaseingNumersEnToFa(_pickedDate.value.month.toString())}/${replaseingNumersEnToFa(_pickedDate.value.day.toString())}',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: Get.textTheme.titleLarge,
                   )),
               widthOf(20),
               IconButton(

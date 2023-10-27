@@ -1,85 +1,69 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:persian_tools/persian_tools.dart';
+import '../../data/constants.dart';
 
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
-
-    return const Placeholder();
-  }
-}
-
-//! ========= all textTheme propertys is in this class ==========
+//! ========= all textTheme property's is in this class ==========
 class MyTextTheme {
   static const String fontFamily = 'Vazir';
-
-  static const TextTheme myTextThemeLight = TextTheme(
-    titleLarge: TextStyle(
-      fontSize: 25,
-      fontWeight: FontWeight.w700,
-    ),
-    bodyLarge: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w500,
-        color: Color.fromARGB(255, 26, 26, 26)),
 //
-    bodyMedium: TextStyle(
+  static TextTheme myTextThemeLight = TextTheme(
+    titleLarge: TextStyle(
+        fontSize: 18, fontWeight: FontWeight.w700, color: AllColors.kdarck),
+
+//
+    bodyLarge: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w500,
-        color: Color.fromARGB(255, 255, 255, 255)),
+        color: Color.fromARGB(255, 17, 17, 17)),
+//
+    bodyMedium: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: Color.fromARGB(255, 124, 124, 124)),
 //
     bodySmall: TextStyle(
-        fontSize: 14,
+        fontSize: 11,
         fontWeight: FontWeight.w500,
         color: Color.fromARGB(157, 77, 77, 77)),
   );
 //! dark mode text theme
-  static const TextTheme myTextThemeDark = TextTheme(
+  static TextTheme myTextThemeDark = TextTheme(
     titleLarge: TextStyle(
-      fontSize: 25,
-      fontWeight: FontWeight.w700,
-    ),
-    bodyLarge: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w500,
-        color: Color.fromARGB(255, 253, 253, 253)),
-
+        fontSize: 18, fontWeight: FontWeight.w700, color: AllColors.kWhite),
 //
-    bodyMedium: TextStyle(
+    bodyLarge: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w500,
-        color: Color.fromARGB(255, 255, 242, 231)),
+        color: Color.fromARGB(255, 201, 201, 201)),
 //
-    bodySmall: TextStyle(
+    bodyMedium: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w500,
-        color: Color.fromARGB(255, 255, 242, 231)),
+        color: Color.fromARGB(255, 197, 197, 197)),
+//
+    bodySmall: TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w500,
+        color: Color.fromARGB(255, 177, 177, 177)),
   );
 }
 
 // ! =========== buttons styel are in this class==============
 class MyButtonStyle {
   //elevetedButton Style
-  static ElevatedButtonThemeData myElevetedButton =
-      const ElevatedButtonThemeData(
-          style: ButtonStyle(
-              elevation: MaterialStatePropertyAll(0),
-              backgroundColor:
-                  MaterialStatePropertyAll(Color.fromARGB(255, 252, 143, 42))));
+  static ElevatedButtonThemeData myElevetedButton = ElevatedButtonThemeData(
+      style: ButtonStyle(
+          elevation: MaterialStatePropertyAll(0),
+          backgroundColor: MaterialStatePropertyAll(AllColors.primaryColor)));
 }
 
 //!============== theme data classes and propertys ==============
 class AppTheme {
   //!lighti theme propertys
   static final lightTheme = ThemeData(
-      buttonTheme: const ButtonThemeData(
-        buttonColor: Colors.green,
+      buttonTheme: ButtonThemeData(
+        buttonColor: AllColors.primaryColor,
       ),
-      primaryColor: Color.fromARGB(255, 62, 104, 167),
+      primaryColor: AllColors.primaryColor,
 // elevetedButtom style
       elevatedButtonTheme: MyButtonStyle.myElevetedButton,
 // primery colors

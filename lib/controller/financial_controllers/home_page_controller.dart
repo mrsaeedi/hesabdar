@@ -60,7 +60,7 @@ class TitleOfTabButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title!,
-      style: Theme.of(context).textTheme.bodySmall,
+      style: Theme.of(context).textTheme.bodyMedium,
     );
   }
 }

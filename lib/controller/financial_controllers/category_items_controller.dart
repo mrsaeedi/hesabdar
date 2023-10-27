@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/data/category_items.dart';
-import 'package:hesabdar/model/category_items_mode.dart';
+import 'package:hesabdar/model/financial_models/category_items_model.dart';
 
 class CategoryItemsController extends GetxController {
   final RxMap<String, List<ListOfcat>> d = RxMap();
@@ -46,50 +46,13 @@ class CategoryItemsController extends GetxController {
     myMap.refresh();
   }
 
-  final RxList<Icon> assetsOfIcons = RxList<Icon>(
+  final RxList<IconData> assetsOfIcons = RxList<IconData>(
     [...assetsOfIconsData],
   );
-  Rx<Icon?> selectedIcon = Rx<Icon?>(null);
-  void upDateSelectedIcon(Icon value) {
+  Rx<IconData?> selectedIcon = Rx<IconData?>(null);
+  void upDateSelectedIcon(IconData value) {
     selectedIcon.value = value;
   }
 
   RxList allNames = [].obs;
 }
-
-
-
-
-
-
-
-
-
-
-
-  // final RxList<Map<String, dynamic>> myList = RxList.from([
-  //   {
-  //     'title': 'آموزش',
-  //     'items': [
-  //       {'title': 'عنوان 1-1', 'icon': Icons.home},
-  //       {'title': 'عنوان 1-2', 'icon': Icons.star},
-  //       {'title': 'عنوان 1-3', 'icon': Icons.settings},
-  //     ],
-  //   },
-  //   {
-  //     'title': 'تغذیه',
-  //     'items': [
-  //       {'title': 'عنوان 2-1', 'icon': Icons.mail},
-  //       {'title': 'عنوان 2-2', 'icon': Icons.phone},
-  //       {'title': 'عنوان 2-3', 'icon': Icons.person},
-  //     ],
-  //   },
-  //   {
-  //     'title': 'بهداشت و درمان',
-  //     'items': [
-  //       {'title': 'عنوان 2-1', 'icon': Icons.mail},
-  //       {'title': 'عنوان 2-2', 'icon': Icons.phone},
-  //       {'title': 'عنوان 2-3', 'icon': Icons.person},
-  //     ],
-  //   },
-  // ]);

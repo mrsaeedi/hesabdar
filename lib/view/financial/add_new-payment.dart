@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/date_picker.dart';
-import 'package:hesabdar/components/number_separator%20.dart';
-import 'package:hesabdar/controller/add_new_peyment_controller.dart';
-import 'package:hesabdar/controller/home_page_controller.dart';
+import 'package:hesabdar/components/number/number_separator%20.dart';
+import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
+import 'package:hesabdar/controller/financial_controllers/home_page_controller.dart';
 import 'package:hesabdar/data/constants.dart';
-import 'package:hesabdar/model/category_items_mode.dart';
-import 'package:hesabdar/view/payment_cat.dart';
-import 'package:hesabdar/view/result_page.dart';
-import '../components/change_number_to_persion.dart';
-import '../components/papular_components.dart';
+import 'package:hesabdar/home.dart';
+import 'package:hesabdar/model/financial_models/category_items_model.dart';
+import 'package:hesabdar/model/financial_models/money.dart';
+import 'package:hesabdar/view/financial/payment_cat.dart';
+import 'package:hesabdar/view/financial/result_page.dart';
+import 'package:hive/hive.dart';
+import '../../components/number/change_number_to_persion.dart';
+import '../../components/papular_components.dart';
 
 class NewPaymentPage extends StatelessWidget {
   NewPaymentPage({super.key});
@@ -18,10 +21,7 @@ class NewPaymentPage extends StatelessWidget {
   final AddNewPeymentController addNewPeymentController =
       Get.put(AddNewPeymentController());
   // String _weekDay = '';
-  Text star = Text(
-    '*',
-    style: TextStyle(color: Colors.red),
-  );
+
   int selectedItem = Get.put(ResultPageController()).controller.value.index;
   @override
   Widget build(BuildContext context) {
@@ -59,7 +59,7 @@ class NewPaymentPage extends StatelessWidget {
                   children: [
                     //! textformefild for price
                     Expanded(
-                      child: Container(
+                      child: SizedBox(
                         width: Get.width,
                         //!
                         child: Obx(() => TextFormField(
@@ -135,9 +135,9 @@ class NewPaymentPage extends StatelessWidget {
                                 color: Color.fromARGB(255, 138, 138, 138),
                                 style: BorderStyle.solid)),
                         child: Obx(() => DropdownButton(
-                              hint: Row(
+                              hint: const Row(
                                 children: [
-                                  Text('از...'),
+                                  Text('از...*'),
                                   Text(
                                     '*',
                                   ),
@@ -169,6 +169,14 @@ class NewPaymentPage extends StatelessWidget {
                   ],
                 ),
               ),
+              ElevatedButton(
+                  onPressed: () {
+                    Get.isDarkMode
+                        ? Get.changeThemeMode(ThemeMode.light)
+                        : Get.changeThemeMode(ThemeMode.dark);
+                  },
+                  child: Icon(
+                      Get.isDarkMode ? Icons.light_mode : Icons.dark_mode)),
               //! choose time and date row
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -236,7 +244,7 @@ class NewPaymentPage extends StatelessWidget {
                       child: Obx(
                     () => Text(
                       addNewPeymentController.selectedCategoryName.value,
-                      style: TextStyle(color: Colors.black, fontSize: 18),
+                      style: Get.textTheme.bodyLarge,
                     ),
                   )),
                 ),
@@ -294,17 +302,17 @@ class NewPaymentPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                onTap: () {
+                onTap: () async {
                   if (addNewPeymentController.controllerPrice != null &&
                       addNewPeymentController.selectedCategoryName !=
                           categoryNameTitle &&
                       addNewPeymentController.selectedAssetsOfMoney.value !=
                           null) {
                     addNewPeymentController.editMode
-                        ? editMoneyPaymentItem(
+                        ? await editMoneyPaymentItem(
                             addNewPeymentController.editIndex)
-                        : addNewMoneyItem();
-                    Get.offAll(RsuletPage());
+                        : await addNewMoneyItem();
+                    Get.offAll(HomePage());
                   } else {
                     Get.showSnackbar(
                       GetSnackBar(
@@ -324,62 +332,57 @@ class NewPaymentPage extends StatelessWidget {
 
   editMoneyPaymentItem(index) {
     if (selectedItem == 0) {
-      addNewPeymentController.addedPayData[index].price =
-          addNewPeymentController.controllerPrice.text;
-      addNewPeymentController.addedPayData[index].time = addNewPeymentController
-                  .selectedTime.value.minute <
-              10
-          ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-          : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}';
-      addNewPeymentController.addedPayData[index].date = 'newdate';
-      addNewPeymentController.addedPayData[index].describtion =
-          addNewPeymentController.describtionController.text;
-      addNewPeymentController.addedPayData[index].listOfcat.name =
-          addNewPeymentController.selectedCategoryName.value;
-      addNewPeymentController.addedPayData[index].listOfcat.catIcon =
-          Icon(Icons.new_label);
+      Hive.box<AddNewPay>('payBox').putAt(
+          index,
+          AddNewPay(
+              price: addNewPeymentController.controllerPrice.text,
+              time: addNewPeymentController.selectedTime.value.minute < 10
+                  ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+                  : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+              date: '1422',
+              describtion: addNewPeymentController.describtionController.text,
+              frome: addNewPeymentController.addedPayData[index].frome,
+              listOfcat: ListOfcat(
+                  catIcon: Icons.new_label,
+                  name: addNewPeymentController.selectedCategoryName.value)));
+    } else if (selectedItem == 1) {
+      Hive.box<AddNewGet>('getBox').putAt(
+          index,
+          AddNewGet(
+              price: addNewPeymentController.controllerPrice.text,
+              time: addNewPeymentController.selectedTime.value.minute < 10
+                  ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+                  : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+              date: '1422',
+              describtion: addNewPeymentController.describtionController.text,
+              frome: addNewPeymentController.addedPayData[index].frome,
+              listOfcat: ListOfcat(
+                  catIcon: Icons.new_label,
+                  name: addNewPeymentController.selectedCategoryName.value)));
+    } else {
+      Hive.box<AddNewBudget>('budgetBox').putAt(
+          index,
+          AddNewBudget(
+              price: addNewPeymentController.controllerPrice.text,
+              time: addNewPeymentController.selectedTime.value.minute < 10
+                  ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+                  : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+              date: '1422',
+              describtion: addNewPeymentController.describtionController.text,
+              frome: addNewPeymentController.addedPayData[index].frome,
+              listOfcat: ListOfcat(
+                  catIcon: Icons.new_label,
+                  name: addNewPeymentController.selectedCategoryName.value)));
     }
-    // add to get money data
-    else if (selectedItem == 1) {
-      addNewPeymentController.addGetMoney[index].price =
-          addNewPeymentController.controllerPrice.text;
-      addNewPeymentController.addGetMoney[index].time = addNewPeymentController
-                  .selectedTime.value.minute <
-              10
-          ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-          : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}';
-      addNewPeymentController.addGetMoney[index].date = 'newdate';
-      addNewPeymentController.addGetMoney[index].describtion =
-          addNewPeymentController.describtionController.text;
-      addNewPeymentController.addGetMoney[index].listOfcat.name =
-          addNewPeymentController.selectedCategoryName.value;
-      addNewPeymentController.addGetMoney[index].listOfcat.catIcon =
-          Icon(Icons.new_label);
-    }
-    // add to budget
-    else {
-      addNewPeymentController.addBudget[index].price =
-          addNewPeymentController.controllerPrice.text;
-      addNewPeymentController.addBudget[index].time = addNewPeymentController
-                  .selectedTime.value.minute <
-              10
-          ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-          : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}';
-      addNewPeymentController.addBudget[index].date = 'newdate';
-      addNewPeymentController.addBudget[index].describtion =
-          addNewPeymentController.describtionController.text;
-      addNewPeymentController.addBudget[index].listOfcat.name =
-          addNewPeymentController.selectedCategoryName.value;
-      addNewPeymentController.addBudget[index].listOfcat.catIcon =
-          Icon(Icons.new_label);
-    }
-    Get.back();
+    addNewPeymentController.editIndex = index;
+    addNewPeymentController.editMode = true;
+    Get.to(() => NewPaymentPage());
   }
 
-  addNewMoneyItem() {
+  addNewMoneyItem() async {
     // add to payed data
     if (selectedItem == 0) {
-      addNewPeymentController.addedPayData.add(MoneyModell(
+      await Hive.box<AddNewPay>('payBox').add(AddNewPay(
           price: addNewPeymentController.controllerPrice.text,
           time: addNewPeymentController.selectedTime.value.minute < 10
               ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
@@ -389,11 +392,11 @@ class NewPaymentPage extends StatelessWidget {
           frome: addNewPeymentController.selectedAssetsOfMoney.value,
           listOfcat: ListOfcat(
               name: addNewPeymentController.selectedCategoryName.value,
-              catIcon: Icon(Icons.new_label))));
+              catIcon: Icons.new_label)));
     }
     // add to get money data
     else if (selectedItem == 1) {
-      addNewPeymentController.addGetMoney.add(MoneyModell(
+      await Hive.box<AddNewGet>('getBox').add(AddNewGet(
           price: addNewPeymentController.controllerPrice.text,
           time: addNewPeymentController.selectedTime.value.minute < 10
               ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
@@ -403,11 +406,11 @@ class NewPaymentPage extends StatelessWidget {
           frome: addNewPeymentController.selectedAssetsOfMoney.value,
           listOfcat: ListOfcat(
               name: addNewPeymentController.selectedCategoryName.value,
-              catIcon: Icon(Icons.new_label))));
+              catIcon: Icons.new_label)));
     }
     // add to budget
     else {
-      addNewPeymentController.addBudget.add(MoneyModell(
+      await Hive.box<AddNewBudget>('budgetBox').add(AddNewBudget(
           price: addNewPeymentController.controllerPrice.text,
           time: addNewPeymentController.selectedTime.value.minute < 10
               ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
@@ -417,9 +420,9 @@ class NewPaymentPage extends StatelessWidget {
           frome: addNewPeymentController.selectedAssetsOfMoney.value,
           listOfcat: ListOfcat(
               name: addNewPeymentController.selectedCategoryName.value,
-              catIcon: Icon(Icons.new_label))));
+              catIcon: Icons.new_label)));
     }
-    Get.to(RsuletPage());
+    // Get.to(RsultPage());
   }
 }
 
@@ -452,7 +455,7 @@ class ChooseDateAndTime extends StatelessWidget {
           child: Center(
             child: Text(
               lable,
-              style: TextStyle(color: Colors.black, fontSize: 14),
+              style: Get.textTheme.bodyLarge,
             ),
           ),
         ),
