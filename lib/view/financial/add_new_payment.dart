@@ -4,13 +4,13 @@ import 'package:get/get.dart';
 import 'package:hesabdar/components/date_picker.dart';
 import 'package:hesabdar/components/number/number_separator%20.dart';
 import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
+import 'package:hesabdar/controller/financial_controllers/category_items_controller.dart';
 import 'package:hesabdar/controller/financial_controllers/home_page_controller.dart';
 import 'package:hesabdar/data/constants.dart';
 import 'package:hesabdar/home.dart';
 import 'package:hesabdar/model/financial_models/category_items_model.dart';
 import 'package:hesabdar/model/financial_models/money.dart';
 import 'package:hesabdar/view/financial/payment_cat.dart';
-import 'package:hesabdar/view/financial/result_page.dart';
 import 'package:hive/hive.dart';
 import '../../components/number/change_number_to_persion.dart';
 import '../../components/papular_components.dart';
@@ -20,9 +20,9 @@ class NewPaymentPage extends StatelessWidget {
 
   final AddNewPeymentController addNewPeymentController =
       Get.put(AddNewPeymentController());
-  // String _weekDay = '';
 
-  int selectedItem = Get.put(ResultPageController()).controller.value.index;
+  final int selectedItem =
+      Get.put(ResultPageController()).controller.value.index;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -31,26 +31,9 @@ class NewPaymentPage extends StatelessWidget {
           child: Column(
             children: [
               //! header and descriptions
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Text(
-                        addNewPeymentController.editMode
-                            ? 'ویرایش'
-                            : (selectedItem == 0)
-                                ? 'خرج جدید'
-                                : (selectedItem == 1)
-                                    ? 'درآمد جدید'
-                                    : 'بودجه جدید',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ),
-                  )
-                ],
-              ),
+              HeaderAndDescrieption(
+                  addNewPeymentController: addNewPeymentController,
+                  selectedItem: selectedItem),
               Divider(),
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -58,70 +41,8 @@ class NewPaymentPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     //! textformefild for price
-                    Expanded(
-                      child: SizedBox(
-                        width: Get.width,
-                        //!
-                        child: Obx(() => TextFormField(
-                              controller: addNewPeymentController
-                                  .controllerPrice, // افزودن کنترلر به فیلد متنی
-
-                              inputFormatters: [
-                                PersianNumberFormatter(),
-                                ThousandsSeparatorInputFormatter(),
-                                PersianNumericTextInputFormatter(),
-                                LengthLimitingTextInputFormatter(11),
-                              ],
-                              onChanged: (value) {
-                                addNewPeymentController
-                                    .isClearButtonPressed.value = value.isEmpty;
-                              },
-                              keyboardType: TextInputType
-                                  .number, // تنظیم نوع کیبورد به عددی
-                              //! stile of field
-                              decoration: InputDecoration(
-                                suffixIcon: addNewPeymentController
-                                        .isClearButtonPressed.value
-                                    ? null
-                                    : IconButton(
-                                        icon: Icon(Icons.clear),
-                                        onPressed: () {
-                                          addNewPeymentController
-                                              .controllerPrice
-                                              .clear();
-                                          addNewPeymentController
-                                              .isClearButtonPressed
-                                              .value = true;
-                                        },
-                                      ),
-                                labelText: 'مبلغ *',
-                                labelStyle: const TextStyle(
-                                    fontSize: 18,
-                                    color: Color.fromARGB(255, 119, 119, 119)),
-                                hintText: 'مبلغ ',
-                                hintStyle: const TextStyle(
-                                    color: Color.fromARGB(255, 168, 168,
-                                        168)), // متن نکته داخل فیلد
-                                focusedBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors
-                                          .grey), // رنگ بردر در حالت فوکوس
-                                ),
-                                enabledBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors
-                                          .grey), // رنگ بردر در حالت غیر فوکوس
-                                ),
-                                border:
-                                    const OutlineInputBorder(), // قسمت border
-                                contentPadding: EdgeInsets.symmetric(
-                                    vertical: 20.0,
-                                    horizontal: 10), // فاصله بین متن و border
-                              ),
-                              //
-                            )),
-                      ),
-                    ),
+                    GetPriceWidget(
+                        addNewPeymentController: addNewPeymentController),
 
                     widthOf(16),
                     //! dropdownButton for choose asset
@@ -183,105 +104,20 @@ class NewPaymentPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Expanded(
-                      flex: 3,
-                      child: Container(
-                        margin: EdgeInsets.all(8),
-                        padding: EdgeInsets.all(8),
-                        height: 60,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            border: Border.all(
-                                width: 1,
-                                color: Color.fromARGB(255, 138, 138, 138),
-                                style: BorderStyle.solid)),
-                        child: Center(
-                          child: CustomDatePicker(
-                            seletedAction: 0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Obx(
-                      () => ChooseDateAndTime(
-                        lable: addNewPeymentController
-                                    .selectedTime.value.minute <
-                                10
-                            ? '0${addNewPeymentController.selectedTime.value.minute}: ${addNewPeymentController.selectedTime.value.hour}'
-                            : '${addNewPeymentController.selectedTime.value.minute}: ${addNewPeymentController.selectedTime.value.hour}',
-                        ontap: () async {
-                          final TimeOfDay? timeOfDay = await showTimePicker(
-                              context: context,
-                              initialTime: Get.find<AddNewPeymentController>()
-                                  .selectedTime
-                                  .value,
-                              initialEntryMode: TimePickerEntryMode.dial);
-                          if (timeOfDay != null) {
-                            Get.find<AddNewPeymentController>()
-                                .selectedTime
-                                .value = timeOfDay;
-                          }
-                        },
-                      ),
-                    )
+                    DatePickerChoseWidget(),
+                    //
+                    TimePicerChoose(
+                        addNewPeymentController: addNewPeymentController)
                   ],
                 ),
               ),
               //! choose category
-              InkWell(
-                child: Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.all(16),
-                  padding: EdgeInsets.all(8),
-                  height: 65,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      border: Border.all(
-                          width: 1,
-                          color: Color.fromARGB(255, 138, 138, 138),
-                          style: BorderStyle.solid)),
-                  child: Center(
-                      child: Obx(
-                    () => Text(
-                      addNewPeymentController.selectedCategoryName.value,
-                      style: Get.textTheme.bodyLarge,
-                    ),
-                  )),
-                ),
-                onTap: () => Get.to(PaymentCat()),
-              ),
+              ChoosePayCat(addNewPeymentController: addNewPeymentController),
               //! text fild for other Description
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-                child: TextField(
-                  maxLines: 3,
-                  controller: addNewPeymentController.describtionController,
-                  decoration: const InputDecoration(
-                    labelText: 'توضیحات',
-                    labelStyle: TextStyle(
-                        fontSize: 18,
-                        color: Color.fromARGB(255, 119, 119, 119)),
-                    hintText: 'سایر توضیحات',
-                    hintStyle: TextStyle(
-                        color: Color.fromARGB(
-                            255, 168, 168, 168)), // متن نکته داخل فیلد
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.grey), // رنگ بردر در حالت فوکوس
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.grey), // رنگ بردر در حالت غیر فوکوس
-                    ),
-                    border: OutlineInputBorder(), // قسمت border
-                    contentPadding: EdgeInsets.symmetric(
-                        vertical: 20.0,
-                        horizontal: 20), // فاصله بین متن و border
-                  ),
-                ),
-              ),
+              OtherDerscriptionWidget(
+                  addNewPeymentController: addNewPeymentController),
               heightOf(100),
+              //! submit button
               InkWell(
                 child: Container(
                   width: double.infinity,
@@ -311,8 +147,11 @@ class NewPaymentPage extends StatelessWidget {
                     addNewPeymentController.editMode
                         ? await editMoneyPaymentItem(
                             addNewPeymentController.editIndex)
-                        : await addNewMoneyItem();
+                        : addNewMoneyItem();
                     Get.offAll(HomePage());
+                    addNewPeymentController.addBudget.refresh();
+                    addNewPeymentController.totalGet.refresh();
+                    addNewPeymentController.totalPay.refresh();
                   } else {
                     Get.showSnackbar(
                       GetSnackBar(
@@ -330,44 +169,44 @@ class NewPaymentPage extends StatelessWidget {
     );
   }
 
-  editMoneyPaymentItem(index) {
+  editMoneyPaymentItem(index) async {
     if (selectedItem == 0) {
-      Hive.box<AddNewPay>('payBox').putAt(
+      await Hive.box<AddNewPay>('payBox').putAt(
           index,
           AddNewPay(
               price: addNewPeymentController.controllerPrice.text,
               time: addNewPeymentController.selectedTime.value.minute < 10
                   ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
                   : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
-              date: '1422',
+              date: addNewPeymentController.dateValue.value,
               describtion: addNewPeymentController.describtionController.text,
               frome: addNewPeymentController.addedPayData[index].frome,
               listOfcat: ListOfcat(
                   catIcon: Icons.new_label,
                   name: addNewPeymentController.selectedCategoryName.value)));
     } else if (selectedItem == 1) {
-      Hive.box<AddNewGet>('getBox').putAt(
+      await Hive.box<AddNewGet>('getBox').putAt(
           index,
           AddNewGet(
               price: addNewPeymentController.controllerPrice.text,
               time: addNewPeymentController.selectedTime.value.minute < 10
                   ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
                   : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
-              date: '1422',
+              date: addNewPeymentController.dateValue.value,
               describtion: addNewPeymentController.describtionController.text,
               frome: addNewPeymentController.addedPayData[index].frome,
               listOfcat: ListOfcat(
                   catIcon: Icons.new_label,
                   name: addNewPeymentController.selectedCategoryName.value)));
     } else {
-      Hive.box<AddNewBudget>('budgetBox').putAt(
+      await Hive.box<AddNewBudget>('budgetBox').putAt(
           index,
           AddNewBudget(
               price: addNewPeymentController.controllerPrice.text,
               time: addNewPeymentController.selectedTime.value.minute < 10
                   ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
                   : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
-              date: '1422',
+              date: addNewPeymentController.dateValue.value,
               describtion: addNewPeymentController.describtionController.text,
               frome: addNewPeymentController.addedPayData[index].frome,
               listOfcat: ListOfcat(
@@ -387,7 +226,7 @@ class NewPaymentPage extends StatelessWidget {
           time: addNewPeymentController.selectedTime.value.minute < 10
               ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
               : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
-          date: 'date',
+          date: addNewPeymentController.dateValue.value,
           describtion: addNewPeymentController.describtionController.text,
           frome: addNewPeymentController.selectedAssetsOfMoney.value,
           listOfcat: ListOfcat(
@@ -401,7 +240,7 @@ class NewPaymentPage extends StatelessWidget {
           time: addNewPeymentController.selectedTime.value.minute < 10
               ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
               : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
-          date: 'date',
+          date: addNewPeymentController.dateValue.value,
           describtion: addNewPeymentController.describtionController.text,
           frome: addNewPeymentController.selectedAssetsOfMoney.value,
           listOfcat: ListOfcat(
@@ -415,22 +254,272 @@ class NewPaymentPage extends StatelessWidget {
           time: addNewPeymentController.selectedTime.value.minute < 10
               ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
               : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
-          date: 'date',
+          date: addNewPeymentController.dateValue.value,
           describtion: addNewPeymentController.describtionController.text,
           frome: addNewPeymentController.selectedAssetsOfMoney.value,
           listOfcat: ListOfcat(
               name: addNewPeymentController.selectedCategoryName.value,
               catIcon: Icons.new_label)));
     }
-    // Get.to(RsultPage());
+    addNewPeymentController.addMoneyItemToRxLists();
+    // addNewPeymentController.addedPayData.clear();
+    // addNewPeymentController.addGetMoney.clear();
+    // addNewPeymentController.addBudget.clear();
+    // addNewPeymentController.totalGet.clear();
+    // addNewPeymentController.totalPay.clear();
+    // addNewPeymentController.sumGet = 0;
+    // addNewPeymentController.sumPay = 0;
+  }
+}
+
+class OtherDerscriptionWidget extends StatelessWidget {
+  const OtherDerscriptionWidget({
+    super.key,
+    required this.addNewPeymentController,
+  });
+
+  final AddNewPeymentController addNewPeymentController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+      child: TextField(
+        maxLines: 3,
+        controller: addNewPeymentController.describtionController,
+        decoration: const InputDecoration(
+          labelText: 'توضیحات',
+          labelStyle: TextStyle(
+              fontSize: 18, color: Color.fromARGB(255, 119, 119, 119)),
+          hintText: 'سایر توضیحات',
+          hintStyle: TextStyle(
+              color: Color.fromARGB(255, 168, 168, 168)), // متن نکته داخل فیلد
+          focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Colors.grey), // رنگ بردر در حالت فوکوس
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Colors.grey), // رنگ بردر در حالت غیر فوکوس
+          ),
+          border: OutlineInputBorder(), // قسمت border
+          contentPadding: EdgeInsets.symmetric(
+              vertical: 20.0, horizontal: 20), // فاصله بین متن و border
+        ),
+      ),
+    );
+  }
+}
+
+class ChoosePayCat extends StatelessWidget {
+  const ChoosePayCat({
+    super.key,
+    required this.addNewPeymentController,
+  });
+  static CategoryItemsController catController = CategoryItemsController();
+
+  final AddNewPeymentController addNewPeymentController;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        child: Container(
+          width: double.infinity,
+          margin: EdgeInsets.all(16),
+          padding: EdgeInsets.all(8),
+          height: 65,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              border: Border.all(
+                  width: 1,
+                  color: Color.fromARGB(255, 138, 138, 138),
+                  style: BorderStyle.solid)),
+          child: Center(
+              child: Obx(
+            () => Text(
+              addNewPeymentController.selectedCategoryName.value,
+              style: Get.textTheme.bodyLarge,
+            ),
+          )),
+        ),
+        onTap: () async {
+          recentlyUsedCatShow.clear();
+          for (final element in catController.listBox.values) {
+            for (final ListOfcat i in element) {
+              recentlyUsedCatShow.add(i);
+            }
+          }
+          Get.to(PaymentCat());
+        });
+  }
+}
+
+class TimePicerChoose extends StatelessWidget {
+  const TimePicerChoose({
+    super.key,
+    required this.addNewPeymentController,
+  });
+
+  final AddNewPeymentController addNewPeymentController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () => ChooseDateAndTime(
+        lable: addNewPeymentController.selectedTime.value.minute < 10
+            ? '0${addNewPeymentController.selectedTime.value.minute}: ${addNewPeymentController.selectedTime.value.hour}'
+            : '${addNewPeymentController.selectedTime.value.minute}: ${addNewPeymentController.selectedTime.value.hour}',
+        ontap: () async {
+          final TimeOfDay? timeOfDay = await showTimePicker(
+              context: context,
+              initialTime:
+                  Get.find<AddNewPeymentController>().selectedTime.value,
+              initialEntryMode: TimePickerEntryMode.dial);
+          if (timeOfDay != null) {
+            Get.find<AddNewPeymentController>().selectedTime.value = timeOfDay;
+          }
+        },
+      ),
+    );
+  }
+}
+
+class DatePickerChoseWidget extends StatelessWidget {
+  const DatePickerChoseWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: 3,
+      child: Container(
+        margin: EdgeInsets.all(8),
+        padding: EdgeInsets.all(8),
+        height: 60,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            border: Border.all(
+                width: 1,
+                color: Color.fromARGB(255, 138, 138, 138),
+                style: BorderStyle.solid)),
+        child: Center(
+          child: CustomDatePicker(
+            seletedAction: 0,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class GetPriceWidget extends StatelessWidget {
+  const GetPriceWidget({
+    super.key,
+    required this.addNewPeymentController,
+  });
+
+  final AddNewPeymentController addNewPeymentController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: SizedBox(
+        width: Get.width,
+        //!
+        child: Obx(() => TextFormField(
+              controller: addNewPeymentController
+                  .controllerPrice, // افزودن کنترلر به فیلد متنی
+
+              inputFormatters: [
+                PersianNumberFormatter(),
+                ThousandsSeparatorInputFormatter(),
+                PersianNumericTextInputFormatter(),
+                LengthLimitingTextInputFormatter(11),
+              ],
+              onChanged: (value) {
+                addNewPeymentController.isClearButtonPressed.value =
+                    value.isEmpty;
+              },
+              keyboardType: TextInputType.number, // تنظیم نوع کیبورد به عددی
+              //! stile of field
+              decoration: InputDecoration(
+                suffixIcon: addNewPeymentController.isClearButtonPressed.value
+                    ? null
+                    : IconButton(
+                        icon: Icon(Icons.clear),
+                        onPressed: () {
+                          addNewPeymentController.controllerPrice.clear();
+                          addNewPeymentController.isClearButtonPressed.value =
+                              true;
+                        },
+                      ),
+                labelText: 'مبلغ *',
+                labelStyle: const TextStyle(
+                    fontSize: 18, color: Color.fromARGB(255, 119, 119, 119)),
+                hintText: 'مبلغ ',
+                hintStyle: const TextStyle(
+                    color: Color.fromARGB(
+                        255, 168, 168, 168)), // متن نکته داخل فیلد
+                focusedBorder: const OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: Colors.grey), // رنگ بردر در حالت فوکوس
+                ),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Colors.grey), // رنگ بردر در حالت غیر فوکوس
+                ),
+                border: const OutlineInputBorder(), // قسمت border
+                contentPadding: EdgeInsets.symmetric(
+                    vertical: 20.0, horizontal: 10), // فاصله بین متن و border
+              ),
+              //
+            )),
+      ),
+    );
+  }
+}
+
+class HeaderAndDescrieption extends StatelessWidget {
+  const HeaderAndDescrieption({
+    super.key,
+    required this.addNewPeymentController,
+    required this.selectedItem,
+  });
+
+  final AddNewPeymentController addNewPeymentController;
+  final int selectedItem;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text(
+              addNewPeymentController.editMode
+                  ? 'ویرایش'
+                  : (selectedItem == 0)
+                      ? 'خرج جدید'
+                      : (selectedItem == 1)
+                          ? 'درآمد جدید'
+                          : 'بودجه جدید',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ),
+        )
+      ],
+    );
   }
 }
 
 class ChooseDateAndTime extends StatelessWidget {
-  String lable;
-  VoidCallback ontap;
+  final String lable;
+  final VoidCallback ontap;
   // Widget? child;
-  ChooseDateAndTime({
+  const ChooseDateAndTime({
     Key? key,
     required this.lable,
     required this.ontap,

@@ -1,12 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hesabdar/components/date_picker.dart';
+import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
 import 'package:hesabdar/model/financial_models/money.dart';
 import 'package:hive/hive.dart';
-import 'package:hive/hive.dart';
-
-import 'add_new-payment.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+import 'add_new_payment.dart';
 
 class CardItemGet extends StatelessWidget {
   final int selectedItem;
@@ -38,12 +39,13 @@ class CardItemGet extends StatelessWidget {
                           Get.defaultDialog(
                               title: '',
                               middleText: '',
-                              onCancel: () {
-                                deleteMoneyItems(index);
+                              onCancel: () async {
+                                await deleteMoneyItems(index);
+                                addNewPeymentController.addMoneyItemToRxLists();
                               },
                               textCancel: 'حذف',
-                              onConfirm: () {
-                                editMoneyItems(index);
+                              onConfirm: () async {
+                                await editMoneyItemsFillForms(index);
                               },
                               textConfirm: 'ویرایش');
                         },
@@ -198,22 +200,20 @@ class CardItemGet extends StatelessWidget {
             )));
   }
 
-  deleteMoneyItems(index) {
+  deleteMoneyItems(index) async {
     if (selectedItem == 0) {
-      Hive.box<AddNewPay>('payBox').deleteAt(index);
-      addNewPeymentController.addedPayData.removeAt(index);
+      await Hive.box<AddNewPay>('payBox').deleteAt(index);
+      // await addNewPeymentController.addedPayData.removeAt(index);
     } else if (selectedItem == 1) {
-      Hive.box<AddNewGet>('getBox').deleteAt(index);
-
-      addNewPeymentController.addGetMoney.removeAt(index);
+      await Hive.box<AddNewGet>('getBox').deleteAt(index);
+      // await addNewPeymentController.addGetMoney.removeAt(index);
     } else if (selectedItem == 2) {
-      Hive.box<AddNewBudget>('budgetBox').deleteAt(index);
-
-      addNewPeymentController.addBudget.removeAt(index);
+      await Hive.box<AddNewBudget>('budgetBox').deleteAt(index);
+      // await addNewPeymentController.addBudget.removeAt(index);
     }
   }
 
-  editMoneyItems(index) {
+  editMoneyItemsFillForms(index) {
     if (selectedItem == 0) {
       addNewPeymentController.controllerPrice.text =
           addNewPeymentController.addedPayData[index].price;
@@ -248,8 +248,27 @@ class CardItemGet extends StatelessWidget {
       addNewPeymentController.selectedCategoryIcon.value =
           addNewPeymentController.addBudget[index].listOfcat.catIcon;
     }
+    addNewPeymentController.dateValue.value =
+        '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumersEnToFa(Jalali.now().year.toString())}/${replaseingNumersEnToFa(Jalali.now().month.toString())}/${replaseingNumersEnToFa(Jalali.now().day.toString())}';
+
     addNewPeymentController.editIndex = index;
     addNewPeymentController.editMode = true;
     Get.to(() => NewPaymentPage());
   }
 }
+
+
+
+  // RxList<int> totalPay = <int>[].obs;
+  // RxList<int> totalGet = <int>[].obs;
+  // int sumPay = 0;
+  // int sumGet = 0;
+    // totalGet.clear();
+    // totalPay.clear();
+    // sumGet = 0;
+    // sumPay = 0;
+         // totalPay.add(int.parse(replaseingNumersFaToEn(element.price)));
+      // for (int number in totalPay) {
+      //   sumPay += number;
+      // }
+   

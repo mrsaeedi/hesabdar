@@ -2,57 +2,97 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/data/category_items.dart';
 import 'package:hesabdar/model/financial_models/category_items_model.dart';
+import 'package:hive/hive.dart';
+
+RxList recentlyUsedCat = [].obs;
+RxList recentlyUsedCatShow = [].obs;
 
 class CategoryItemsController extends GetxController {
-  final RxMap<String, List<ListOfcat>> d = RxMap();
-
-  RxMap<String, List<ListOfcat>> myMap = categoryData.value.obs;
-
-  RxList<ListOfcat> recentlyUsedCat = <ListOfcat>[].obs;
-
-  void addItem(item) {
-    // اگر لیست پر است، ایتم قدیمی را حذف کنید
-    if (recentlyUsedCat.length == 10) {
-      recentlyUsedCat.removeAt(0);
-    }
-
-    // اگر ایتم تکراری است، آن را قبول نکنید
-    if (recentlyUsedCat.contains(item)) {
-      // ایتم قدیمی را پیدا کنید
-      int index = recentlyUsedCat.indexOf(item);
-
-      // ایتم قدیمی را حذف کنید
-      recentlyUsedCat.removeAt(index);
-
-      // ایتم جدید را در ایندکس 0 قرار دهید
-      recentlyUsedCat.insert(recentlyUsedCat.length, item);
-    } else {
-      // ایتم جدید را اضافه کنید
-      recentlyUsedCat.add(item);
-    }
-  }
-
-  // for add new item to the map
-  void addTextToMap(String name, int index) {
-    myMap.values
-        .elementAt(index)
-        .add(ListOfcat(name: name, catIcon: selectedIcon.value));
-    myMap.refresh();
-  }
-
-  // for remove a item frome map
-  void removeTextMap(index, item) {
-    myMap.values.elementAt(index).remove(item);
-    myMap.refresh();
-  }
-
+  //
   final RxList<IconData> assetsOfIcons = RxList<IconData>(
     [...assetsOfIconsData],
   );
   Rx<IconData?> selectedIcon = Rx<IconData?>(null);
+//
+
+  RxList<CategoresPayMoney> catDataForShow =
+      <CategoresPayMoney>[...catDataAddOnInint].obs;
+//
   void upDateSelectedIcon(IconData value) {
     selectedIcon.value = value;
   }
 
-  RxList allNames = [].obs;
+  // for add new item to the pay category List
+  void addMoneyCatToMap(String name, int index) async {
+    var box = await Hive.openBox<CategoresPayMoney>('catListBox');
+    var myCategoresPayMoney = box.get(index);
+    var newItem =
+        ListOfcat(name: name, catIndex: index, catIcon: selectedIcon.value);
+    myCategoresPayMoney!.catList.add(newItem);
+    await box.put(index, myCategoresPayMoney);
+    catDataForShow.refresh();
+  }
+
+  // for remove a item frome add category list
+  void removeAddMoneyCatItem(index, subIndex) async {
+    var box = await Hive.openBox<CategoresPayMoney>('catListBox');
+    var myCategoresPayMoney = box.get(index);
+    ListOfcat item = myCategoresPayMoney!.catList[subIndex];
+    myCategoresPayMoney.catList.remove(item);
+    await box.put(index, myCategoresPayMoney);
+    catDataForShow.refresh();
+  }
+
+  // for remove a item frome add category list
+  void updateAddMoneyCatiItem(index, subIndex, text, icon) async {
+    var box = await Hive.openBox<CategoresPayMoney>('catListBox');
+    var myCategoresPayMoney = box.get(index);
+
+    ListOfcat item = myCategoresPayMoney!.catList[subIndex];
+    item.name = text;
+    item.catIcon = icon;
+
+    await box.put(index, myCategoresPayMoney);
+    catDataForShow.refresh();
+  }
+
+  final listBox = Hive.box<List>('listBox');
+  //!------------------------------------
+  void addMonyItemToResently1(ListOfcat item) async {
+    final newItem = item; // ایتم جدید
+    List myList = listBox.getAt(0)!;
+
+    if (myList.contains(newItem)) {
+      int index = myList.indexOf(newItem);
+      myList.removeAt(index); // حذف ایتم تکراری
+    } else if (myList.length >= 10) {
+      myList
+          .removeLast(); // اگر تعداد ایتم‌ها بیشتر یا مساوی 10 تا شده باشد، ایتم‌های اضافی را حذف کنید
+    }
+    myList.insert(0, newItem); // اضافه کردن ایتم جدید در ایندکس صفر
+    // لیست را در محفظه Hive ذخیره کنید
+    await listBox.putAt(0, myList);
+  }
+
+  // for (final element in listBox.values) {
+  //   for (final ListOfcat i in element) {
+  //     recentlyUsedCatShow.add(i);
+  //   }
+  // }
+
+  // void addRecentToShowlist() {
+  //   for (final element in listBox.values) {
+  //     for (final ListOfcat i in element) {
+  //       recentlyUsedCatShow.add(i);
+  //     }
+  //   }
+  // }
+
+//!----------------------------------------
+
+  @override
+  void onClose() {
+    recentlyUsedCatShow.clear();
+    super.onClose();
+  }
 }

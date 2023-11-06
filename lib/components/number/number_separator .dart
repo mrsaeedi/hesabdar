@@ -53,3 +53,20 @@ class ThousandsSeparatorInputFormatter extends TextInputFormatter {
     return newValue;
   }
 }
+
+String addCommasToNumber(int number) {
+  String numberStr = number.toString();
+  String result = '';
+  int count = 0;
+
+  for (int i = numberStr.length - 1; i >= 0; i--) {
+    result = numberStr[i] + result;
+    count++;
+
+    if (count % 3 == 0 && i != 0) {
+      result = ',' + result;
+    }
+  }
+
+  return result;
+}

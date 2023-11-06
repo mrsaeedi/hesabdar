@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hesabdar/components/date_picker.dart';
+import 'package:hesabdar/components/number/change_number_to_persion.dart';
+import 'package:hesabdar/components/number/number_separator%20.dart';
 import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
 import 'package:hesabdar/controller/financial_controllers/home_page_controller.dart';
 import 'package:hesabdar/data/constants.dart';
-import 'package:hesabdar/view/financial/add_new-payment.dart';
+import 'package:hesabdar/view/financial/add_new_payment.dart';
 import 'package:hesabdar/view/financial/test.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
 class RsultPage extends StatelessWidget {
   final ResultPageController resultPageController =
@@ -36,6 +40,9 @@ class RsultPage extends StatelessWidget {
                 addNewPeymentController.selectedAssetsOfMoney.value = '';
                 null.toString();
                 addNewPeymentController.editMode = false;
+                addNewPeymentController.dateValue.value =
+                    '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumersEnToFa(Jalali.now().year.toString())}/${replaseingNumersEnToFa(Jalali.now().month.toString())}/${replaseingNumersEnToFa(Jalali.now().day.toString())}';
+
                 // addNewPeymentController.selectedCategoryIcon.value = null;
                 Get.to(() => NewPaymentPage());
               },
@@ -55,17 +62,6 @@ class RsultPage extends StatelessWidget {
           body: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              //! header part
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(
-              //       vertical: 10.0, horizontal: 20.0),
-              //   child: Container(
-              //     child: CustomDatePicker(
-              //       seletedAction: 1,
-              //     ),
-              //   ),
-              // ),
-
               //! total part
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -88,20 +84,23 @@ class RsultPage extends StatelessWidget {
                           'درآمد روز :',
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
-                        Text(
-                          '۲۵.۱۷۳.۰۰۰',
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Color.fromARGB(255, 3, 202, 9)),
-                        ),
+                        Obx(() => Text(
+                              // addNewPeymentController.sumGet.toString(),
+                              replaseingNumersEnToFa(addCommasToNumber(
+                                  addNewPeymentController.sumGet.value)),
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Color.fromARGB(255, 3, 202, 9)),
+                            )),
                         Text(
                           'هزینه روز :',
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
-                        Text(
-                          '۳۴۳.۰۰۰',
-                          style: TextStyle(fontSize: 18, color: Colors.red),
-                        ),
+                        Obx(() => Text(
+                              replaseingNumersEnToFa(addCommasToNumber(
+                                  addNewPeymentController.sumPay.value)),
+                              style: TextStyle(fontSize: 18, color: Colors.red),
+                            )),
                       ],
                     ),
                   ),

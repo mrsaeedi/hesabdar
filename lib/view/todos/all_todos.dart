@@ -1,7 +1,8 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hesabdar/components/total_pay_get.dart';
+import 'package:hesabdar/model/todo_models/add_todo_model.dart';
+import 'package:hive/hive.dart';
 
 import '../../controller/todo_controllers/add_todo_controller.dart';
 
@@ -16,6 +17,7 @@ class ToDoPage extends StatelessWidget {
           padding: EdgeInsets.all(6),
           child: Column(
             children: [
+              ElevatedButton(onPressed: () {}, child: Text('show')),
               Padding(
                 padding: const EdgeInsets.only(bottom: 10.0, top: 5),
                 child: Text('کارهای امروز: '),
@@ -31,64 +33,107 @@ class ToDoPage extends StatelessWidget {
                             shrinkWrap: true,
                             itemCount: addTodoController.notDoneList.length,
                             itemBuilder: (context, index) {
-                              return Container(
-                                  // padding: EdgeInsets.all(4),
-                                  margin: EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                      color: Get.isDarkMode
-                                          ? Color.fromARGB(134, 83, 83, 83)
-                                          : Color.fromARGB(255, 228, 228, 228)),
-                                  child: ListTile(
-                                    onLongPress: () {
-                                      Get.defaultDialog(
-                                        title: 'حذف شود؟',
-                                        textCancel: 'لغو',
-                                        textConfirm: 'حذف',
-                                        middleText: '',
-                                        onConfirm: () {
-                                          addTodoController
-                                              .deleteFromeHive(index);
-                                          Get.back();
-                                        },
-                                      );
+                              return ExpansionTile(
+                                  title: Text(
+                                    addTodoController.notDoneList[index].title,
+                                    style: TextStyle(),
+                                  ),
+                                  leading: Checkbox(
+                                    value: addTodoController
+                                        .notDoneList[index].isDone,
+                                    onChanged: (value) {
+                                      addTodoController.updateItemInHive(
+                                          index, value!);
+
+                                      // addTodoController.updateItemInHive(
+                                      //     index,
+                                      //     addTodoController
+                                      //         .notDoneList[index].isDone);
+                                      addTodoController
+                                              .notDoneList[index].isDone
+                                          ? addTodoController
+                                              .notDoneList[index].isDone = false
+                                          : addTodoController
+                                              .notDoneList[index].isDone = true;
+                                      addTodoController.notDoneList.refresh();
+                                      addTodoController.doneList.refresh();
+                                      addTodoController.toggleTodoState(index);
                                     },
-                                    contentPadding: EdgeInsets.zero,
-                                    subtitle: Text(
+                                  ),
+                                  children: [
+                                    Text(
+                                      addTodoController.notDoneList[index].time,
+                                      style: TextStyle(),
+                                    ),
+                                    Text(
                                       addTodoController
                                           .notDoneList[index].describtion,
                                       style: TextStyle(),
                                     ),
-                                    title: Text(
-                                      addTodoController
-                                          .notDoneList[index].title,
-                                      style: TextStyle(),
-                                    ),
-                                    leading: Checkbox(
-                                      value: addTodoController
-                                          .notDoneList[index].isDone,
-                                      onChanged: (value) {
-                                        addTodoController.updateItemInHive(
-                                            index, value!);
+                                    Container(
+                                        // padding: EdgeInsets.all(4),
+                                        margin: EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                            color: Get.isDarkMode
+                                                ? Color.fromARGB(
+                                                    134, 83, 83, 83)
+                                                : Color.fromARGB(
+                                                    255, 228, 228, 228)),
+                                        child: ListTile(
+                                          onLongPress: () {
+                                            Get.defaultDialog(
+                                              title: 'حذف شود؟',
+                                              textCancel: 'لغو',
+                                              textConfirm: 'حذف',
+                                              middleText: '',
+                                              onConfirm: () {
+                                                addTodoController
+                                                    .deleteFromeHive(index);
+                                                Get.back();
+                                              },
+                                            );
+                                          },
+                                          contentPadding: EdgeInsets.zero,
+                                          subtitle: Text(
+                                            addTodoController
+                                                .notDoneList[index].describtion,
+                                            style: TextStyle(),
+                                          ),
+                                          title: Text(
+                                            addTodoController
+                                                .notDoneList[index].title,
+                                            style: TextStyle(),
+                                          ),
+                                          leading: Checkbox(
+                                            value: addTodoController
+                                                .notDoneList[index].isDone,
+                                            onChanged: (value) {
+                                              addTodoController
+                                                  .updateItemInHive(
+                                                      index, value!);
 
-                                        // addTodoController.updateItemInHive(
-                                        //     index,
-                                        //     addTodoController
-                                        //         .notDoneList[index].isDone);
-                                        addTodoController
-                                                .notDoneList[index].isDone
-                                            ? addTodoController
-                                                .notDoneList[index]
-                                                .isDone = false
-                                            : addTodoController
-                                                .notDoneList[index]
-                                                .isDone = true;
-                                        addTodoController.notDoneList.refresh();
-                                        addTodoController.doneList.refresh();
-                                        addTodoController
-                                            .toggleTodoState(index);
-                                      },
-                                    ),
-                                  ));
+                                              // addTodoController.updateItemInHive(
+                                              //     index,
+                                              //     addTodoController
+                                              //         .notDoneList[index].isDone);
+                                              addTodoController
+                                                      .notDoneList[index].isDone
+                                                  ? addTodoController
+                                                      .notDoneList[index]
+                                                      .isDone = false
+                                                  : addTodoController
+                                                      .notDoneList[index]
+                                                      .isDone = true;
+                                              addTodoController.notDoneList
+                                                  .refresh();
+                                              addTodoController.doneList
+                                                  .refresh();
+                                              addTodoController
+                                                  .toggleTodoState(index);
+                                            },
+                                          ),
+                                        )),
+                                  ]);
                             },
                           ))
                       : (index == 1)

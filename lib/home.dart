@@ -7,16 +7,14 @@ import 'package:hesabdar/view/notes/add_note.dart';
 import 'package:hesabdar/view/todos/add_todo.dart';
 import 'package:hesabdar/view/todos/all_todos.dart';
 import 'package:hesabdar/view/todos/test.dart';
-
 import 'view/financial/result_page.dart';
 import 'view/notes/noteList.dart';
-import 'view/profile/profile_screen.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
-  RxInt selectedIndexButtomNav = 0.obs;
-  int indexof = 0;
-  List pages = [RsultPage(), ToDoPage(), NoteListPage(), TodoList()];
+  final RxInt selectedIndexButtomNav = 0.obs;
+  final int indexof = 0;
+  final List pages = [RsultPage(), ToDoPage(), NoteListPage(), TodoList()];
   void onSelectedPage(int index) {
     selectedIndexButtomNav.value = index;
   }
@@ -99,7 +97,7 @@ class FloatAddButton extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  navIndex == 1 ? 'کار جدید' : 'یادداشت جدید',
+                  navIndex.value == 1 ? 'کار جدید' : 'یادداشت جدید',
                   style: TextStyle(fontSize: 16),
                 ),
                 widthOf(6),
@@ -111,7 +109,7 @@ class FloatAddButton extends StatelessWidget {
             ),
           ),
           onPressed: () {
-            Get.to(AddNewNote());
+            navIndex.value == 1 ? Get.to(AddTodo()) : Get.to(AddNewNote());
           },
         ));
   }

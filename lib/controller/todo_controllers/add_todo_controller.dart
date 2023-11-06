@@ -1,14 +1,37 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hesabdar/components/date_picker.dart';
+import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/model/todo_models/add_todo_model.dart';
 import 'package:hive/hive.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
 class AddTodoController extends GetxController {
+  final Rx<Jalali> pickedDateSelectedTodo = Jalali.now().obs;
+  final RxString weekDayString = ''.obs;
+  final Rx<Jalali> pickedDateSelectedHomeTodo = Jalali.now().obs;
+  RxString dateToSaveTodo =
+      '${getPersianWeekDay(Jalali.now() + 1)} __ ${replaseingNumersEnToFa(Jalali.now().year.toString())}/${replaseingNumersEnToFa(Jalali.now().month.toString())}/${replaseingNumersEnToFa((Jalali.now().day + 1).toString())}'
+          .obs;
+  RxString dateValueTodo =
+      '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumersEnToFa(Jalali.now().year.toString())}/${replaseingNumersEnToFa(Jalali.now().month.toString())}/${replaseingNumersEnToFa(Jalali.now().day.toString())}'
+          .obs;
+  //
   RxBool isClearButtonPressed = true.obs;
+  //
   bool checkValue = false;
+  //
   RxInt selectedValue = 1.obs;
+  //
   RxList<AddTodoModel> notDoneList = <AddTodoModel>[].obs;
+  //
   RxList<AddTodoModel> doneList = <AddTodoModel>[].obs;
-
+  //
+  Rx<TimeOfDay> selectedTime = Rx<TimeOfDay>(TimeOfDay.now());
+  //
+  String nowDate =
+      '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumersEnToFa(Jalali.now().year.toString())}/${replaseingNumersEnToFa(Jalali.now().month.toString())}/${replaseingNumersEnToFa(Jalali.now().day.toString())}';
+  //
   void handleRadioValueChange(int? value) {
     selectedValue.value = value ?? 1;
   }
@@ -57,17 +80,20 @@ class AddTodoController extends GetxController {
   }
 
   void addItemToRxLists() {
-    final items = Hive.box<AddTodoModel>('todoBox').values.toList();
+    // final items = Hive.box<AddTodoModel>('todoBox').values.toList();
     doneList.clear();
     notDoneList.clear();
-
-    for (final item in items) {
-      if (item.isDone) {
-        doneList.add(item);
-      } else {
-        notDoneList.add(item);
+    doneList.refresh();
+    notDoneList.refresh();
+    Hive.box<AddTodoModel>('todoBox').values.forEach((element) {
+      if (element.date == dateToSaveTodo.value) {
+        if (element.isDone) {
+          doneList.add(element);
+        } else {
+          notDoneList.add(element);
+        }
       }
-    }
+    });
   }
 
   @override

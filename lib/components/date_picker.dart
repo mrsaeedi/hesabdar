@@ -3,12 +3,33 @@ import 'package:get/get.dart';
 import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/components/papular_components.dart';
 import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
+import 'package:hesabdar/controller/todo_controllers/add_todo_controller.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+
+getPersianWeekDay(Jalali pickedDate) {
+  switch (pickedDate.weekDay) {
+    case 1:
+      return 'شنبه';
+    case 2:
+      return 'یکشنبه';
+    case 3:
+      return 'دوشنبه';
+    case 4:
+      return 'سه شنبه';
+    case 5:
+      return 'چهارشنبه';
+    case 6:
+      return 'پنجشنبه';
+    case 7:
+      return 'جمعه';
+    default:
+      return '';
+  }
+}
 
 class CustomDatePicker extends StatelessWidget {
   final int seletedAction;
-  final Rx<Jalali> _pickedDate = Jalali.now().obs;
-  final RxString _weekDayStr = ''.obs;
+  final AddTodoController addTodoController = Get.put(AddTodoController());
 
   final AddNewPeymentController addNewPeymentController =
       Get.put(AddNewPeymentController());
@@ -16,85 +37,85 @@ class CustomDatePicker extends StatelessWidget {
     Key? key,
     required this.seletedAction,
   }) : super(key: key);
-  getPersianWeekDay(Jalali pickedDate) {
-    switch (pickedDate.weekDay) {
-      case 1:
-        return 'شنبه';
-      case 2:
-        return 'یکشنبه';
-      case 3:
-        return 'دوشنبه';
-      case 4:
-        return 'سه شنبه';
-      case 5:
-        return 'چهارشنبه';
-      case 6:
-        return 'پنجشنبه';
-      case 7:
-        return 'جمعه';
-      default:
-        return '';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     RxString dateValue = 'تاریخ'.obs;
 
-    var weekDayStr = getPersianWeekDay(Jalali.now());
-
     return seletedAction == 0
-        ? InkWell(
+        ?
+//! choose date for add new item
+        InkWell(
             onTap: () async {
               var pickedDate = await showPersianDatePicker(
                   context: context,
                   initialDate: Jalali.now(),
                   firstDate: Jalali(1402),
-                  lastDate: Jalali(1405));
+                  lastDate: Jalali(1406));
               if (pickedDate != null) {
-                _pickedDate.value = pickedDate;
-                _weekDayStr.value = getPersianWeekDay(_pickedDate.value);
-              } else {
-                weekDayStr = 'تاریخ';
+                addNewPeymentController.pickedDateSelected.value = pickedDate;
+                addNewPeymentController.weekDayString.value =
+                    await getPersianWeekDay(
+                        addNewPeymentController.pickedDateSelected.value);
               }
-
               pickedDate != null
-                  ? dateValue.value =
-                      '${weekDayStr.toString()} __ ${replaseingNumersEnToFa(pickedDate.year.toString())}/${replaseingNumersEnToFa(pickedDate.month.toString())}/${replaseingNumersEnToFa(pickedDate.day.toString())}'
-                  : '${weekDayStr.toString()} __ ${replaseingNumersEnToFa(Jalali.now().year.toString())}/${replaseingNumersEnToFa(Jalali.now().month.toString())}/${replaseingNumersEnToFa(Jalali.now().day.toString())}';
+                  ? dateValue.value = addNewPeymentController
+                      .dateValue.value = addTodoController
+                          .dateValueTodo.value =
+                      '${getPersianWeekDay(addNewPeymentController.pickedDateSelected.value)} __ ${replaseingNumersEnToFa(pickedDate.year.toString())}/${replaseingNumersEnToFa(pickedDate.month.toString())}/${replaseingNumersEnToFa(pickedDate.day.toString())}'
+                  : '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumersEnToFa(Jalali.now().year.toString())}/${replaseingNumersEnToFa(Jalali.now().month.toString())}/${replaseingNumersEnToFa(Jalali.now().day.toString())}';
             },
-            child: Obx(() => Container(
-                  child: Text(
-                    dateValue.value,
-                    style: Get.textTheme.titleLarge,
-                  ),
+            child: Obx(() => Text(
+                  dateValue.value,
+                  style: Get.textTheme.titleLarge,
                 )))
-
-        // قسمت دارای ایکون برای جلو عقب بردن تاریخ
+//! choose date for show items in home
         : Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                  onPressed: () {
-                    _pickedDate.value = _pickedDate.value.addDays(1);
-                    _weekDayStr.value = getPersianWeekDay(_pickedDate.value);
+                  onPressed: () async {
+                    addNewPeymentController.pickedDateSelectedHome.value =
+                        addNewPeymentController.pickedDateSelectedHome.value
+                            .addDays(1);
+                    addNewPeymentController.weekDayStringHome.value =
+                        await getPersianWeekDay(addNewPeymentController
+                            .pickedDateSelectedHome.value);
+                    addNewPeymentController.dateToSave.value = addTodoController
+                            .dateToSaveTodo.value =
+                        '${getPersianWeekDay(addNewPeymentController.pickedDateSelectedHome.value)} __ ${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.year.toString())}/${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.month.toString())}/${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.day.toString())}';
+                    addNewPeymentController.addMoneyItemToRxLists();
+                    addTodoController.addItemToRxLists();
                   },
                   icon: Icon(
                     Icons.arrow_back_ios,
                     color: Colors.grey,
                   )),
+//
               IconButton(
                 onPressed: () async {
-                  var pickedDate = await showPersianDatePicker(
+                  var pickedDateHome = await showPersianDatePicker(
                       context: context,
                       initialDate: Jalali.now(),
                       firstDate: Jalali(1402),
                       lastDate: Jalali(1405));
-                  if (pickedDate != null) {
-                    _pickedDate.value = pickedDate;
-                    _weekDayStr.value = getPersianWeekDay(_pickedDate.value);
+                  if (pickedDateHome != null) {
+                    addNewPeymentController.pickedDateSelectedHome.value =
+                        pickedDateHome;
+                    addNewPeymentController.weekDayStringHome.value =
+                        await getPersianWeekDay(addNewPeymentController
+                            .pickedDateSelectedHome.value);
+                    addNewPeymentController.dateToSave.value = addTodoController
+                            .dateToSaveTodo.value =
+                        '${getPersianWeekDay(addNewPeymentController.pickedDateSelectedHome.value)} __ ${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.year.toString())}/${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.month.toString())}/${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.day.toString())}';
+                    addNewPeymentController.addMoneyItemToRxLists();
+                    addTodoController.addItemToRxLists();
                   } else {
-                    weekDayStr = 'تاریخ';
+                    addNewPeymentController.dateToSave.value = addTodoController
+                            .dateToSaveTodo.value =
+                        '${getPersianWeekDay(addNewPeymentController.pickedDateSelectedHome.value)} __ ${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.year.toString())}/${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.month.toString())}/${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.day.toString())}';
+                    addNewPeymentController.addMoneyItemToRxLists();
+                    addTodoController.addItemToRxLists();
                   }
                 },
                 icon: Icon(
@@ -103,15 +124,26 @@ class CustomDatePicker extends StatelessWidget {
                   color: Color.fromARGB(255, 45, 201, 201),
                 ),
               ),
+//
               Obx(() => Text(
-                    '${getPersianWeekDay(_pickedDate.value)} __ ${replaseingNumersEnToFa(_pickedDate.value.year.toString())}/${replaseingNumersEnToFa(_pickedDate.value.month.toString())}/${replaseingNumersEnToFa(_pickedDate.value.day.toString())}',
+                    '${getPersianWeekDay(addNewPeymentController.pickedDateSelectedHome.value)} __ ${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.year.toString())}/${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.month.toString())}/${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.day.toString())}',
                     style: Get.textTheme.titleLarge,
                   )),
               widthOf(20),
+//
               IconButton(
-                  onPressed: () {
-                    _pickedDate.value = _pickedDate.value.addDays(-1);
-                    _weekDayStr.value = getPersianWeekDay(_pickedDate.value);
+                  onPressed: () async {
+                    addNewPeymentController.pickedDateSelectedHome.value =
+                        addNewPeymentController.pickedDateSelectedHome.value
+                            .addDays(-1);
+                    addNewPeymentController.weekDayStringHome.value =
+                        await getPersianWeekDay(addNewPeymentController
+                            .pickedDateSelectedHome.value);
+                    addNewPeymentController.dateToSave.value = addTodoController
+                            .dateToSaveTodo.value =
+                        '${getPersianWeekDay(addNewPeymentController.pickedDateSelectedHome.value)} __ ${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.year.toString())}/${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.month.toString())}/${replaseingNumersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.day.toString())}';
+                    addNewPeymentController.addMoneyItemToRxLists();
+                    addTodoController.addItemToRxLists();
                   },
                   icon: Icon(
                     Icons.arrow_forward_ios,

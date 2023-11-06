@@ -1,10 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hesabdar/components/number/change_number_to_persion.dart';
+import 'package:hesabdar/components/total_pay_get.dart';
 import 'package:hesabdar/controller/todo_controllers/add_todo_controller.dart';
 import 'package:hesabdar/data/constants.dart';
 import 'package:hesabdar/model/todo_models/add_todo_model.dart';
+import 'package:hesabdar/view/financial/add_new_payment.dart';
 import 'package:hive/hive.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import '../../components/date_picker.dart';
 
 class AddTodo extends StatelessWidget {
@@ -21,6 +26,7 @@ class AddTodo extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
+              ElevatedButton(onPressed: () => Get.back(), child: Text('')),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
@@ -39,13 +45,9 @@ class AddTodo extends StatelessWidget {
                   DateAndImportance(
                     action: 0,
                     flex: 2,
-                    title: 'ساعت',
+                    title: 'تاریخ',
                   ),
-                  DateAndImportance(
-                    action: 1,
-                    flex: 1,
-                    title: 'ساعت',
-                  ),
+                  TimeTodoChoose()
                 ],
               ),
               Obx(() => Padding(
@@ -97,20 +99,25 @@ class AddTodo extends StatelessWidget {
                         title: titleController.text,
                         describtion: discreptionController.text,
                         isDone: false,
-                        date: '1402.1.3',
-                        time: '11:45',
+                        date: addTodoController.dateValueTodo.value,
+                        time: addTodoController.selectedTime.value.minute < 10
+                            ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+                            : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
                         importance: addTodoController.selectedValue.value));
                     Hive.box<AddTodoModel>('todoBox').add(AddTodoModel(
                         title: titleController.text,
                         describtion: discreptionController.text,
                         isDone: false,
-                        date: '1402.1.3',
-                        time: '11:45',
+                        date: addTodoController.dateValueTodo.value,
+                        time: addTodoController.selectedTime.value.minute < 10
+                            ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+                            : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+
                         //  category: category,
                         importance: addTodoController.selectedValue.value));
                     Get.back();
                   },
-                  child: Container(
+                  child: SizedBox(
                       width: Get.width / 1.5,
                       height: 60,
                       child: Center(child: Text('add'))))
@@ -126,6 +133,7 @@ class DateAndImportance extends StatelessWidget {
   String title;
   int action;
   int flex;
+  String? label;
   DateAndImportance(
       {Key? key, required this.title, required this.action, required this.flex})
       : super(key: key);
@@ -135,15 +143,13 @@ class DateAndImportance extends StatelessWidget {
     return Expanded(
         flex: flex,
         child: Container(
-          padding: EdgeInsets.all(18),
-          margin: EdgeInsets.all(10),
-          child:
-              action == 0 ? CustomDatePicker(seletedAction: 0) : Text('data'),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(6)),
-              border: Border.all(
-                  width: 1, style: BorderStyle.solid, color: Colors.grey)),
-        ));
+            padding: EdgeInsets.all(18),
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(6)),
+                border: Border.all(
+                    width: 1, style: BorderStyle.solid, color: Colors.grey)),
+            child: CustomDatePicker(seletedAction: 0)));
   }
 }
 
@@ -203,6 +209,45 @@ class AddToDoWidget extends StatelessWidget {
             ),
             controller: titleController,
           )),
+    );
+  }
+}
+
+class TimeTodoChoose extends StatelessWidget {
+  TimeTodoChoose({
+    super.key,
+  });
+
+  final AddTodoController addTodoController = Get.put(AddTodoController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () => ChooseDateAndTime(
+        lable: addTodoController.selectedTime.value.minute < 10
+            ? '0${addTodoController.selectedTime.value.minute}: ${addTodoController.selectedTime.value.hour}'
+            : '${addTodoController.selectedTime.value.minute}: ${addTodoController.selectedTime.value.hour}',
+        ontap: () async {
+          var picked = await showPersianTimePicker(
+            context: context,
+            initialTime: TimeOfDay.now(),
+            builder: (BuildContext context, Widget? child) {
+              return Directionality(
+                textDirection: TextDirection.rtl,
+                child: child!,
+              );
+            },
+          );
+
+          // final TimeOfDay? timeOfDay = await showTimePicker(
+          //     context: context,
+          //     initialTime: addTodoController.selectedTime.value,
+          //     initialEntryMode: TimePickerEntryMode.dial);
+          if (picked != null) {
+            addTodoController.selectedTime.value = picked;
+          }
+        },
+      ),
     );
   }
 }

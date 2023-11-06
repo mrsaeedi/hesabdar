@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hesabdar/components/number/change_number_to_persion.dart';
+import 'package:hesabdar/components/total_pay_get.dart';
+import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
 
 class ResultPageController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -7,19 +10,29 @@ class ResultPageController extends GetxController
 
   final List<Tab> myTabs = <Tab>[
     Tab(
-      child: TitleOfTabButtons(
-        title: 'هزینه',
-      ),
+      child: Obx(() => TitleOfTabButtons(
+            isTrueLength:
+                addNewPeymentController.addedPayData.isEmpty ? false : true,
+            number: addNewPeymentController.totalPay.length.toString(),
+            title: 'هزینه',
+          )),
     ),
     Tab(
-      child: TitleOfTabButtons(
+        child: Obx(
+      () => TitleOfTabButtons(
+        isTrueLength:
+            addNewPeymentController.addGetMoney.isEmpty ? false : true,
+        number: addNewPeymentController.totalGet.length.toString(),
         title: 'درآمد',
       ),
-    ),
+    )),
     Tab(
-      child: TitleOfTabButtons(
-        title: 'بودجه',
-      ),
+      child: Obx(() => TitleOfTabButtons(
+            isTrueLength:
+                addNewPeymentController.addBudget.isEmpty ? false : true,
+            number: addNewPeymentController.totalBudget.length.toString(),
+            title: 'بودجه',
+          )),
     ),
   ];
   final RxInt openIndex = RxInt(-1);
@@ -53,14 +66,51 @@ class ResultPageController extends GetxController
 }
 
 class TitleOfTabButtons extends StatelessWidget {
-  String? title;
-  TitleOfTabButtons({required this.title});
-
+  final bool isTrueLength;
+  final String title;
+  final String number;
+  TitleOfTabButtons(
+      {super.key,
+      required this.title,
+      required this.number,
+      required this.isTrueLength});
+  final AddNewPeymentController addNewPeymentController =
+      Get.put(AddNewPeymentController());
   @override
   Widget build(BuildContext context) {
-    return Text(
-      title!,
-      style: Theme.of(context).textTheme.bodyMedium,
+    return Stack(
+      children: [
+        isTrueLength == true
+            ? Positioned(
+                top: 10,
+                left: 10,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 102, 255, 255),
+                      borderRadius: BorderRadius.all(Radius.circular(50))),
+                  height: 16,
+                  width: 16,
+                  child: Center(
+                    child: Text(
+                      // addNewPeymentController.sumGet.toString(),
+                      replaseingNumersEnToFa(number ?? ''),
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: Color.fromARGB(255, 0, 0, 0)),
+                    ),
+                  ),
+                ))
+            : SizedBox(),
+        Center(
+          child: Container(
+            child: Text(
+              title!,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

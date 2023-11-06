@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/Hive/hive_type_adapters.dart';
 import 'package:hesabdar/components/theme/themes.dart';
+import 'package:hesabdar/data/category_items.dart';
 import 'package:hesabdar/home.dart';
+import 'package:hesabdar/model/financial_models/category_items_model.dart';
+import 'package:hive/hive.dart';
+
+bool? firstInstall;
 
 void main() async {
   await HiveManager.initializeHive();
@@ -12,7 +17,6 @@ void main() async {
 class Hesabdart extends StatelessWidget {
   const Hesabdart({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
