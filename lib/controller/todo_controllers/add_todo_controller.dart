@@ -11,10 +11,10 @@ class AddTodoController extends GetxController {
   final RxString weekDayString = ''.obs;
   final Rx<Jalali> pickedDateSelectedHomeTodo = Jalali.now().obs;
   RxString dateToSaveTodo =
-      '${getPersianWeekDay(Jalali.now() + 1)} __ ${replaseingNumersEnToFa(Jalali.now().year.toString())}/${replaseingNumersEnToFa(Jalali.now().month.toString())}/${replaseingNumersEnToFa((Jalali.now().day + 1).toString())}'
+      '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month.toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}'
           .obs;
   RxString dateValueTodo =
-      '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumersEnToFa(Jalali.now().year.toString())}/${replaseingNumersEnToFa(Jalali.now().month.toString())}/${replaseingNumersEnToFa(Jalali.now().day.toString())}'
+      '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month.toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}'
           .obs;
   //
   RxBool isClearButtonPressed = true.obs;
@@ -30,7 +30,7 @@ class AddTodoController extends GetxController {
   Rx<TimeOfDay> selectedTime = Rx<TimeOfDay>(TimeOfDay.now());
   //
   String nowDate =
-      '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumersEnToFa(Jalali.now().year.toString())}/${replaseingNumersEnToFa(Jalali.now().month.toString())}/${replaseingNumersEnToFa(Jalali.now().day.toString())}';
+      '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month.toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}';
   //
   void handleRadioValueChange(int? value) {
     selectedValue.value = value ?? 1;

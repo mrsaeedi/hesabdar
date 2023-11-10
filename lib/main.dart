@@ -21,8 +21,6 @@ class Hesabdart extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      // getPages: Routes.page,
-      // initialRoute: '/homeScreen',
       locale: const Locale("fa", "IR"),
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,

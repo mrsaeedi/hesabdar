@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
 import 'package:hesabdar/controller/financial_controllers/category_items_controller.dart';
-import 'package:hive/hive.dart';
+import 'package:hesabdar/controller/home_page_controller.dart';
 import '../../model/financial_models/category_items_model.dart';
 
 class PaymentCat extends StatelessWidget {
@@ -12,6 +12,7 @@ class PaymentCat extends StatelessWidget {
   final AddNewPeymentController addNewPeymentController =
       Get.put(AddNewPeymentController());
   final RxBool _showClearIcon = false.obs;
+  final int selectedItem = controller.value.index;
 
   PaymentCat({super.key});
   @override
@@ -36,26 +37,25 @@ class PaymentCat extends StatelessWidget {
             Expanded(
 //! sub lists in list view
               child: Obx(() => ListView.builder(
-                    itemCount: catController.catDataForShow.length,
+                    itemCount: selectedItem == 1
+                        ? catController.catGetDataForShow.length
+                        : catController.catPayDataForShow.length,
                     itemBuilder: (context, index) {
-                      String catName =
-                          catController.catDataForShow[index].name!;
-                      // String categoryName =
-                      //     catController.myMap.keys.toList()[index];
-                      List categoryItems =
-                          catController.catDataForShow[index].catList;
-                      //catController.myMap.values.toList()[index];
+                      String catName = selectedItem == 1
+                          ? catController.catGetDataForShow[index].name!
+                          : catController.catPayDataForShow[index].name!;
+                      List categoryItems = selectedItem == 1
+                          ? catController.catGetDataForShow[index].catList
+                          : catController.catPayDataForShow[index].catList;
                       return Card(
                         child: ExpansionTile(title: Text(catName), children: [
                           //! add new item
                           AddNewItemToCatList(
+                              selectedItem: selectedItem,
                               index: index,
                               addTextController: addTextController,
                               catController: catController,
                               showClearIcon: _showClearIcon),
-
-                          //...categoryItems.map<Widget>((item) {
-                          // return
                           Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -64,7 +64,8 @@ class PaymentCat extends StatelessWidget {
                                 itemCount: categoryItems.length,
                                 shrinkWrap: true,
                                 itemBuilder: (context, subIndex) {
-                                  return LIstOfCatItems(
+                                  return ListOfCatItems(
+                                      selectedItem: selectedItem,
                                       subIndex: subIndex,
                                       index: index,
                                       item: categoryItems.toList()[subIndex],
@@ -77,8 +78,6 @@ class PaymentCat extends StatelessWidget {
                               )
                             ],
                           )
-                          //!  list view of items
-                          // })
                         ]),
                       );
                     },
@@ -104,9 +103,10 @@ class PaymentCat extends StatelessWidget {
 }
 
 //! list of category item for select
-class LIstOfCatItems extends StatelessWidget {
-  const LIstOfCatItems({
+class ListOfCatItems extends StatelessWidget {
+  const ListOfCatItems({
     super.key,
+    required this.selectedItem,
     required this.subIndex,
     required this.item,
     required this.index,
@@ -122,6 +122,8 @@ class LIstOfCatItems extends StatelessWidget {
   final AddNewPeymentController addNewPeymentController;
   final ListOfcat item;
   final int index;
+  final int selectedItem;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -138,21 +140,24 @@ class LIstOfCatItems extends StatelessWidget {
             radius: 12,
             textConfirm: 'ویرایش',
             onConfirm: () {
-              // _showClearIcon.value = true;
               Future.delayed(const Duration(milliseconds: 100), () {
                 Get.defaultDialog(
                   title: 'ویرایش',
                   middleText: '',
                   textConfirm: 'ثبت',
                   onConfirm: () {
-                    catController.updateAddMoneyCatiItem(
-                        index,
-                        subIndex,
-                        editingController.text,
-                        catController.selectedIcon.value);
-                    // item.name = editingController.text;
-                    // item.catIcon = catController.selectedIcon.value;
-                    catController.catDataForShow.refresh();
+                    selectedItem == 1
+                        ? catController.updateAddMoneyGetiItem(
+                            index,
+                            subIndex,
+                            editingController.text,
+                            catController.selectedIcon.value)
+                        : catController.updateAddMoneyPayiItem(
+                            index,
+                            subIndex,
+                            editingController.text,
+                            catController.selectedIcon.value);
+                    catController.catPayDataForShow.refresh();
                     Get.back();
                   },
                   content: Row(
@@ -225,14 +230,18 @@ class LIstOfCatItems extends StatelessWidget {
                   ),
                 );
               });
-              catController.removeAddMoneyCatItem(index, subIndex);
+              selectedItem == 1
+                  ? catController.removeAddMoneyCatGetItem(index, subIndex)
+                  : catController.removeAddMoneyCatItem(index, subIndex);
             },
           );
         },
         onTap: () {
           addNewPeymentController.selectedCategoryName.value = item.name!;
           addNewPeymentController.selectedCategoryIcon.value = item.catIcon;
-          catController.addMonyItemToResently1(item);
+          selectedItem == 1
+              ? catController.addMonyItemToResently2(item)
+              : catController.addMonyItemToResently1(item);
           Get.back();
           // catController.addRecentToShowlist();
           recentlyUsedCatShow.clear();
@@ -248,6 +257,7 @@ class LIstOfCatItems extends StatelessWidget {
 class AddNewItemToCatList extends StatelessWidget {
   const AddNewItemToCatList({
     super.key,
+    required this.selectedItem,
     required this.addTextController,
     required this.index,
     required this.catController,
@@ -257,6 +267,7 @@ class AddNewItemToCatList extends StatelessWidget {
   final CategoryItemsController catController;
   final RxBool _showClearIcon;
   final int? index;
+  final int? selectedItem;
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -270,7 +281,11 @@ class AddNewItemToCatList extends StatelessWidget {
           onConfirm: () {
             if (addTextController.text.isNotEmpty &&
                 catController.selectedIcon.value != null) {
-              catController.addMoneyCatToMap(addTextController.text, index!);
+              selectedItem == 1
+                  ? catController.addMoneyCatToGetList(
+                      addTextController.text, index!)
+                  : catController.addMoneyCatToPayList(
+                      addTextController.text, index!);
               //show added result in snackBar
               Future.delayed(const Duration(milliseconds: 100), () {
                 Get.showSnackbar(
@@ -352,7 +367,6 @@ class AddNewItemToCatList extends StatelessWidget {
           ),
           // add changes and show result
         );
-
         addTextController.clear();
         catController.selectedIcon.value = null;
       },
@@ -377,7 +391,7 @@ class RecentlyAddedItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 80,
       child: ListView.builder(
         itemCount: recentlyUsedCatShow.length,
@@ -386,9 +400,9 @@ class RecentlyAddedItem extends StatelessWidget {
           return InkWell(
             onTap: () {
               addNewPeymentController.selectedCategoryName.value =
-                  recentlyUsedCatShow.value.toList()[index].name!;
+                  recentlyUsedCatShow.toList()[index].name!;
               addNewPeymentController.selectedCategoryIcon.value =
-                  recentlyUsedCatShow.value.toList()[index].catIcon!;
+                  recentlyUsedCatShow.toList()[index].catIcon!;
 
               Get.back();
             },

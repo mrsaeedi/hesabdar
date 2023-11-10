@@ -68,7 +68,7 @@ String replaseingNumersFaToEn(String input) {
   return input;
 }
 
-String replaseingNumersEnToFa(String input) {
+String replaseingNumbersEnToFa(String input) {
   const enList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '،'];
   const faList = ['۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹', '۰', ''];
   for (int i = 0; i < enList.length; i++) {

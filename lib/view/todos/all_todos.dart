@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hesabdar/components/total_pay_get.dart';
-import 'package:hesabdar/model/todo_models/add_todo_model.dart';
-import 'package:hive/hive.dart';
-
 import '../../controller/todo_controllers/add_todo_controller.dart';
 
 class ToDoPage extends StatelessWidget {
-  int vlue = 0;
+  final int vlue = 0;
   final AddTodoController addTodoController = Get.put(AddTodoController());
+
+  ToDoPage({super.key});
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -141,7 +139,7 @@ class ToDoPage extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 20),
                               child: Row(
-                                children: [Text('کارهای انجام شده: ')],
+                                children: const [Text('کارهای انجام شده: ')],
                               ),
                             )
 //! seccond list view builder

@@ -22,7 +22,7 @@ class AddNewPeymentController extends GetxController {
   }
 
   String nowDate =
-      '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumersEnToFa(Jalali.now().year.toString())}/${replaseingNumersEnToFa(Jalali.now().month.toString())}/${replaseingNumersEnToFa(Jalali.now().day.toString())}';
+      '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}';
 // date picker part
   final Rx<Jalali> pickedDateSelected = Jalali.now().obs;
   final RxString weekDayString = ''.obs;
@@ -41,8 +41,10 @@ class AddNewPeymentController extends GetxController {
   final TextEditingController controllerPrice = TextEditingController();
   final TextEditingController describtionController = TextEditingController();
   RxString dateValue =
-      '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumersEnToFa(Jalali.now().year.toString())}/${replaseingNumersEnToFa(Jalali.now().month.toString())}/${replaseingNumersEnToFa(Jalali.now().day.toString())}'
+      '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month.toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}'
           .obs;
+  // '${getPersianWeekDay(addNewPeymentController.pickedDateSelected.value)} __ ${replaseingNumersEnToFa(pickedDate.year.toString())}/${pickedDate.month < 10 ? replaseingNumersEnToFa('0${pickedDate.month.toString()}') : replaseingNumersEnToFa(pickedDate.month.toString())}/${pickedDate.day < 10 ? replaseingNumersEnToFa('0${pickedDate.day.toString()}') : replaseingNumersEnToFa(pickedDate.day.toString())}'
+
   Rx<IconData?> selectedCategoryIcon = Rx<IconData?>(null);
   RxString selectedCategoryName = categoryNameTitle.obs;
 
@@ -51,7 +53,6 @@ class AddNewPeymentController extends GetxController {
 
   RxBool isClearButtonPressed = true.obs;
   Rx selectedAssetsOfMoneyList = Rx([]);
-  final List<String> assetsOfMoney = ['جیب', 'کیف پول', 'کارت سپه'];
 
   var selectedAssetsOfMoney = ''.obs;
   void upDateSelectedAssets(String value) {
@@ -59,7 +60,7 @@ class AddNewPeymentController extends GetxController {
   }
 
   RxString dateToSave =
-      '${getPersianWeekDay(Jalali.now())} __ ${replaseingNumersEnToFa(Jalali.now().year.toString())}/${replaseingNumersEnToFa(Jalali.now().month.toString())}/${replaseingNumersEnToFa(Jalali.now().day.toString())}'
+      '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month.toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}'
           .obs;
 
   void addMoneyItemToRxLists() {
@@ -97,7 +98,6 @@ class AddNewPeymentController extends GetxController {
         addBudget.add(element);
         totalBudget.add(int.parse(replaseingNumersFaToEn(element.price)));
       }
-      ;
     });
   }
 

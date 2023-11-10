@@ -6,6 +6,7 @@ import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/components/total_pay_get.dart';
 import 'package:hesabdar/controller/todo_controllers/add_todo_controller.dart';
 import 'package:hesabdar/data/constants.dart';
+import 'package:hesabdar/model/financial_models/money.dart';
 import 'package:hesabdar/model/todo_models/add_todo_model.dart';
 import 'package:hesabdar/view/financial/add_new_payment.dart';
 import 'package:hive/hive.dart';
@@ -26,7 +27,6 @@ class AddTodo extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              ElevatedButton(onPressed: () => Get.back(), child: Text('')),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
@@ -101,8 +101,8 @@ class AddTodo extends StatelessWidget {
                         isDone: false,
                         date: addTodoController.dateValueTodo.value,
                         time: addTodoController.selectedTime.value.minute < 10
-                            ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-                            : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+                            ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+                            : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
                         importance: addTodoController.selectedValue.value));
                     Hive.box<AddTodoModel>('todoBox').add(AddTodoModel(
                         title: titleController.text,
@@ -110,8 +110,8 @@ class AddTodo extends StatelessWidget {
                         isDone: false,
                         date: addTodoController.dateValueTodo.value,
                         time: addTodoController.selectedTime.value.minute < 10
-                            ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-                            : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+                            ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+                            : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
 
                         //  category: category,
                         importance: addTodoController.selectedValue.value));

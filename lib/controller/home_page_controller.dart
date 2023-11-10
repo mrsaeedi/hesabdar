@@ -4,10 +4,10 @@ import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/components/total_pay_get.dart';
 import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
 
+late Rx<TabController> controller;
+
 class ResultPageController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  late Rx<TabController> controller;
-
   final List<Tab> myTabs = <Tab>[
     Tab(
       child: Obx(() => TitleOfTabButtons(
@@ -52,10 +52,6 @@ class ResultPageController extends GetxController
     super.onClose();
   }
 
-  void changeTabIndex(int index) {
-    controller.value.animateTo(index);
-  }
-
   void onTap(int index) {
     if (openIndex.value == index) {
       openIndex.value = -1;
@@ -93,7 +89,7 @@ class TitleOfTabButtons extends StatelessWidget {
                   child: Center(
                     child: Text(
                       // addNewPeymentController.sumGet.toString(),
-                      replaseingNumersEnToFa(number ?? ''),
+                      replaseingNumbersEnToFa(number),
                       style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -103,11 +99,9 @@ class TitleOfTabButtons extends StatelessWidget {
                 ))
             : SizedBox(),
         Center(
-          child: Container(
-            child: Text(
-              title!,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
         ),
       ],

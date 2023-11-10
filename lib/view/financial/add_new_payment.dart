@@ -4,8 +4,9 @@ import 'package:get/get.dart';
 import 'package:hesabdar/components/date_picker.dart';
 import 'package:hesabdar/components/number/number_separator%20.dart';
 import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
+import 'package:hesabdar/controller/financial_controllers/assets_controller.dart';
 import 'package:hesabdar/controller/financial_controllers/category_items_controller.dart';
-import 'package:hesabdar/controller/financial_controllers/home_page_controller.dart';
+import 'package:hesabdar/controller/home_page_controller.dart';
 import 'package:hesabdar/data/constants.dart';
 import 'package:hesabdar/home.dart';
 import 'package:hesabdar/model/financial_models/category_items_model.dart';
@@ -21,8 +22,10 @@ class NewPaymentPage extends StatelessWidget {
   final AddNewPeymentController addNewPeymentController =
       Get.put(AddNewPeymentController());
 
-  final int selectedItem =
-      Get.put(ResultPageController()).controller.value.index;
+  final AssetController assetController = Get.put(AssetController());
+
+  final int selectedItem = controller.value.index;
+  // Get.put(ResultPageController()).
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -78,12 +81,12 @@ class NewPaymentPage extends StatelessWidget {
                                 addNewPeymentController
                                     .upDateSelectedAssets(newvalue.toString());
                               },
-                              items: addNewPeymentController.assetsOfMoney
+                              items: assetController.assetsOfMoney
                                   .map<DropdownMenuItem<String>>(
                                       (String value) {
                                 return DropdownMenuItem(
                                   value: value,
-                                  child: Text('از ${value}'),
+                                  child: Text('از $value'),
                                 );
                               }).toList(),
                             ))),
@@ -104,7 +107,7 @@ class NewPaymentPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    DatePickerChoseWidget(),
+                    DatePickerChooseWidget(),
                     //
                     TimePicerChoose(
                         addNewPeymentController: addNewPeymentController)
@@ -112,7 +115,9 @@ class NewPaymentPage extends StatelessWidget {
                 ),
               ),
               //! choose category
-              ChoosePayCat(addNewPeymentController: addNewPeymentController),
+              ChoosePaymentCat(
+                  selectedItem: selectedItem,
+                  addNewPeymentController: addNewPeymentController),
               //! text fild for other Description
               OtherDerscriptionWidget(
                   addNewPeymentController: addNewPeymentController),
@@ -139,15 +144,15 @@ class NewPaymentPage extends StatelessWidget {
                   ),
                 ),
                 onTap: () async {
-                  if (addNewPeymentController.controllerPrice != null &&
-                      addNewPeymentController.selectedCategoryName !=
+                  if (addNewPeymentController.controllerPrice.text.isNotEmpty &&
+                      addNewPeymentController.selectedCategoryName.value !=
                           categoryNameTitle &&
-                      addNewPeymentController.selectedAssetsOfMoney.value !=
-                          null) {
+                      addNewPeymentController
+                          .selectedAssetsOfMoney.value.isNotEmpty) {
                     addNewPeymentController.editMode
                         ? await editMoneyPaymentItem(
                             addNewPeymentController.editIndex)
-                        : addNewMoneyItem();
+                        : await addNewMoneyItem();
                     Get.offAll(HomePage());
                     addNewPeymentController.addBudget.refresh();
                     addNewPeymentController.totalGet.refresh();
@@ -176,8 +181,8 @@ class NewPaymentPage extends StatelessWidget {
           AddNewPay(
               price: addNewPeymentController.controllerPrice.text,
               time: addNewPeymentController.selectedTime.value.minute < 10
-                  ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-                  : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+                  ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+                  : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
               date: addNewPeymentController.dateValue.value,
               describtion: addNewPeymentController.describtionController.text,
               frome: addNewPeymentController.addedPayData[index].frome,
@@ -190,8 +195,8 @@ class NewPaymentPage extends StatelessWidget {
           AddNewGet(
               price: addNewPeymentController.controllerPrice.text,
               time: addNewPeymentController.selectedTime.value.minute < 10
-                  ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-                  : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+                  ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+                  : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
               date: addNewPeymentController.dateValue.value,
               describtion: addNewPeymentController.describtionController.text,
               frome: addNewPeymentController.addedPayData[index].frome,
@@ -204,8 +209,8 @@ class NewPaymentPage extends StatelessWidget {
           AddNewBudget(
               price: addNewPeymentController.controllerPrice.text,
               time: addNewPeymentController.selectedTime.value.minute < 10
-                  ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-                  : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+                  ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+                  : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
               date: addNewPeymentController.dateValue.value,
               describtion: addNewPeymentController.describtionController.text,
               frome: addNewPeymentController.addedPayData[index].frome,
@@ -224,8 +229,8 @@ class NewPaymentPage extends StatelessWidget {
       await Hive.box<AddNewPay>('payBox').add(AddNewPay(
           price: addNewPeymentController.controllerPrice.text,
           time: addNewPeymentController.selectedTime.value.minute < 10
-              ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-              : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+              ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+              : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
           date: addNewPeymentController.dateValue.value,
           describtion: addNewPeymentController.describtionController.text,
           frome: addNewPeymentController.selectedAssetsOfMoney.value,
@@ -238,8 +243,8 @@ class NewPaymentPage extends StatelessWidget {
       await Hive.box<AddNewGet>('getBox').add(AddNewGet(
           price: addNewPeymentController.controllerPrice.text,
           time: addNewPeymentController.selectedTime.value.minute < 10
-              ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-              : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+              ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+              : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
           date: addNewPeymentController.dateValue.value,
           describtion: addNewPeymentController.describtionController.text,
           frome: addNewPeymentController.selectedAssetsOfMoney.value,
@@ -252,8 +257,8 @@ class NewPaymentPage extends StatelessWidget {
       await Hive.box<AddNewBudget>('budgetBox').add(AddNewBudget(
           price: addNewPeymentController.controllerPrice.text,
           time: addNewPeymentController.selectedTime.value.minute < 10
-              ? '۰${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-              : '${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+              ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+              : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
           date: addNewPeymentController.dateValue.value,
           describtion: addNewPeymentController.describtionController.text,
           frome: addNewPeymentController.selectedAssetsOfMoney.value,
@@ -262,13 +267,6 @@ class NewPaymentPage extends StatelessWidget {
               catIcon: Icons.new_label)));
     }
     addNewPeymentController.addMoneyItemToRxLists();
-    // addNewPeymentController.addedPayData.clear();
-    // addNewPeymentController.addGetMoney.clear();
-    // addNewPeymentController.addBudget.clear();
-    // addNewPeymentController.totalGet.clear();
-    // addNewPeymentController.totalPay.clear();
-    // addNewPeymentController.sumGet = 0;
-    // addNewPeymentController.sumPay = 0;
   }
 }
 
@@ -311,13 +309,14 @@ class OtherDerscriptionWidget extends StatelessWidget {
   }
 }
 
-class ChoosePayCat extends StatelessWidget {
-  const ChoosePayCat({
+class ChoosePaymentCat extends StatelessWidget {
+  const ChoosePaymentCat({
     super.key,
     required this.addNewPeymentController,
+    required this.selectedItem,
   });
   static CategoryItemsController catController = CategoryItemsController();
-
+  final int selectedItem;
   final AddNewPeymentController addNewPeymentController;
 
   @override
@@ -342,11 +341,19 @@ class ChoosePayCat extends StatelessWidget {
             ),
           )),
         ),
-        onTap: () async {
+        onTap: () {
           recentlyUsedCatShow.clear();
-          for (final element in catController.listBox.values) {
-            for (final ListOfcat i in element) {
-              recentlyUsedCatShow.add(i);
+          if (selectedItem == 1) {
+            for (final element in catController.listGetBox.values) {
+              for (final ListOfcat i in element) {
+                recentlyUsedCatShow.add(i);
+              }
+            }
+          } else {
+            for (final element in catController.listBox.values) {
+              for (final ListOfcat i in element) {
+                recentlyUsedCatShow.add(i);
+              }
             }
           }
           Get.to(PaymentCat());
@@ -384,8 +391,8 @@ class TimePicerChoose extends StatelessWidget {
   }
 }
 
-class DatePickerChoseWidget extends StatelessWidget {
-  const DatePickerChoseWidget({
+class DatePickerChooseWidget extends StatelessWidget {
+  const DatePickerChooseWidget({
     super.key,
   });
 
