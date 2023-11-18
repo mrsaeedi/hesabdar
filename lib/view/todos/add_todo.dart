@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/components/total_pay_get.dart';
+import 'package:hesabdar/controller/financial_controllers/report_controller.dart';
 import 'package:hesabdar/controller/todo_controllers/add_todo_controller.dart';
 import 'package:hesabdar/data/constants.dart';
-import 'package:hesabdar/model/financial_models/money.dart';
 import 'package:hesabdar/model/todo_models/add_todo_model.dart';
 import 'package:hesabdar/view/financial/add_new_payment.dart';
 import 'package:hive/hive.dart';
@@ -16,8 +16,8 @@ import '../../components/date_picker.dart';
 class AddTodo extends StatelessWidget {
   AddTodo({super.key});
 
-  TextEditingController titleController = TextEditingController();
-  TextEditingController discreptionController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController discreptionController = TextEditingController();
   final AddTodoController addTodoController = Get.put(AddTodoController());
 
   @override
@@ -58,6 +58,13 @@ class AddTodo extends StatelessWidget {
                       children: [
                         Text('اولویت:', style: Get.textTheme.bodyLarge),
                         RadioMenuButton(
+                            style: ButtonStyle(
+                              iconColor:
+                                  MaterialStateProperty.resolveWith<Color?>(
+                                      (Set<MaterialState> states) {
+                                return Colors.red; // رنگ برای وضعیت انتخاب شده
+                              }),
+                            ),
                             value: 1,
                             groupValue: addTodoController.selectedValue.value,
                             onChanged: (value) {
@@ -94,7 +101,7 @@ class AddTodo extends StatelessWidget {
                 height: 200,
               ),
               ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     addTodoController.notDoneList.add(AddTodoModel(
                         title: titleController.text,
                         describtion: discreptionController.text,
@@ -116,11 +123,12 @@ class AddTodo extends StatelessWidget {
                         //  category: category,
                         importance: addTodoController.selectedValue.value));
                     Get.back();
+                    await Get.put(ReportController()).allResultTodo();
                   },
                   child: SizedBox(
                       width: Get.width / 1.5,
                       height: 60,
-                      child: Center(child: Text('add'))))
+                      child: Center(child: Text('اضافه کن'))))
             ],
           ),
         ),
@@ -130,9 +138,9 @@ class AddTodo extends StatelessWidget {
 }
 
 class DateAndImportance extends StatelessWidget {
-  String title;
-  int action;
-  int flex;
+  final String title;
+  final int action;
+  final int flex;
   String? label;
   DateAndImportance(
       {Key? key, required this.title, required this.action, required this.flex})

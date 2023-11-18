@@ -85,7 +85,7 @@ class CustomDatePicker extends StatelessWidget {
                             .dateToSaveTodo.value =
                         '${getPersianWeekDay(addNewPeymentController.pickedDateSelectedHome.value)} __ ${replaseingNumbersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.year.toString())}/${addNewPeymentController.pickedDateSelectedHome.value.month < 10 ? replaseingNumbersEnToFa('0${addNewPeymentController.pickedDateSelectedHome.value.month.toString()}') : replaseingNumbersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.month.toString())}/${addNewPeymentController.pickedDateSelectedHome.value.day < 10 ? replaseingNumbersEnToFa('0${addNewPeymentController.pickedDateSelectedHome.value.day.toString()}') : replaseingNumbersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.day.toString())}';
                     addNewPeymentController.addMoneyItemToRxLists();
-                    addTodoController.addItemToRxLists();
+                    await addTodoController.addItemToRxLists();
                   },
                   icon: Icon(
                     Icons.arrow_back_ios,
@@ -109,13 +109,13 @@ class CustomDatePicker extends StatelessWidget {
                             .dateToSaveTodo.value =
                         '${getPersianWeekDay(addNewPeymentController.pickedDateSelectedHome.value)} __ ${replaseingNumbersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.year.toString())}/${addNewPeymentController.pickedDateSelectedHome.value.month < 10 ? replaseingNumbersEnToFa('0${addNewPeymentController.pickedDateSelectedHome.value.month.toString()}') : replaseingNumbersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.month.toString())}/${addNewPeymentController.pickedDateSelectedHome.value.day < 10 ? replaseingNumbersEnToFa('0${addNewPeymentController.pickedDateSelectedHome.value.day.toString()}') : replaseingNumbersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.day.toString())}';
                     addNewPeymentController.addMoneyItemToRxLists();
-                    addTodoController.addItemToRxLists();
+                    await addTodoController.addItemToRxLists();
                   } else {
                     addNewPeymentController.dateToSave.value = addTodoController
                             .dateToSaveTodo.value =
                         '${getPersianWeekDay(addNewPeymentController.pickedDateSelectedHome.value)} __ ${replaseingNumbersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.year.toString())}/${addNewPeymentController.pickedDateSelectedHome.value.month < 10 ? replaseingNumbersEnToFa('0${addNewPeymentController.pickedDateSelectedHome.value.month.toString()}') : replaseingNumbersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.month.toString())}/${addNewPeymentController.pickedDateSelectedHome.value.day < 10 ? replaseingNumbersEnToFa('0${addNewPeymentController.pickedDateSelectedHome.value.day.toString()}') : replaseingNumbersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.day.toString())}';
                     addNewPeymentController.addMoneyItemToRxLists();
-                    addTodoController.addItemToRxLists();
+                    await addTodoController.addItemToRxLists();
                   }
                 },
                 icon: Icon(
@@ -143,7 +143,7 @@ class CustomDatePicker extends StatelessWidget {
                             .dateToSaveTodo.value =
                         '${getPersianWeekDay(addNewPeymentController.pickedDateSelectedHome.value)} __ ${replaseingNumbersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.year.toString())}/${addNewPeymentController.pickedDateSelectedHome.value.month < 10 ? replaseingNumbersEnToFa('0${addNewPeymentController.pickedDateSelectedHome.value.month.toString()}') : replaseingNumbersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.month.toString())}/${addNewPeymentController.pickedDateSelectedHome.value.day < 10 ? replaseingNumbersEnToFa('0${addNewPeymentController.pickedDateSelectedHome.value.day.toString()}') : replaseingNumbersEnToFa(addNewPeymentController.pickedDateSelectedHome.value.day.toString())}';
                     addNewPeymentController.addMoneyItemToRxLists();
-                    addTodoController.addItemToRxLists();
+                    await addTodoController.addItemToRxLists();
                   },
                   icon: Icon(
                     Icons.arrow_forward_ios,

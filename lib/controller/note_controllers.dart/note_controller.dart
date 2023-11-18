@@ -23,7 +23,10 @@ class NoteController extends GetxController {
     Hive.box<NoteModel>('noteBox').putAt(
         index,
         NoteModel(
-            tile: title, contents: describtion, category: catNote, date: date));
+            title: title,
+            contents: describtion,
+            category: catNote,
+            date: date));
   }
 
   void deleteFromeHive(index) {

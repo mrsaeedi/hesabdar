@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/date_picker.dart';
 import 'package:hesabdar/components/number/change_number_to_persion.dart';
+import 'package:hesabdar/controller/financial_controllers/report_controller.dart';
+import 'package:hesabdar/controller/home_page_controller.dart';
 import 'package:hesabdar/data/constants.dart';
 import 'package:hesabdar/model/financial_models/money.dart';
+import 'package:hesabdar/model/financial_models/money_assets.dart';
 import 'package:hive/hive.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
@@ -11,6 +14,35 @@ class AddNewPeymentController extends GetxController {
   RxList addedPayData = <MoneyModell>[].obs; // List of amount spent
   RxList addGetMoney = <MoneyModell>[].obs; // List of received amount
   RxList addBudget = <MoneyModell>[].obs; // Registered budget list
+  var selectedAssetsOfMoney = ''.obs;
+  RxString resultAsset = '0'.obs;
+  final int selectedItem = controller.value.index;
+
+  Future<void> assetsResult() async {
+    resultAsset.value = '0';
+    var assetsBox = Hive.box<MoneyAssets>('assetsBox');
+
+    for (var element in assetsBox.values) {
+      if (selectedAssetsOfMoney.value == element.name && selectedItem == 0) {
+        resultAsset.value = (element.inventory -
+                int.parse(replaseingNumbersFaToEn(controllerPrice.text)))
+            .toString();
+        element.inventory = int.parse(resultAsset.value);
+        await assetsBox.put(element.name, element);
+      }
+      if (selectedAssetsOfMoney.value == element.name && selectedItem == 1) {
+        resultAsset.value = (element.inventory +
+                int.parse(replaseingNumbersFaToEn(controllerPrice.text)))
+            .toString();
+        element.inventory = int.parse(resultAsset.value);
+        await assetsBox.put(element.name, element);
+      }
+    }
+  }
+
+  // Hive.box<AddNewPay>('payBox').values.forEach((element) {});
+  // Hive.box<AddNewGet>('getBox').values.forEach((element) {});
+
   // open and close description part
   final RxInt openIndex = RxInt(-1);
   void onTap(int index) {
@@ -54,7 +86,6 @@ class AddNewPeymentController extends GetxController {
   RxBool isClearButtonPressed = true.obs;
   Rx selectedAssetsOfMoneyList = Rx([]);
 
-  var selectedAssetsOfMoney = ''.obs;
   void upDateSelectedAssets(String value) {
     selectedAssetsOfMoney.value = value;
   }
@@ -77,7 +108,7 @@ class AddNewPeymentController extends GetxController {
     Hive.box<AddNewPay>('payBox').values.forEach((element) {
       if (element.date == dateToSave.value) {
         addedPayData.add(element);
-        totalPay.add(int.parse(replaseingNumersFaToEn(element.price)));
+        totalPay.add(int.parse(replaseingNumbersFaToEn(element.price)));
       }
       if (totalPay.isNotEmpty) {
         sumPay = totalPay.reduce((a, b) => a + b).obs;
@@ -87,7 +118,7 @@ class AddNewPeymentController extends GetxController {
     Hive.box<AddNewGet>('getBox').values.forEach((element) {
       if (element.date == dateToSave.value) {
         addGetMoney.add(element);
-        totalGet.add(int.parse(replaseingNumersFaToEn(element.price)));
+        totalGet.add(int.parse(replaseingNumbersFaToEn(element.price)));
       }
       if (totalGet.isNotEmpty) {
         sumGet = totalGet.reduce((a, b) => a + b).obs;
@@ -96,7 +127,7 @@ class AddNewPeymentController extends GetxController {
     Hive.box<AddNewBudget>('budgetBox').values.forEach((element) {
       if (element.date == dateToSave.value) {
         addBudget.add(element);
-        totalBudget.add(int.parse(replaseingNumersFaToEn(element.price)));
+        totalBudget.add(int.parse(replaseingNumbersFaToEn(element.price)));
       }
     });
   }

@@ -16,14 +16,17 @@ class MoneyModell {
   String frome;
   @HiveField(6)
   ListOfcat listOfcat;
-  MoneyModell({
-    required this.price,
-    required this.time,
-    required this.date,
-    required this.describtion,
-    required this.frome,
-    required this.listOfcat,
-  });
+  @HiveField(7)
+  String resultAsset;
+
+  MoneyModell(
+      {required this.price,
+      required this.time,
+      required this.date,
+      required this.describtion,
+      required this.frome,
+      required this.listOfcat,
+      required this.resultAsset});
 }
 
 @HiveType(typeId: 4)
@@ -35,6 +38,7 @@ class AddNewPay extends MoneyModell {
     required super.describtion,
     required super.frome,
     required super.listOfcat,
+    required super.resultAsset,
   });
 }
 
@@ -47,6 +51,7 @@ class AddNewGet extends MoneyModell {
     required super.describtion,
     required super.frome,
     required super.listOfcat,
+    required super.resultAsset,
   });
 }
 
@@ -59,5 +64,6 @@ class AddNewBudget extends MoneyModell {
     required super.describtion,
     required super.frome,
     required super.listOfcat,
+    required super.resultAsset,
   });
 }

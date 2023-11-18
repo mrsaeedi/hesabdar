@@ -56,6 +56,11 @@ class MyButtonStyle {
           backgroundColor: MaterialStatePropertyAll(AllColors.primaryColor)));
 }
 
+class MyRadio {
+  //elevetedButton Style
+  static RadioThemeData radioThemeData = RadioThemeData();
+}
+
 //!============== theme data classes and propertys ==============
 class AppTheme {
   //!lighti theme propertys

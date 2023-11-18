@@ -6,7 +6,7 @@ import 'package:hive/hive.dart';
 
 class AddNewNote extends StatelessWidget {
   AddNewNote({super.key});
-  NoteController noteController = Get.put(NoteController());
+  final NoteController noteController = Get.put(NoteController());
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -23,7 +23,7 @@ class AddNewNote extends StatelessWidget {
                         onPressed: () {
                           Hive.box<NoteModel>('noteBox')
                               .add(NoteModel(
-                                  tile: noteController.noteTitle.text,
+                                  title: noteController.noteTitle.text,
                                   contents: noteController.noteContent.text,
                                   category: 'category',
                                   date: '1402.3'))

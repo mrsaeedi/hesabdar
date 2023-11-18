@@ -9,7 +9,7 @@ class ThousandsSeparatorInputFormatter extends TextInputFormatter {
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
     // Short-circuit if the new value is empty
-    if (newValue.text.length == 0) {
+    if (newValue.text.isEmpty) {
       return newValue.copyWith(text: '');
     }
 
@@ -34,13 +34,14 @@ class ThousandsSeparatorInputFormatter extends TextInputFormatter {
 
       String newString = '';
       for (int i = chars.length - 1; i >= 0; i--) {
-        if ((chars.length - 1 - i) % 3 == 0 && i != chars.length - 1)
+        if ((chars.length - 1 - i) % 3 == 0 && i != chars.length - 1) {
           newString = separator + newString;
+        }
         newString = chars[i] + newString;
       }
 
       return TextEditingValue(
-        text: newString.toString() + (parts.length > 1 ? '.' + parts[1] : ''),
+        text: newString.toString() + (parts.length > 1 ? '.${parts[1]}' : ''),
         selection: TextSelection.collapsed(
           offset: newString.length -
               selectionIndex +
@@ -64,7 +65,7 @@ String addCommasToNumber(int number) {
     count++;
 
     if (count % 3 == 0 && i != 0) {
-      result = ',' + result;
+      result = ',$result';
     }
   }
 

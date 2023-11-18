@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:hesabdar/components/date_picker.dart';
 import 'package:hesabdar/components/number/number_separator%20.dart';
 import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
-import 'package:hesabdar/controller/financial_controllers/assets_controller.dart';
+import 'package:hesabdar/controller/financial_controllers/report_controller.dart';
 import 'package:hesabdar/controller/financial_controllers/category_items_controller.dart';
 import 'package:hesabdar/controller/home_page_controller.dart';
 import 'package:hesabdar/data/constants.dart';
@@ -22,7 +22,7 @@ class NewPaymentPage extends StatelessWidget {
   final AddNewPeymentController addNewPeymentController =
       Get.put(AddNewPeymentController());
 
-  final AssetController assetController = Get.put(AssetController());
+  final ReportController reportController = Get.put(ReportController());
 
   final int selectedItem = controller.value.index;
   // Get.put(ResultPageController()).
@@ -59,14 +59,7 @@ class NewPaymentPage extends StatelessWidget {
                                 color: Color.fromARGB(255, 138, 138, 138),
                                 style: BorderStyle.solid)),
                         child: Obx(() => DropdownButton(
-                              hint: const Row(
-                                children: [
-                                  Text('از...*'),
-                                  Text(
-                                    '*',
-                                  ),
-                                ],
-                              ),
+                              hint: Text('از...*'),
                               underline: SizedBox(),
                               elevation: 1,
                               isExpanded: true,
@@ -81,9 +74,8 @@ class NewPaymentPage extends StatelessWidget {
                                 addNewPeymentController
                                     .upDateSelectedAssets(newvalue.toString());
                               },
-                              items: assetController.assetsOfMoney
-                                  .map<DropdownMenuItem<String>>(
-                                      (String value) {
+                              items: reportController.assetsOfMoney
+                                  .map<DropdownMenuItem>((dynamic value) {
                                 return DropdownMenuItem(
                                   value: value,
                                   child: Text('از $value'),
@@ -93,14 +85,7 @@ class NewPaymentPage extends StatelessWidget {
                   ],
                 ),
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    Get.isDarkMode
-                        ? Get.changeThemeMode(ThemeMode.light)
-                        : Get.changeThemeMode(ThemeMode.dark);
-                  },
-                  child: Icon(
-                      Get.isDarkMode ? Icons.light_mode : Icons.dark_mode)),
+
               //! choose time and date row
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -157,6 +142,7 @@ class NewPaymentPage extends StatelessWidget {
                     addNewPeymentController.addBudget.refresh();
                     addNewPeymentController.totalGet.refresh();
                     addNewPeymentController.totalPay.refresh();
+                    await reportController.allPaymentResult();
                   } else {
                     Get.showSnackbar(
                       GetSnackBar(
@@ -188,7 +174,8 @@ class NewPaymentPage extends StatelessWidget {
               frome: addNewPeymentController.addedPayData[index].frome,
               listOfcat: ListOfcat(
                   catIcon: Icons.new_label,
-                  name: addNewPeymentController.selectedCategoryName.value)));
+                  name: addNewPeymentController.selectedCategoryName.value),
+              resultAsset: '11'));
     } else if (selectedItem == 1) {
       await Hive.box<AddNewGet>('getBox').putAt(
           index,
@@ -202,7 +189,8 @@ class NewPaymentPage extends StatelessWidget {
               frome: addNewPeymentController.addedPayData[index].frome,
               listOfcat: ListOfcat(
                   catIcon: Icons.new_label,
-                  name: addNewPeymentController.selectedCategoryName.value)));
+                  name: addNewPeymentController.selectedCategoryName.value),
+              resultAsset: '12'));
     } else {
       await Hive.box<AddNewBudget>('budgetBox').putAt(
           index,
@@ -216,7 +204,8 @@ class NewPaymentPage extends StatelessWidget {
               frome: addNewPeymentController.addedPayData[index].frome,
               listOfcat: ListOfcat(
                   catIcon: Icons.new_label,
-                  name: addNewPeymentController.selectedCategoryName.value)));
+                  name: addNewPeymentController.selectedCategoryName.value),
+              resultAsset: '13'));
     }
     addNewPeymentController.editIndex = index;
     addNewPeymentController.editMode = true;
@@ -224,7 +213,7 @@ class NewPaymentPage extends StatelessWidget {
   }
 
   addNewMoneyItem() async {
-    // add to payed data
+    await addNewPeymentController.assetsResult();
     if (selectedItem == 0) {
       await Hive.box<AddNewPay>('payBox').add(AddNewPay(
           price: addNewPeymentController.controllerPrice.text,
@@ -236,7 +225,8 @@ class NewPaymentPage extends StatelessWidget {
           frome: addNewPeymentController.selectedAssetsOfMoney.value,
           listOfcat: ListOfcat(
               name: addNewPeymentController.selectedCategoryName.value,
-              catIcon: Icons.new_label)));
+              catIcon: Icons.new_label),
+          resultAsset: addNewPeymentController.resultAsset.value));
     }
     // add to get money data
     else if (selectedItem == 1) {
@@ -250,7 +240,8 @@ class NewPaymentPage extends StatelessWidget {
           frome: addNewPeymentController.selectedAssetsOfMoney.value,
           listOfcat: ListOfcat(
               name: addNewPeymentController.selectedCategoryName.value,
-              catIcon: Icons.new_label)));
+              catIcon: Icons.new_label),
+          resultAsset: addNewPeymentController.resultAsset.value));
     }
     // add to budget
     else {
@@ -264,7 +255,8 @@ class NewPaymentPage extends StatelessWidget {
           frome: addNewPeymentController.selectedAssetsOfMoney.value,
           listOfcat: ListOfcat(
               name: addNewPeymentController.selectedCategoryName.value,
-              catIcon: Icons.new_label)));
+              catIcon: Icons.new_label),
+          resultAsset: '1'));
     }
     addNewPeymentController.addMoneyItemToRxLists();
   }

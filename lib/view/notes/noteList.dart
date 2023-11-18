@@ -52,7 +52,7 @@ class NoteListPage extends StatelessWidget {
                         return Card(
                           child: ListTile(
                             title: Text(
-                              noteController.allNotes[index].tile,
+                              noteController.allNotes[index].title,
                             ),
                             onLongPress: () {
                               Get.defaultDialog(
@@ -70,7 +70,7 @@ class NoteListPage extends StatelessWidget {
                               noteController.noteEditMode = true;
                               Get.to(AddNewNote());
                               noteController.noteTitle.text =
-                                  noteController.allNotes[index].tile;
+                                  noteController.allNotes[index].title;
                               noteController.noteContent.text =
                                   noteController.allNotes[index].contents;
                             },

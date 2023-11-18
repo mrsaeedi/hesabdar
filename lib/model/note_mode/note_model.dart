@@ -5,7 +5,7 @@ part 'note_model.g.dart';
 @HiveType(typeId: 3)
 class NoteModel {
   @HiveField(1)
-  String tile;
+  String title;
   @HiveField(2)
   String contents;
   @HiveField(3)
@@ -13,7 +13,7 @@ class NoteModel {
   @HiveField(4)
   String date;
   NoteModel({
-    required this.tile,
+    required this.title,
     required this.contents,
     required this.category,
     required this.date,

@@ -11,14 +11,14 @@ import 'package:hesabdar/view/financial/add_new_payment.dart';
 import 'package:hesabdar/view/notes/add_note.dart';
 import 'package:hesabdar/view/todos/add_todo.dart';
 import 'package:hesabdar/view/todos/all_todos.dart';
-import 'package:hesabdar/view/todos/test.dart';
+import 'package:hesabdar/view/profile/profile_screen.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'view/financial/result_page.dart';
 import 'view/notes/noteList.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
-  final RxInt selectedIndexButtomNav = 0.obs;
+  final RxInt selectedIndexButtomNav = 2.obs;
   final int indexof = 0;
   final List pages = [RsultPage(), ToDoPage(), NoteListPage(), TodoList()];
   void onSelectedPage(int index) {
@@ -26,25 +26,11 @@ class HomePage extends StatelessWidget {
   }
 
   final RxInt selectedItem = controller.value.index.obs;
-  // Get.put(ResultPageController()).controller.value.index.obs;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 10.0,
-          ),
-          child: CustomDatePicker(
-            seletedAction: 1,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: Stack(
         children: [
           Obx(() =>

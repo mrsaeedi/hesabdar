@@ -31,7 +31,32 @@ class AddTodoController extends GetxController {
   //
   String nowDate =
       '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month.toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}';
-  //
+
+  RxDouble getProsess() {
+    if (notDoneList.isEmpty) {
+      return 1.0.obs;
+    } else if (doneList.isEmpty) {
+      return 0.0.obs;
+    } else {
+      double prosessReturn =
+          doneList.length / (notDoneList.length + doneList.length);
+      return prosessReturn.obs;
+    }
+  }
+
+  RxString getProsessPir() {
+    if (notDoneList.isEmpty) {
+      return '100'.obs;
+    } else if (doneList.isEmpty) {
+      return '0'.obs;
+    } else {
+      double prosessReturn =
+          doneList.length / (notDoneList.length + doneList.length) * 100;
+      return prosessReturn.toStringAsFixed(0).obs;
+      //  prosesPirintshow.value = prosesPirint.toStringAsFixed(0);
+    }
+  }
+
   void handleRadioValueChange(int? value) {
     selectedValue.value = value ?? 1;
   }
@@ -60,10 +85,8 @@ class AddTodoController extends GetxController {
   void updateItemInHive(int index, bool isDone) async {
     final AddTodoModel item = Hive.box<AddTodoModel>('todoBox').getAt(index)!;
 
-    if (item != null) {
-      item.isDone = isDone;
-      await Hive.box<AddTodoModel>('todoBox').putAt(index, item);
-    }
+    item.isDone = isDone;
+    await Hive.box<AddTodoModel>('todoBox').putAt(index, item);
   }
 
   void updateItemsInHive(
@@ -79,7 +102,7 @@ class AddTodoController extends GetxController {
             importance: importance));
   }
 
-  void addItemToRxLists() {
+  addItemToRxLists() {
     // final items = Hive.box<AddTodoModel>('todoBox').values.toList();
     doneList.clear();
     notDoneList.clear();
@@ -97,10 +120,13 @@ class AddTodoController extends GetxController {
   }
 
   @override
-  void onInit() {
-    addItemToRxLists();
-    Hive.box<AddTodoModel>('todoBox').watch().listen((event) {
-      addItemToRxLists();
+  void onInit() async {
+    await addItemToRxLists();
+    // await prosesBar();
+
+    Hive.box<AddTodoModel>('todoBox').watch().listen((event) async {
+      await addItemToRxLists();
+      // await prosesBar();
     });
 
     super.onInit();

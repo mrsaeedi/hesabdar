@@ -20,9 +20,9 @@ List<CategoresPayMoney> catPayData = [
     catList: [
       ListOfcat(name: 'دارو', catIcon: Icons.account_tree_rounded),
       ListOfcat(name: 'بیمارستان', catIcon: Icons.account_tree_rounded),
-      ListOfcat(name: 'ازمایش', catIcon: Icons.account_tree_rounded),
+      ListOfcat(name: 'آزمایش', catIcon: Icons.account_tree_rounded),
       ListOfcat(
-          name: 'لوازم رایشی بهداشتی', catIcon: Icons.account_tree_rounded),
+          name: 'لوازم آرایشی بهداشتی', catIcon: Icons.account_tree_rounded),
       ListOfcat(name: 'جراحی', catIcon: Icons.account_tree_rounded),
       ListOfcat(name: 'دندان پزشکی', catIcon: Icons.account_tree_rounded),
       ListOfcat(name: 'ویزیت پزشک', catIcon: Icons.account_tree_rounded),
@@ -45,7 +45,7 @@ List<CategoresPayMoney> catPayData = [
     catList: [
       ListOfcat(name: 'اتبوس', catIcon: Icons.account_tree_rounded),
       ListOfcat(name: 'قطار', catIcon: Icons.account_tree_rounded),
-      ListOfcat(name: 'اژانس', catIcon: Icons.account_tree_rounded),
+      ListOfcat(name: 'آژانس', catIcon: Icons.account_tree_rounded),
       ListOfcat(name: 'اسنپ', catIcon: Icons.account_tree_rounded),
       ListOfcat(name: 'مترو', catIcon: Icons.account_tree_rounded),
       ListOfcat(name: 'محل اقامت', catIcon: Icons.account_tree_rounded),
@@ -111,13 +111,13 @@ List<CategoresPayMoney> catPayData = [
   CategoresPayMoney(
     name: 'آموزش',
     catList: [
-      ListOfcat(name: 'کلاس اموزشی', catIcon: Icons.account_tree_rounded),
+      ListOfcat(name: 'کلاس آموزشی', catIcon: Icons.account_tree_rounded),
       ListOfcat(name: 'دوره', catIcon: Icons.account_tree_rounded),
       ListOfcat(name: 'باشگاه', catIcon: Icons.account_tree_rounded),
       ListOfcat(name: 'وبینار', catIcon: Icons.account_tree_rounded),
       ListOfcat(name: 'لوازم تحریر', catIcon: Icons.account_tree_rounded),
       ListOfcat(name: 'کتاب', catIcon: Icons.account_tree_rounded),
-      ListOfcat(name: 'لاوازم ورزشی', catIcon: Icons.account_tree_rounded),
+      ListOfcat(name: 'لوازم ورزشی', catIcon: Icons.account_tree_rounded),
     ],
   ),
 ];

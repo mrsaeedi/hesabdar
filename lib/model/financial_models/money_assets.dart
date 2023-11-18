@@ -8,8 +8,11 @@ class MoneyAssets {
   String name;
   @HiveField(2)
   int inventory;
+  @HiveField(3)
+  List? transactionList = [];
   MoneyAssets({
     required this.name,
     required this.inventory,
+    this.transactionList,
   });
 }

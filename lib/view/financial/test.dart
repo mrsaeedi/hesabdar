@@ -146,10 +146,10 @@ class CardItemGet extends StatelessWidget {
                                       Text(
                                         // result...
                                         (selectedItem == 0)
-                                            ? '${addNewPeymentController.addedPayData[index].price ?? '0'}: باقی مانده '
+                                            ? '${addNewPeymentController.addedPayData[index].resultAsset ?? '0'}: باقی مانده '
                                             : (selectedItem == 1)
-                                                ? '${addNewPeymentController.addGetMoney[index].price ?? '0'}: باقی مانده '
-                                                : '${addNewPeymentController.addBudget[index].price ?? '0'}: باقی مانده ',
+                                                ? '${addNewPeymentController.addGetMoney[index].resultAsset ?? '0'}: باقی مانده '
+                                                : '${addNewPeymentController.addBudget[index].resultAsset ?? '0'}: باقی مانده ',
                                         style: Get.textTheme.bodySmall,
                                       ),
                                     ],
