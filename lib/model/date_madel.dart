@@ -11,7 +11,7 @@ String day = Jalali.now().day.toString().length == 1
 class DateModel {}
 
 String today() {
-  return year + '/' + month + '/' + day;
+  return '$year/$month/$day';
 }
     //  int payToday(){
     //   int result=0;

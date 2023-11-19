@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:hesabdar/components/date_picker.dart';
-import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/components/papular_components.dart';
-import 'package:hesabdar/components/total_pay_get.dart';
 import 'package:hesabdar/controller/home_page_controller.dart';
+import 'package:hesabdar/controller/note_controllers.dart/note_controller.dart';
 import 'package:hesabdar/data/constants.dart';
-import 'package:hesabdar/view/financial/add_new_payment.dart';
 import 'package:hesabdar/view/notes/add_note.dart';
 import 'package:hesabdar/view/todos/add_todo.dart';
 import 'package:hesabdar/view/todos/all_todos.dart';
 import 'package:hesabdar/view/profile/profile_screen.dart';
-import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'view/financial/result_page.dart';
-import 'view/notes/noteList.dart';
+import 'view/notes/note_list.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
-  final RxInt selectedIndexButtomNav = 2.obs;
+  final RxInt selectedIndexButtomNav = 0.obs;
   final int indexof = 0;
   final List pages = [RsultPage(), ToDoPage(), NoteListPage(), TodoList()];
   void onSelectedPage(int index) {
@@ -95,7 +90,7 @@ class FloatAddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned(
         bottom: 18,
-        right: 25,
+        left: 25,
         child: ElevatedButton(
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -119,6 +114,10 @@ class FloatAddButton extends StatelessWidget {
             if (navIndex.value == 1) {
               Get.to(AddTodo());
             } else if (navIndex.value == 2) {
+              Get.put(NoteController()).selectedCategory.value = '';
+              Get.put(NoteController()).noteTitle.clear();
+              Get.put(NoteController()).noteContent.clear();
+              Get.put(NoteController()).noteEditMode = false;
               Get.to(AddNewNote());
             }
           },

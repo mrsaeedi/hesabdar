@@ -149,7 +149,7 @@ class CardItemGet extends StatelessWidget {
                                             ? '${addNewPeymentController.addedPayData[index].resultAsset ?? '0'}: باقی مانده '
                                             : (selectedItem == 1)
                                                 ? '${addNewPeymentController.addGetMoney[index].resultAsset ?? '0'}: باقی مانده '
-                                                : '${addNewPeymentController.addBudget[index].resultAsset ?? '0'}: باقی مانده ',
+                                                : '',
                                         style: Get.textTheme.bodySmall,
                                       ),
                                     ],
@@ -207,7 +207,7 @@ class CardItemGet extends StatelessWidget {
                 )),
             Positioned(
                 bottom: 18,
-                right: 16,
+                left: 16,
                 child: ElevatedButton(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(

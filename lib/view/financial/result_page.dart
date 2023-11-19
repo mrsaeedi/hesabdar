@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/date_picker.dart';
 import 'package:hesabdar/components/number/change_number_to_persion.dart';
-import 'package:hesabdar/components/number/number_separator%20.dart';
+import 'package:hesabdar/components/number/number_separator.dart';
 import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
 import 'package:hesabdar/controller/home_page_controller.dart';
 import 'package:hesabdar/data/constants.dart';
-import 'package:hesabdar/view/financial/test.dart';
+import 'package:hesabdar/view/financial/result_payment_item.dart';
 
 class RsultPage extends StatelessWidget {
   final ResultPageController resultPageController =

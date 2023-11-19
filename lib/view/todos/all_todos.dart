@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/date_picker.dart';
 import 'package:hesabdar/controller/financial_controllers/report_controller.dart';
-import 'package:hesabdar/model/todo_models/add_todo_model.dart';
-import 'package:hive/hive.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../../controller/todo_controllers/add_todo_controller.dart';
 
@@ -80,7 +78,7 @@ class ToDoPage extends StatelessWidget {
                                         bottom: BorderSide(
                                             width: 1,
                                             color: Color.fromARGB(
-                                                249, 51, 48, 48))),
+                                                104, 53, 49, 49))),
                                     color: Color.fromARGB(52, 158, 158, 158)),
                                 child: ExpansionTile(
                                     trailing: Icon(Icons.flag,
@@ -199,6 +197,8 @@ class ToDoPage extends StatelessWidget {
                                         subtitle: Text(
                                           addTodoController
                                               .doneList[index].describtion,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.fade,
                                           style: TextStyle(
                                               decoration:
                                                   TextDecoration.lineThrough),
@@ -207,6 +207,7 @@ class ToDoPage extends StatelessWidget {
                                           addTodoController
                                               .doneList[index].title,
                                           style: TextStyle(
+                                              color: Colors.grey,
                                               decoration:
                                                   TextDecoration.lineThrough),
                                         ),

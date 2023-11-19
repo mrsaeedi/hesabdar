@@ -48,8 +48,11 @@ class HiveManager {
     await Hive.openBox<List>('listGetBox');
 // for money assets
     await Hive.openBox<MoneyAssets>('assetsBox');
+// for save category's of note's
+    Hive.openBox<String>('noteCatBox');
 // Check initial installation status
     var box = await Hive.openBox<bool>('install_status_box');
+
     firstInstall = box.get('installed') ?? true;
 // all voids for first install
     if (firstInstall!) {

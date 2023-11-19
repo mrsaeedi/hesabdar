@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:hesabdar/components/number/change_number_to_persion.dart';
-import 'package:hesabdar/components/papular_components.dart';
-import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
 getPersianWeekDay(Jalali pickedDate) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/number/change_number_to_persion.dart';
-import 'package:hesabdar/components/number/number_separator%20.dart';
+import 'package:hesabdar/components/number/number_separator.dart';
 import 'package:hesabdar/controller/financial_controllers/asset_controller.dart';
 import 'package:hesabdar/model/financial_models/money_assets.dart';
 import 'package:hive/hive.dart';

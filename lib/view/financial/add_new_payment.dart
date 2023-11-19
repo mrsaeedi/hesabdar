@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/date_picker.dart';
-import 'package:hesabdar/components/number/number_separator%20.dart';
+import 'package:hesabdar/components/number/number_separator.dart';
 import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
 import 'package:hesabdar/controller/financial_controllers/report_controller.dart';
 import 'package:hesabdar/controller/financial_controllers/category_items_controller.dart';
@@ -11,6 +11,7 @@ import 'package:hesabdar/data/constants.dart';
 import 'package:hesabdar/home.dart';
 import 'package:hesabdar/model/financial_models/category_items_model.dart';
 import 'package:hesabdar/model/financial_models/money.dart';
+import 'package:hesabdar/view/financial/money_asset_page.dart';
 import 'package:hesabdar/view/financial/payment_cat.dart';
 import 'package:hive/hive.dart';
 import '../../components/number/change_number_to_persion.dart';
@@ -59,29 +60,40 @@ class NewPaymentPage extends StatelessWidget {
                                 color: Color.fromARGB(255, 138, 138, 138),
                                 style: BorderStyle.solid)),
                         child: Obx(() => DropdownButton(
-                              hint: Text('از...*'),
-                              underline: SizedBox(),
-                              elevation: 1,
-                              isExpanded: true,
-                              padding: EdgeInsets.all(10),
-                              value: addNewPeymentController
-                                          .selectedAssetsOfMoney.value ==
-                                      ""
-                                  ? null
-                                  : addNewPeymentController
-                                      .selectedAssetsOfMoney.value,
-                              onChanged: (newvalue) {
-                                addNewPeymentController
-                                    .upDateSelectedAssets(newvalue.toString());
-                              },
-                              items: reportController.assetsOfMoney
-                                  .map<DropdownMenuItem>((dynamic value) {
-                                return DropdownMenuItem(
-                                  value: value,
-                                  child: Text('از $value'),
-                                );
-                              }).toList(),
-                            ))),
+                                underline: SizedBox(),
+                                elevation: 1,
+                                hint: Text('از...*'),
+                                isExpanded: true,
+                                padding: EdgeInsets.all(10),
+                                value: addNewPeymentController
+                                            .selectedAssetsOfMoney.value ==
+                                        ""
+                                    ? null
+                                    : addNewPeymentController
+                                        .selectedAssetsOfMoney.value,
+                                onChanged: (newvalue) {
+                                  addNewPeymentController.upDateSelectedAssets(
+                                      newvalue.toString());
+                                },
+                                items: [
+                                  ...reportController.assetsOfMoney
+                                      .map<DropdownMenuItem>((dynamic value) {
+                                    return DropdownMenuItem(
+                                      value: value,
+                                      child: Text('از $value'),
+                                    );
+                                  }).toList(),
+                                  DropdownMenuItem(
+                                      value: 'منبع جدید',
+                                      child: TextButton.icon(
+                                          icon: Icon(
+                                            Icons.add_circle_outline_rounded,
+                                            size: 18,
+                                          ),
+                                          onPressed: () =>
+                                              Get.to(MoneyAssetPage()),
+                                          label: Text('منبع جدید'))),
+                                ]))),
                   ],
                 ),
               ),

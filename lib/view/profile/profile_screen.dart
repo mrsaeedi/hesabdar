@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/number/change_number_to_persion.dart';
-import 'package:hesabdar/components/number/number_separator%20.dart';
+import 'package:hesabdar/components/number/number_separator.dart';
 import 'package:hesabdar/controller/financial_controllers/report_controller.dart';
 import 'package:hesabdar/view/financial/money_asset_page.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -35,10 +35,7 @@ class _TodoListState extends State<TodoList> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     IconButton(
-                        onPressed: () {
-                          print(reportController.showMonthMaxPir);
-                        },
-                        icon: Icon(Icons.arrow_back_ios)),
+                        onPressed: () {}, icon: Icon(Icons.arrow_back_ios)),
                     Text('اردیبهشت'),
                     IconButton(
                         onPressed: () {}, icon: Icon(Icons.arrow_forward_ios)),

@@ -246,8 +246,14 @@ class ListOfCatItems extends StatelessWidget {
           // catController.addRecentToShowlist();
           recentlyUsedCatShow.clear();
         },
-        title: Text(item.name!),
-        leading: Icon(item.catIcon),
+        title: Text(
+          item.name!,
+          style: TextStyle(fontSize: 14),
+        ),
+        // leading: Icon(
+        //   Icons.category,
+        //   size: 18,
+        // ),
       ),
     );
   }
@@ -392,7 +398,7 @@ class RecentlyAddedItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 80,
+      height: 50,
       child: ListView.builder(
         itemCount: recentlyUsedCatShow.length,
         scrollDirection: Axis.horizontal,
@@ -407,22 +413,20 @@ class RecentlyAddedItem extends StatelessWidget {
               Get.back();
             },
             child: Container(
-              padding: EdgeInsets.all(8),
-              height: 80,
-              child: Container(
-                padding: EdgeInsets.all(8),
-                height: 60,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                    border: Border.all(
-                        width: 1,
-                        color: Color.fromARGB(255, 138, 138, 138),
-                        style: BorderStyle.solid)),
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  border: Border.all(
+                      width: 1,
+                      color: Color.fromARGB(255, 138, 138, 138),
+                      style: BorderStyle.solid)),
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              child: InkWell(
                 child: Row(
                   children: [
-                    Icon(
-                      recentlyUsedCatShow.toList()[index].catIcon,
-                    ),
+                    // Icon(
+                    //   recentlyUsedCatShow.toList()[index].catIcon,
+                    // ),
                     Text(
                       recentlyUsedCatShow.toList()[index].name!,
                       style: Get.textTheme.bodyMedium,

@@ -1,11 +1,10 @@
 import 'package:get/get.dart';
 import 'package:hesabdar/components/date_picker.dart';
 import 'package:hesabdar/components/number/change_number_to_persion.dart';
-import 'package:hesabdar/components/number/number_separator%20.dart';
+import 'package:hesabdar/components/number/number_separator.dart';
 import 'package:hesabdar/model/financial_models/money.dart';
 import 'package:hesabdar/model/financial_models/money_assets.dart';
 import 'package:hesabdar/model/todo_models/add_todo_model.dart';
-import 'package:hesabdar/view/profile/profile_screen.dart';
 import 'package:hive/hive.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
