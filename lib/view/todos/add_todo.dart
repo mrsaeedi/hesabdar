@@ -91,39 +91,77 @@ class AddTodo extends StatelessWidget {
                       ],
                     ),
                   )),
-              AddToDoWidget(
-                titleController: discreptionController,
-                lable: 'توضیحات',
-                hint: 'سایر توضیحات',
-                maxLine: 2,
+              Obx(
+                () => Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
+                  child: TextField(
+                    maxLines: 3,
+                    onChanged: (value) {
+                      addTodoController.isClearButtonPressedDis.value =
+                          value.isEmpty;
+                    },
+                    decoration: InputDecoration(
+                      suffixIcon:
+                          addTodoController.isClearButtonPressedDis.value
+                              ? null
+                              : IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    discreptionController.clear();
+                                    addTodoController
+                                        .isClearButtonPressedDis.value = true;
+                                  },
+                                  icon: Icon(Icons.clear),
+                                  color: AllColors.primaryColor,
+                                ),
+                      hintText: 'توضیحات',
+                      labelStyle: const TextStyle(
+                          fontSize: 18,
+                          color: Color.fromARGB(255, 119, 119, 119)),
+                      hintStyle: const TextStyle(
+                          color: Color.fromARGB(255, 168, 168, 168)),
+                      label: Text('توضیحات'),
+                      border: const OutlineInputBorder(), // قسمت border
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 20.0, horizontal: 10),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.grey), // رنگ بردر در حالت غیر فوکوس
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.grey), // رنگ بردر در حالت فوکوس
+                      ),
+                    ),
+                    controller: discreptionController,
+                  ),
+                ),
               ),
               SizedBox(
                 height: 200,
               ),
               ElevatedButton(
                   onPressed: () async {
-                    addTodoController.notDoneList.add(AddTodoModel(
-                        title: titleController.text,
-                        describtion: discreptionController.text,
-                        isDone: false,
-                        date: addTodoController.dateValueTodo.value,
-                        time: addTodoController.selectedTime.value.minute < 10
-                            ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-                            : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
-                        importance: addTodoController.selectedValue.value));
-                    Hive.box<AddTodoModel>('todoBox').add(AddTodoModel(
-                        title: titleController.text,
-                        describtion: discreptionController.text,
-                        isDone: false,
-                        date: addTodoController.dateValueTodo.value,
-                        time: addTodoController.selectedTime.value.minute < 10
-                            ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-                            : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+                    if (titleController.text.isNotEmpty) {
+                      Hive.box<AddTodoModel>('todoBox').add(AddTodoModel(
+                          title: titleController.text,
+                          describtion: discreptionController.text,
+                          isDone: false,
+                          date: addTodoController.dateValueTodo.value,
+                          time: addTodoController.selectedTime.value.minute < 10
+                              ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+                              : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
 
-                        //  category: category,
-                        importance: addTodoController.selectedValue.value));
-                    Get.back();
-                    await Get.put(ReportController()).allResultTodo();
+                          //  category: category,
+                          importance: addTodoController.selectedValue.value));
+                      Get.back();
+                      await Get.put(ReportController()).allResultTodo();
+                      addTodoController.addTodosToRxListForShow();
+                    } else {
+                      Get.snackbar('عنوان خالی است!', 'لطفاً عنوانی وارد کنید',
+                          snackPosition: SnackPosition.TOP);
+                    }
                   },
                   child: SizedBox(
                       width: Get.width / 1.5,
@@ -181,42 +219,44 @@ class AddToDoWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.all(6),
       padding: EdgeInsets.all(4),
-      child: Obx(() => TextField(
-            maxLines: maxLine,
-            onChanged: (value) {
-              addTodoController.isClearButtonPressed.value = value.isEmpty;
-            },
-            decoration: InputDecoration(
-              prefixIcon: addTodoController.isClearButtonPressed.value
-                  ? null
-                  : IconButton(
-                      onPressed: () {
-                        titleController.clear();
-                        addTodoController.isClearButtonPressed.value = true;
-                      },
-                      icon: Icon(Icons.clear),
-                      color: AllColors.primaryColor,
-                    ),
-              hintText: hint,
-              labelStyle: const TextStyle(
-                  fontSize: 18, color: Color.fromARGB(255, 119, 119, 119)),
-              hintStyle:
-                  const TextStyle(color: Color.fromARGB(255, 168, 168, 168)),
-              label: Text(lable),
-              border: const OutlineInputBorder(), // قسمت border
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 20.0, horizontal: 10),
-              enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                    color: Colors.grey), // رنگ بردر در حالت غیر فوکوس
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: Colors.grey), // رنگ بردر در حالت فوکوس
-              ),
+      child: Obx(
+        () => TextField(
+          maxLines: maxLine,
+          onChanged: (value) {
+            addTodoController.isClearButtonPressedTitle.value = value.isEmpty;
+          },
+          decoration: InputDecoration(
+            prefixIcon: addTodoController.isClearButtonPressedTitle.value
+                ? null
+                : IconButton(
+                    onPressed: () {
+                      titleController.clear();
+                      addTodoController.isClearButtonPressedTitle.value = true;
+                    },
+                    icon: Icon(Icons.clear),
+                    color: AllColors.primaryColor,
+                  ),
+            hintText: hint,
+            labelStyle: const TextStyle(
+                fontSize: 18, color: Color.fromARGB(255, 119, 119, 119)),
+            hintStyle:
+                const TextStyle(color: Color.fromARGB(255, 168, 168, 168)),
+            label: Text(lable),
+            border: const OutlineInputBorder(), // قسمت border
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 20.0, horizontal: 10),
+            enabledBorder: const OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Colors.grey), // رنگ بردر در حالت غیر فوکوس
             ),
-            controller: titleController,
-          )),
+            focusedBorder: const OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Colors.grey), // رنگ بردر در حالت فوکوس
+            ),
+          ),
+          controller: titleController,
+        ),
+      ),
     );
   }
 }

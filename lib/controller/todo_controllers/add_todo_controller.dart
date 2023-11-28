@@ -17,7 +17,9 @@ class AddTodoController extends GetxController {
       '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month.toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}'
           .obs;
   //
-  RxBool isClearButtonPressed = true.obs;
+  RxBool isClearButtonPressedDis = true.obs;
+  //
+  RxBool isClearButtonPressedTitle = true.obs;
   //
   bool checkValue = false;
   //
@@ -61,32 +63,74 @@ class AddTodoController extends GetxController {
     selectedValue.value = value ?? 1;
   }
 
-  void deleteFromeHive(index) {
-    Hive.box<AddTodoModel>('todoBox').deleteAt(index);
-    notDoneList.removeAt(index);
-  }
+  // void toggleTodoState(int index) {
+  //   notDoneList[index].isDone = true;
+  //   if (notDoneList[index].isDone) {
+  //     final todo = notDoneList.removeAt(index);
+  //     doneList.add(todo);
+  //   }
+  // }
 
-  void toggleTodoState(int index) {
-    notDoneList[index].isDone = true;
-    if (notDoneList[index].isDone) {
-      final todo = notDoneList.removeAt(index);
-      doneList.add(todo);
+  // void toggleTodoStateDone(int index) {
+  //   doneList[index].isDone = false;
+  //   if (!doneList[index].isDone) {
+  //     final todo = doneList.removeAt(index);
+  //     notDoneList.add(todo);
+  //   }
+  // }
+  final Box<AddTodoModel> todoBox = Hive.box<AddTodoModel>('todoBox');
+  final Box<AddTodoModel> todoBoxDone = Hive.box<AddTodoModel>('todoDoneBox');
+
+  void updateItemInHive(int index, bool item) async {
+    doneList.clear();
+    notDoneList.clear();
+    doneList.refresh();
+    notDoneList.refresh();
+    if (index >= 0) {
+      if (item == false && index < todoBox.length) {
+        // خواندن عنصر مورد نظر از todoBox
+        AddTodoModel getItem = todoBox.getAt(index)!;
+        // حذف عنصر از todoBox
+        todoBox.deleteAt(index);
+        // افزودن عنصر به todoBoxDone
+        todoBoxDone.add(getItem);
+      } else if (item == true && index < todoBoxDone.length) {
+        // خواندن عنصر مورد نظر از todoBoxDone
+        AddTodoModel getItem = todoBoxDone.getAt(index)!;
+        // حذف عنصر از todoBoxDone
+        todoBoxDone.deleteAt(index);
+        // افزودن عنصر به todoBox
+        todoBox.add(getItem);
+      }
+      // ذخیره تغییرات در Hive
+      await Future.wait([todoBox.compact(), todoBoxDone.compact()]);
     }
   }
 
-  void toggleTodoStateDone(int index) {
-    doneList[index].isDone = false;
-    if (!doneList[index].isDone) {
-      final todo = doneList.removeAt(index);
-      notDoneList.add(todo);
+  deleteFromeHive(index, bool isTrue) {
+    if (isTrue) {
+      todoBoxDone.deleteAt(index);
+    } else {
+      todoBox.deleteAt(index);
     }
   }
 
-  void updateItemInHive(int index, bool isDone) async {
-    final AddTodoModel item = Hive.box<AddTodoModel>('todoBox').getAt(index)!;
+  addTodosToRxListForShow() {
+    doneList.clear();
+    notDoneList.clear();
+    doneList.refresh();
+    notDoneList.refresh();
 
-    item.isDone = isDone;
-    await Hive.box<AddTodoModel>('todoBox').putAt(index, item);
+    Hive.box<AddTodoModel>('todoBox').values.forEach((element) {
+      if (element.date == dateToSaveTodo.value) {
+        notDoneList.add(element);
+      }
+    });
+    Hive.box<AddTodoModel>('todoDoneBox').values.forEach((element) {
+      if (element.date == dateToSaveTodo.value) {
+        doneList.add(element);
+      }
+    });
   }
 
   void updateItemsInHive(
@@ -102,30 +146,28 @@ class AddTodoController extends GetxController {
             importance: importance));
   }
 
-  addItemToRxLists() {
-    // final items = Hive.box<AddTodoModel>('todoBox').values.toList();
-    doneList.clear();
-    notDoneList.clear();
-    doneList.refresh();
-    notDoneList.refresh();
-    Hive.box<AddTodoModel>('todoBox').values.forEach((element) {
-      if (element.date == dateToSaveTodo.value) {
-        if (element.isDone) {
-          doneList.add(element);
-        } else {
-          notDoneList.add(element);
-        }
-      }
-    });
-  }
+  // addItemToRxLists() {
+  //   // final items = Hive.box<AddTodoModel>('todoBox').values.toList();
+
+  //   Hive.box<AddTodoModel>('todoBox').values.forEach((element) {
+  //     if (element.date == dateToSaveTodo.value) {
+  //       if (element.isDone) {
+  //         doneList.add(element);
+  //       } else {
+  //         notDoneList.add(element);
+  //       }
+  //     }
+  //   });
+  // }
 
   @override
   void onInit() async {
-    await addItemToRxLists();
+    addTodosToRxListForShow();
+    //await addItemToRxLists();
     // await prosesBar();
-
+    // addTodosToRxListForShow();
     Hive.box<AddTodoModel>('todoBox').watch().listen((event) async {
-      await addItemToRxLists();
+      //await addItemToRxLists();
       // await prosesBar();
     });
 

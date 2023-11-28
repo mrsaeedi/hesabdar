@@ -50,50 +50,62 @@ class NewPaymentPage extends StatelessWidget {
 
                     widthOf(16),
                     //! dropdownButton for choose asset
-                    Container(
-                        height: 65,
-                        width: Get.width / 3,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            border: Border.all(
-                                width: 1,
-                                color: Color.fromARGB(255, 138, 138, 138),
-                                style: BorderStyle.solid)),
-                        child: Obx(() => DropdownButton(
-                                underline: SizedBox(),
-                                elevation: 1,
-                                hint: Text('از...*'),
-                                isExpanded: true,
-                                padding: EdgeInsets.all(10),
-                                value: addNewPeymentController
-                                            .selectedAssetsOfMoney.value ==
-                                        ""
-                                    ? null
-                                    : addNewPeymentController
-                                        .selectedAssetsOfMoney.value,
-                                onChanged: (newvalue) {
-                                  addNewPeymentController.upDateSelectedAssets(
-                                      newvalue.toString());
-                                },
-                                items: [
-                                  ...reportController.assetsOfMoney
-                                      .map<DropdownMenuItem>((dynamic value) {
-                                    return DropdownMenuItem(
-                                      value: value,
-                                      child: Text('از $value'),
-                                    );
-                                  }).toList(),
-                                  DropdownMenuItem(
-                                      value: 'منبع جدید',
-                                      child: TextButton.icon(
-                                          icon: Icon(
-                                            Icons.add_circle_outline_rounded,
-                                            size: 18,
-                                          ),
-                                          onPressed: () =>
-                                              Get.to(MoneyAssetPage()),
-                                          label: Text('منبع جدید'))),
-                                ]))),
+                    InkWell(
+                      onTap: () => Get.to(MoneyAssetPage()),
+                      child: Container(
+                          height: 65,
+                          width: Get.width / 3,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8)),
+                              border: Border.all(
+                                  width: 1,
+                                  color: Color.fromARGB(255, 138, 138, 138),
+                                  style: BorderStyle.solid)),
+                          child: Obx(
+                            () =>
+                                //
+                                Center(
+                                    child: Text(addNewPeymentController
+                                        .selectedAsset.value)),
+                            //  DropdownButton(
+                            //         underline: SizedBox(),
+                            //         elevation: 1,
+                            //         hint: Text('از...*'),
+                            //         isExpanded: true,
+                            //         padding: EdgeInsets.all(10),
+                            //         value: addNewPeymentController
+                            //                     .selectedAssetsOfMoney.value ==
+                            //                 ""
+                            //             ? null
+                            //             : addNewPeymentController
+                            //                 .selectedAssetsOfMoney.value,
+                            //         onChanged: (newvalue) {
+                            //           addNewPeymentController.upDateSelectedAssets(
+                            //               newvalue.toString());
+                            //         },
+                            //         items: [
+                            //           ...reportController.assetsOfMoney
+                            //               .map<DropdownMenuItem>((dynamic value) {
+                            //             return DropdownMenuItem(
+                            //               value: value,
+                            //               child: Text('از $value'),
+                            //             );
+                            //           }).toList(),
+                            //           DropdownMenuItem(
+                            //               value: 'منبع جدید',
+                            //               child: TextButton.icon(
+                            //                   icon: Icon(
+                            //                     Icons.add_circle_outline_rounded,
+                            //                     size: 18,
+                            //                   ),
+                            //                   onPressed: () =>
+                            //                       Get.to(MoneyAssetPage()),
+                            //                   label: Text('منبع جدید'))),
+                            //         ])
+                            //
+                          )),
+                    ),
                   ],
                 ),
               ),
@@ -144,8 +156,7 @@ class NewPaymentPage extends StatelessWidget {
                   if (addNewPeymentController.controllerPrice.text.isNotEmpty &&
                       addNewPeymentController.selectedCategoryName.value !=
                           categoryNameTitle &&
-                      addNewPeymentController
-                          .selectedAssetsOfMoney.value.isNotEmpty) {
+                      addNewPeymentController.selectedAsset.value.isNotEmpty) {
                     addNewPeymentController.editMode
                         ? await editMoneyPaymentItem(
                             addNewPeymentController.editIndex)
@@ -156,12 +167,9 @@ class NewPaymentPage extends StatelessWidget {
                     addNewPeymentController.totalPay.refresh();
                     await reportController.allPaymentResult();
                   } else {
-                    Get.showSnackbar(
-                      GetSnackBar(
-                        message: 'آیتم های ستاره دار را تکمیل کنید',
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
+                    Get.snackbar('آیتم خالی است',
+                        'لطفاً آیتم های ستاره دار را  تکمیل کنید',
+                        snackPosition: SnackPosition.TOP);
                   }
                 },
               ),
@@ -225,7 +233,7 @@ class NewPaymentPage extends StatelessWidget {
   }
 
   addNewMoneyItem() async {
-    await addNewPeymentController.assetsResult();
+    addNewPeymentController.assetsResult1();
     if (selectedItem == 0) {
       await Hive.box<AddNewPay>('payBox').add(AddNewPay(
           price: addNewPeymentController.controllerPrice.text,
@@ -234,7 +242,7 @@ class NewPaymentPage extends StatelessWidget {
               : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
           date: addNewPeymentController.dateValue.value,
           describtion: addNewPeymentController.describtionController.text,
-          frome: addNewPeymentController.selectedAssetsOfMoney.value,
+          frome: addNewPeymentController.selectedAsset.value,
           listOfcat: ListOfcat(
               name: addNewPeymentController.selectedCategoryName.value,
               catIcon: Icons.new_label),
@@ -249,7 +257,7 @@ class NewPaymentPage extends StatelessWidget {
               : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
           date: addNewPeymentController.dateValue.value,
           describtion: addNewPeymentController.describtionController.text,
-          frome: addNewPeymentController.selectedAssetsOfMoney.value,
+          frome: addNewPeymentController.selectedAsset.value,
           listOfcat: ListOfcat(
               name: addNewPeymentController.selectedCategoryName.value,
               catIcon: Icons.new_label),
@@ -264,7 +272,7 @@ class NewPaymentPage extends StatelessWidget {
               : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
           date: addNewPeymentController.dateValue.value,
           describtion: addNewPeymentController.describtionController.text,
-          frome: addNewPeymentController.selectedAssetsOfMoney.value,
+          frome: addNewPeymentController.selectedAsset.value,
           listOfcat: ListOfcat(
               name: addNewPeymentController.selectedCategoryName.value,
               catIcon: Icons.new_label),

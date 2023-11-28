@@ -29,16 +29,14 @@ class ReportController extends GetxController {
       '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month.toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}'
           .obs;
 
-  // String? dateElelemnt;
-
-  // result map for save data
   Map<String, List> resultPayMap = {};
-  Map<String, int> resultPayMapshow = {};
+  RxMap<RxString, int> resultPayMapshow = <RxString, int>{}.obs;
   Map<String, List> resultGetMap = {};
-  Map<String, int> resultGetMapShow = {};
+  RxMap<String, int> resultGetMapShow = <String, int>{}.obs;
   int sumPay = 0;
   int sumGet = 0;
   RxDouble monthTurnoverPir = 0.0.obs;
+
   addAssetToList() {
     assetsOfMoney.clear();
     Hive.box<MoneyAssets>('assetsBox').values.forEach((element) {
@@ -46,11 +44,17 @@ class ReportController extends GetxController {
     });
   }
 
+  final Rx<Jalali> chosseDate = Jalali.now().obs;
+
+  RxString resultdateToSave =
+      '${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${(Jalali.now().month).toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}'
+          .obs;
+
   RxDouble? maxTotal;
   RxDouble? minTotal;
   RxDouble? resultTotal;
 
-  double showMonthMaxPir = 0;
+  RxDouble showMonthMaxPir = 0.0.obs;
   double showMonthMinPir = 0;
 //--------------------------------------------------------------
   List monthlyCompletTodos = [];
@@ -62,6 +66,13 @@ class ReportController extends GetxController {
   List monthlyEmergencyTodosDown = [];
   List monthlyImportantTodosDown = [];
   List monthlyNormalTodosDown = [];
+
+  changeResultDateAdd(int number) {
+    chosseDate.value = chosseDate.value.addMonths(number);
+    dateToSave.value =
+        '${replaseingNumbersEnToFa(chosseDate.value.year.toString())}/${chosseDate.value.month < 10 ? replaseingNumbersEnToFa('0${(chosseDate.value.month).toString()}') : replaseingNumbersEnToFa(chosseDate.value.month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}';
+  }
+
 //
   RxString monthlyImportanchEmergency() {
     if (monthlyEmergencyTodos.isEmpty) {
@@ -69,7 +80,7 @@ class ReportController extends GetxController {
     } else if (monthlyEmergencyTodosDown.isEmpty) {
       return '0'.obs;
     }
-    double resultPirE = monthlyEmergencyTodos.length /
+    double resultPirE = monthlyEmergencyTodosDown.length /
         (monthlyEmergencyTodos.length + monthlyEmergencyTodosDown.length) *
         100;
 
@@ -84,7 +95,7 @@ class ReportController extends GetxController {
       return '0'.obs;
     }
 
-    double resultPirI = monthlyImportantTodos.length /
+    double resultPirI = monthlyImportantTodosDown.length /
         (monthlyImportantTodos.length + monthlyImportantTodosDown.length) *
         100;
 
@@ -99,7 +110,7 @@ class ReportController extends GetxController {
       return '0'.obs;
     }
 
-    double resultPirN = monthlyNormalTodos.length /
+    double resultPirN = monthlyNormalTodosDown.length /
         (monthlyNormalTodos.length + monthlyNormalTodosDown.length) *
         100;
     return resultPirN.toStringAsFixed(0).obs;
@@ -112,7 +123,7 @@ class ReportController extends GetxController {
     } else if (monthlyEmergencyTodosDown.isEmpty) {
       return 0.0.obs;
     }
-    double resultPirE = monthlyEmergencyTodos.length /
+    double resultPirE = monthlyEmergencyTodosDown.length /
         (monthlyEmergencyTodos.length + monthlyEmergencyTodosDown.length);
 
     return resultPirE.obs;
@@ -126,7 +137,7 @@ class ReportController extends GetxController {
       return 0.0.obs;
     }
 
-    double resultPirI = monthlyImportantTodos.length /
+    double resultPirI = monthlyImportantTodosDown.length /
         (monthlyImportantTodos.length + monthlyImportantTodosDown.length);
 
     return resultPirI.obs;
@@ -140,16 +151,16 @@ class ReportController extends GetxController {
       return 0.0.obs;
     }
 
-    double resultPirN = monthlyNormalTodos.length /
+    double resultPirN = monthlyNormalTodosDown.length /
         (monthlyNormalTodos.length + monthlyNormalTodosDown.length);
     return resultPirN.obs;
   }
 
 //
   RxString todoMonthlyResult() {
-    if (monthlyCompletTodos.isEmpty) {
+    if (monthlyNotDownTodos.isEmpty) {
       return '100'.obs;
-    } else if (monthlyNotDownTodos.isEmpty) {
+    } else if (monthlyCompletTodos.isEmpty) {
       return '0'.obs;
     } else {
       double returnTodo = monthlyCompletTodos.length /
@@ -162,9 +173,9 @@ class ReportController extends GetxController {
 
 //
   RxDouble todoMonthlyResultProsess() {
-    if (monthlyCompletTodos.isEmpty) {
+    if (monthlyNotDownTodos.isEmpty) {
       return 1.0.obs;
-    } else if (monthlyNotDownTodos.isEmpty) {
+    } else if (monthlyCompletTodos.isEmpty) {
       return 0.0.obs;
     } else {
       double returnTodo = monthlyCompletTodos.length /
@@ -175,8 +186,8 @@ class ReportController extends GetxController {
 
   //
   allResultTodo() {
+    monthlyNotDownTodos.clear();
     monthlyCompletTodos.clear();
-    monthlyNotDownTodos.cast();
     monthlyEmergencyTodos.clear();
     monthlyImportantTodos.clear();
     monthlyNormalTodos.clear();
@@ -186,43 +197,79 @@ class ReportController extends GetxController {
     Hive.box<AddTodoModel>('todoBox').values.forEach((element) {
       String resultTimeSplit =
           element.date.split('').reversed.join().substring(2, 7);
-      String resultdateToSave =
+      resultdateToSave.value =
           dateToSave.split('').reversed.join().substring(2, 7);
-      //
-      if (resultTimeSplit == resultdateToSave) {
-        if (element.isDone) {
-          monthlyCompletTodos.add(element);
-        } else {
-          monthlyNotDownTodos.add(element);
-        }
+
+      if (resultTimeSplit == resultdateToSave.value) {
+        monthlyNotDownTodos.add(element);
+
         //
-        if (element.isDone && element.importance == 1) {
-          monthlyEmergencyTodosDown.add(element);
-        } else if (element.isDone == false && element.importance == 1) {
+        if (element.importance == 1) {
           monthlyEmergencyTodos.add(element);
         }
         //
-        else if (element.isDone && element.importance == 2) {
-          monthlyImportantTodosDown.add(element);
-        } else if (element.isDone == false && element.importance == 2) {
+        else if (element.importance == 2) {
           monthlyImportantTodos.add(element);
         }
         //
-        else if (element.isDone && element.importance == 3) {
-          monthlyNormalTodosDown.add(element);
-        } else if (element.isDone == false && element.importance == 3) {
+        else if (element.importance == 3) {
           monthlyNormalTodos.add(element);
+        }
+      }
+    });
+
+    Hive.box<AddTodoModel>('todoDoneBox').values.forEach((element) {
+      String resultTimeSplit =
+          element.date.split('').reversed.join().substring(2, 7);
+      resultdateToSave.value =
+          dateToSave.split('').reversed.join().substring(2, 7);
+
+      if (resultTimeSplit == resultdateToSave.value) {
+        monthlyCompletTodos.add(element);
+        //
+        if (element.importance == 1) {
+          monthlyEmergencyTodosDown.add(element);
+        }
+        //
+        else if (element.importance == 2) {
+          monthlyImportantTodosDown.add(element);
+        }
+        //
+        else if (element.importance == 3) {
+          monthlyNormalTodosDown.add(element);
         }
       }
     });
   }
 
+  var themBox = Hive.box<bool>('themeBox');
+
+  RxBool isdarkLight = true.obs;
+
+  void toggleTheme(bool isTrue) async {
+    final bool isDarkTheme = themBox.get('isDarkTheme') ?? false;
+
+    if (isTrue) {
+      bool currentTheme = themBox.get('isDarkTheme') ?? false;
+      themBox.put('isDarkTheme', !currentTheme);
+    }
+    isdarkLight.value = isDarkTheme;
+  }
+
 // show monthly payment result's for report
   allPaymentResult() {
+    // clear variables for add new value
     resultGetMap.clear();
     resultPayMap.clear();
     totalMonthPayPrice.clear();
     totalMonthGetPrice.clear();
+    totalMonthPayPriceInt = 0.0.obs;
+    totalMonthGetPriceInt = 0.0.obs;
+    totalMonthPayPriceShow.value = '۰';
+    totalMonthGetPriceShow.value = '۰';
+    monthTurnover.value = '۰';
+    resultPayMapshow.clear();
+    resultGetMapShow.clear();
     //
     Hive.box<AddNewPay>('payBox').values.forEach((element) {
       String resultPaySplit =
@@ -245,7 +292,7 @@ class ReportController extends GetxController {
         }
         int intSave = totalMonthPayPrice.isNotEmpty
             ? (totalMonthPayPrice.reduce((a, b) => a + b))
-            : 0.0;
+            : 0;
         totalMonthPayPriceInt.value = intSave.toDouble();
 
         totalMonthPayPriceShow.value = replaseingNumbersEnToFa(
@@ -253,7 +300,7 @@ class ReportController extends GetxController {
       }
       resultPayMap.forEach((key, value) {
         int sum = value.reduce((a, b) => a + b);
-        resultPayMapshow[key] = sum;
+        resultPayMapshow[key.obs] = sum;
       });
     });
 
@@ -307,7 +354,8 @@ class ReportController extends GetxController {
         ? totalMonthPayPriceInt
         : totalMonthGetPriceInt;
 
-    showMonthMaxPir = calculatePercentage(minTotal!.value, maxTotal!.value);
+    showMonthMaxPir.value =
+        calculatePercentage(minTotal!.value, maxTotal!.value);
     showMonthMinPir = calculatePercentage(minTotal!.value, maxTotal!.value);
 
     monthTurnoverPir.value =
@@ -327,13 +375,9 @@ class ReportController extends GetxController {
     return percentage;
   }
 
-  final dateResult = Hive.box<AddNewPay>('payBox');
-  static int payWeek() {
-    return 0;
-  }
-
   @override
   void onInit() async {
+    toggleTheme(false);
     await allPaymentResult();
     await addAssetToList();
     await allResultTodo();

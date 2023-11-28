@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
   HomePage({super.key});
   final RxInt selectedIndexButtomNav = 0.obs;
   final int indexof = 0;
-  final List pages = [RsultPage(), ToDoPage(), NoteListPage(), TodoList()];
+  final List pages = [RsultPage(), ToDoPage(), NoteListPage(), ProfilePage()];
   void onSelectedPage(int index) {
     selectedIndexButtomNav.value = index;
   }

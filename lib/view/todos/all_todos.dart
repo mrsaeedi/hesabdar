@@ -9,7 +9,7 @@ class ToDoPage extends StatelessWidget {
   final int vlue = 0;
   final AddTodoController addTodoController = Get.put(AddTodoController());
   final ReportController reportController = Get.put(ReportController());
-
+  final RxInt _selctedOpenValue = RxInt(-1);
   ToDoPage({super.key});
   @override
   Widget build(BuildContext context) {
@@ -32,8 +32,6 @@ class ToDoPage extends StatelessWidget {
           padding: EdgeInsets.all(6),
           child: Column(
             children: [
-              ElevatedButton.icon(
-                  onPressed: () {}, icon: Icon(Icons.nat), label: Text('data')),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -70,115 +68,156 @@ class ToDoPage extends StatelessWidget {
                       ? Obx(() => ListView.builder(
                             physics: ClampingScrollPhysics(),
                             shrinkWrap: true,
-                            itemCount: addTodoController.notDoneList.length,
+                            itemCount: addTodoController.notDoneList.isEmpty
+                                ? 1
+                                : addTodoController.notDoneList.length,
                             itemBuilder: (context, index) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            width: 1,
-                                            color: Color.fromARGB(
-                                                104, 53, 49, 49))),
-                                    color: Color.fromARGB(52, 158, 158, 158)),
-                                child: ExpansionTile(
-                                    trailing: Icon(Icons.flag,
-                                        color: (addTodoController
-                                                    .notDoneList[index]
-                                                    .importance ==
-                                                3)
-                                            ? Colors.green
-                                            : (addTodoController
-                                                        .notDoneList[index]
-                                                        .importance ==
-                                                    2)
-                                                ? Colors.blue
-                                                : Colors.red),
-                                    title: Text(
-                                      addTodoController
-                                          .notDoneList[index].title,
-                                      style: TextStyle(),
-                                    ),
-                                    leading: Checkbox(
-                                      value: addTodoController
-                                          .notDoneList[index].isDone,
-                                      onChanged: (value) async {
-                                        addTodoController.updateItemInHive(
-                                            index, value!);
-
-                                        // addTodoController.updateItemInHive(
-                                        //     index,
-                                        //     addTodoController
-                                        //         .notDoneList[index].isDone);
-                                        addTodoController
-                                                .notDoneList[index].isDone
-                                            ? addTodoController
-                                                .notDoneList[index]
-                                                .isDone = false
-                                            : addTodoController
-                                                .notDoneList[index]
-                                                .isDone = true;
-                                        addTodoController.notDoneList.refresh();
-                                        addTodoController.doneList.refresh();
-                                        addTodoController
-                                            .toggleTodoState(index);
-                                        await reportController.allResultTodo();
-                                      },
-                                    ),
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 12,
+                              return addTodoController.notDoneList.isEmpty
+                                  ? Center(
+                                      child: ColorFiltered(
+                                        colorFilter: ColorFilter.mode(
+                                          const Color.fromARGB(
+                                                  255, 100, 100, 100)
+                                              .withOpacity(
+                                                  0.5), // شفافیت (opacity) یا رنگ جدید
+                                          BlendMode.srcATop, // حالت ترکیب رنگ
                                         ),
-                                        width: double.infinity,
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Text(
-                                              addTodoController
-                                                  .notDoneList[index].time,
-                                              style: TextStyle(fontSize: 10),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                addTodoController
-                                                    .notDoneList[index]
-                                                    .describtion,
-                                                style: TextStyle(),
-                                              ),
-                                            ),
+                                            Container(
+                                                margin:
+                                                    EdgeInsets.only(top: 100),
+                                                height: 200,
+                                                child: Image.asset(
+                                                    'assets/images/todo.png')),
+                                            Text('کاری برای امروز ندارید')
                                           ],
                                         ),
-                                      )
-                                    ]),
-                              );
+                                      ),
+                                    )
+                                  : Card(
+                                      child: Obx(
+                                      () => GestureDetector(
+                                        onLongPress: () {
+                                          Get.defaultDialog(
+                                            title: 'حذف شود؟',
+                                            textCancel: 'لغو',
+                                            textConfirm: 'حذف',
+                                            middleText: '',
+                                            onConfirm: () {
+                                              addTodoController.deleteFromeHive(
+                                                  index, false);
+                                              addTodoController
+                                                  .addTodosToRxListForShow();
+                                              Get.back();
+                                            },
+                                          );
+                                        },
+                                        child: ExpansionTile(
+                                            initiallyExpanded: index ==
+                                                _selctedOpenValue.value,
+                                            key: Key(_selctedOpenValue.value
+                                                .toString()),
+                                            onExpansionChanged: (newState) {
+                                              // setState(() {
+                                              _selctedOpenValue.value = index;
+                                              // });
+                                            },
+                                            trailing: Icon(Icons.flag,
+                                                color: (addTodoController
+                                                            .notDoneList[index]
+                                                            .importance ==
+                                                        3)
+                                                    ? Colors.green
+                                                    : (addTodoController
+                                                                .notDoneList[
+                                                                    index]
+                                                                .importance ==
+                                                            2)
+                                                        ? Colors.blue
+                                                        : Colors.red),
+                                            title: Text(
+                                              addTodoController
+                                                  .notDoneList[index].title,
+                                              style: TextStyle(),
+                                            ),
+                                            leading: Checkbox(
+                                              value: false,
+                                              onChanged: (value) async {
+                                                addTodoController
+                                                    .updateItemInHive(
+                                                        index, false);
+                                                addTodoController
+                                                    .addTodosToRxListForShow();
+                                                addTodoController.notDoneList
+                                                    .refresh();
+                                                addTodoController.doneList
+                                                    .refresh();
+
+                                                await reportController
+                                                    .allResultTodo();
+                                              },
+                                            ),
+                                            children: [
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 12,
+                                                ),
+                                                width: double.infinity,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      addTodoController
+                                                          .notDoneList[index]
+                                                          .time,
+                                                      style: TextStyle(
+                                                          fontSize: 10),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Text(
+                                                        addTodoController
+                                                            .notDoneList[index]
+                                                            .describtion,
+                                                        style: TextStyle(),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ]),
+                                      ),
+                                    ));
                             },
                           ))
                       : (index == 1)
                           ? Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 20),
-                              child: Row(
-                                children: const [Text('کارهای انجام شده: ')],
-                              ),
-                            )
+                              child: Obx(
+                                () => addTodoController.doneList.isEmpty
+                                    ? SizedBox()
+                                    : Row(
+                                        children: const [
+                                          Text('کارهای انجام شده: ')
+                                        ],
+                                      ),
+                              ))
 //! seccond list view builder
                           : Obx(() => ListView.builder(
                                 physics: ClampingScrollPhysics(),
                                 shrinkWrap: true,
                                 itemCount: addTodoController.doneList.length,
                                 itemBuilder: (context, index) {
-                                  return Container(
-                                      // padding: EdgeInsets.all(4),
+                                  return Card(
                                       margin: EdgeInsets.all(4),
-                                      decoration: BoxDecoration(
-                                          color: Get.isDarkMode
-                                              ? Color.fromARGB(134, 83, 83, 83)
-                                              : Color.fromARGB(
-                                                  255, 228, 228, 228)),
                                       child: ListTile(
                                         onLongPress: () {
                                           Get.defaultDialog(
@@ -187,8 +226,10 @@ class ToDoPage extends StatelessWidget {
                                             textConfirm: 'حذف',
                                             middleText: '',
                                             onConfirm: () {
+                                              addTodoController.deleteFromeHive(
+                                                  index, true);
                                               addTodoController
-                                                  .deleteFromeHive(index);
+                                                  .addTodosToRxListForShow();
                                               Get.back();
                                             },
                                           );
@@ -212,32 +253,15 @@ class ToDoPage extends StatelessWidget {
                                                   TextDecoration.lineThrough),
                                         ),
                                         leading: Checkbox(
-                                          value: addTodoController
-                                              .doneList[index].isDone,
+                                          value: true,
                                           onChanged: (value) {
-                                            Future.delayed(
-                                                Duration(milliseconds: 50), () {
-                                              addTodoController
-                                                  .updateItemInHive(
-                                                      index, value!);
-                                            });
-
-                                            // addTodoController.updateItemInHive(
-                                            //     index,
-                                            //     addTodoController
-                                            //         .doneList[index].isDone);
+                                            addTodoController.updateItemInHive(
+                                                index, true);
                                             addTodoController
-                                                    .doneList[index].isDone
-                                                ? addTodoController
-                                                    .doneList[index]
-                                                    .isDone = false
-                                                : addTodoController
-                                                    .doneList[index]
-                                                    .isDone = true;
+                                                .addTodosToRxListForShow();
+                                            reportController.allResultTodo();
                                             addTodoController.doneList
                                                 .refresh();
-                                            addTodoController
-                                                .toggleTodoStateDone(index);
                                           },
                                         ),
                                       ));

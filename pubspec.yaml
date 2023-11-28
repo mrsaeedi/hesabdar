@@ -36,12 +36,15 @@ dependencies:
   hive_flutter: ^1.1.0
   hive_generator: ^2.0.1
   path_provider: ^2.1.1
-  persian_datetime_picker: ^2.6.0
+  # persian_datetime_picker: ^2.6.0
   intl: ^0.18.1
   fl_chart: ^0.63.0
   persian_tools:
     git:
       url: https://github.com/persian-tools/dart-persian-tools.git
+  persian_datetime_picker:
+    git:
+      url: https://github.com/mrsaeedi/persian-datetime-picker.git
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2

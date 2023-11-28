@@ -25,10 +25,10 @@ class _AddNewNoteState extends State<AddNewNote> {
             //crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               TextButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (noteController.noteTitle.text.isNotEmpty) {
                       noteController.noteEditMode
-                          ? noteController.updateNoteInHive(
+                          ? await noteController.updateNoteInHive(
                               index: noteController.selectedIndex,
                               title: noteController.noteTitle.text,
                               describtion: noteController.noteContent.text,
@@ -36,10 +36,12 @@ class _AddNewNoteState extends State<AddNewNote> {
                               date: noteController.dateToSave.value)
                           : addNoteToHive();
 
+                      noteController.showNotes.refresh();
                       noteController.noteEditMode = false;
                       Get.back();
+                      noteController.noteCategory.refresh();
                     } else {
-                      Get.snackbar('', 'لطفاً عنوانی وارد کنید',
+                      Get.snackbar('عنوان خالی است!', 'لطفاً عنوانی وارد کنید',
                           snackPosition: SnackPosition.TOP);
                     }
                   },

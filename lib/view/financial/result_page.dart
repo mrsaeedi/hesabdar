@@ -83,6 +83,7 @@ class RsultPage extends StatelessWidget {
                                   addNewPeymentController.sumPay.value)),
                               style: TextStyle(fontSize: 18, color: Colors.red),
                             )),
+                        ElevatedButton(onPressed: () {}, child: Text('data'))
                       ],
                     ),
                   ),

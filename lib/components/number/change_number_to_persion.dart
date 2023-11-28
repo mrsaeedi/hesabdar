@@ -90,3 +90,42 @@ class PersianNumericTextInputFormatter extends TextInputFormatter {
     return newValue;
   }
 }
+
+// یک متد برای تکست ها که تغییر میده شماره را به ماهString replaceNumbersToMonth(String input) {
+String replaceNumbersToMonth(String input) {
+  const enList = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12'
+  ];
+  const faList = [
+    'فروردین',
+    'اردیبهشت',
+    'خرداد',
+    'تیر',
+    'مرداد',
+    'شهریور',
+    'مهر',
+    'آبان',
+    'آذر',
+    'دی',
+    'بهمن',
+    'اسفند'
+  ];
+
+  for (int i = 0; i < enList.length; i++) {
+    input = input.replaceAllMapped(
+        RegExp('\\b${enList[i]}\\b'), (match) => faList[i]);
+  }
+
+  return input;
+}

@@ -28,6 +28,8 @@ class HiveManager {
     await Hive.openBox<ListOfcat>('catBox');
 // To Do model for add todo's
     await Hive.openBox<AddTodoModel>('todoBox');
+// To Do model for add todo's
+    await Hive.openBox<AddTodoModel>('todoDoneBox');
 // Note Hive model for add all note's
     await Hive.openBox<NoteModel>('noteBox');
 // for add all payment's
@@ -52,10 +54,13 @@ class HiveManager {
     Hive.openBox<String>('noteCatBox');
 // Check initial installation status
     var box = await Hive.openBox<bool>('install_status_box');
+// Check initial installation status
+    var themBox = await Hive.openBox<bool>('themeBox');
 
     firstInstall = box.get('installed') ?? true;
-// all voids for first install
+// all action's at first install
     if (firstInstall!) {
+      themBox.add(true);
       Hive.box<List>('listBox').add(recentlyUsedCat);
       Hive.box<List>('listGetBox').add(recentlyUsedCat);
       await box.put('installed', false);
@@ -66,7 +71,6 @@ class HiveManager {
         await Hive.box<CategoresPayMoney>('catGrtBox').add(get);
       }
     }
-
     Hive.box<CategoresPayMoney>('catListBox').values.forEach((element) {
       catPayDataAddOnInint.add(element);
     });

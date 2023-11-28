@@ -8,10 +8,10 @@ import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 class NoteController extends GetxController {
   int selectedIndex = 0;
   bool noteEditMode = false;
-  List noteCategory = [].obs;
+  RxList noteCategory = [].obs;
   var selectedCategory = ''.obs;
   String selectedCategoryshow = '';
-  List<NoteModel> showNotes = <NoteModel>[];
+  RxList<NoteModel> showNotes = <NoteModel>[].obs;
   TextEditingController noteTitle = TextEditingController();
   TextEditingController noteContent = TextEditingController();
   RxString dateToSave =
@@ -30,6 +30,7 @@ class NoteController extends GetxController {
         showNotes.add(element);
       }
     });
+    showNotes.refresh();
   }
 
   addToNoteCat() {
@@ -39,7 +40,7 @@ class NoteController extends GetxController {
     });
   }
 
-  void updateNoteInHive({index, title, describtion, date, catNote}) {
+  updateNoteInHive({index, title, describtion, date, catNote}) {
     Hive.box<NoteModel>('noteBox').putAt(
         index,
         NoteModel(
@@ -49,7 +50,7 @@ class NoteController extends GetxController {
             date: date));
   }
 
-  void deleteFromeHive(index) {
+  deleteFromeHive(index) async {
     Hive.box<NoteModel>('noteBox').deleteAt(index);
     showNotes.removeAt(index);
   }

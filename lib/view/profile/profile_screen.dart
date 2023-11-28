@@ -5,16 +5,17 @@ import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/components/number/number_separator.dart';
 import 'package:hesabdar/controller/financial_controllers/report_controller.dart';
 import 'package:hesabdar/view/financial/money_asset_page.dart';
+import 'package:hive/hive.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-class TodoList extends StatefulWidget {
-  const TodoList({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  State<TodoList> createState() => _TodoListState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _TodoListState extends State<TodoList> {
+class _ProfilePageState extends State<ProfilePage> {
   final ReportController reportController = Get.put(ReportController());
 
   @override
@@ -35,10 +36,33 @@ class _TodoListState extends State<TodoList> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     IconButton(
-                        onPressed: () {}, icon: Icon(Icons.arrow_back_ios)),
-                    Text('اردیبهشت'),
+                        onPressed: () {
+                          setState(() {
+                            reportController.changeResultDateAdd(-1);
+                            reportController.allResultTodo();
+                            reportController.allPaymentResult();
+                          });
+                        },
+                        icon: Icon(Icons.arrow_back_ios)),
+                    //
+                    Obx(
+                      () => Text(
+                        "${replaceNumbersToMonth(reportController.chosseDate.value.month.toString())} ${replaseingNumbersEnToFa(reportController.chosseDate.value.year.toString())}",
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: const Color.fromARGB(164, 0, 0, 0)),
+                      ),
+                    ),
+                    //
                     IconButton(
-                        onPressed: () {}, icon: Icon(Icons.arrow_forward_ios)),
+                        onPressed: () {
+                          setState(() {
+                            reportController.changeResultDateAdd(1);
+                            reportController.allResultTodo();
+                            reportController.allPaymentResult();
+                          });
+                        },
+                        icon: Icon(Icons.arrow_forward_ios)),
                   ],
                 ),
               ),
@@ -166,10 +190,6 @@ class _TodoListState extends State<TodoList> {
                                 CircleContainerColor(
                                   color: Color.fromARGB(255, 252, 20, 20),
                                 ),
-                                // Obx(() => Text(
-                                //     'پرداخت ماهانه:   ${assetController.totalMonthPayPriceShow}')),
-                                // Obx(() => Text(
-                                //     'دریافت ماهانه:   ${assetController.totalMonthGetPriceShow}')),
                               ],
                             ),
                           ),
@@ -209,82 +229,84 @@ class _TodoListState extends State<TodoList> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Flexible(
-                                child: ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: reportController
-                                      .resultPayMapshow.keys.length,
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 4.0, vertical: 10),
-                                      decoration: BoxDecoration(
-                                          color: Color.fromARGB(
-                                              52, 255, 137, 137)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          SizedBox(
-                                            width: 85,
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                      ' ${reportController.resultPayMapshow.keys.elementAt(index)} :'),
-                                                ],
+                                child: Obx(() => ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: reportController
+                                          .resultPayMapshow.keys.length,
+                                      itemBuilder: (context, index) {
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 4.0, vertical: 10),
+                                          decoration: BoxDecoration(
+                                              color: Color.fromARGB(
+                                                  52, 255, 137, 137)),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              SizedBox(
+                                                width: 85,
+                                                child: SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                          ' ${reportController.resultPayMapshow.keys.elementAt(index)} :'),
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
-                                            ),
+                                              Text(
+                                                  '  ${replaseingNumbersEnToFa(addCommasToNumber((reportController.resultPayMapshow.values.elementAt(index))))} '),
+                                            ],
                                           ),
-                                          Text(
-                                              '  ${replaseingNumbersEnToFa(addCommasToNumber((reportController.resultPayMapshow.values.elementAt(index))))} '),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
+                                        );
+                                      },
+                                    )),
                               ),
                               VerticalDivider(
                                 width: 0.5,
                                 color: const Color.fromARGB(255, 255, 255, 255),
                               ),
                               Flexible(
-                                child: ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: reportController
-                                      .resultGetMapShow.keys.length,
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 4.0, vertical: 10),
-                                      decoration: BoxDecoration(
-                                          color:
-                                              Color.fromARGB(29, 72, 255, 102)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          SizedBox(
-                                            width: 85,
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                      ' ${reportController.resultGetMapShow.keys.elementAt(index)} :'),
-                                                ],
+                                child: Obx(() => ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: reportController
+                                          .resultGetMapShow.keys.length,
+                                      itemBuilder: (context, index) {
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 4.0, vertical: 10),
+                                          decoration: BoxDecoration(
+                                              color: Color.fromARGB(
+                                                  29, 72, 255, 102)),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              SizedBox(
+                                                width: 85,
+                                                child: SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                          ' ${reportController.resultGetMapShow.keys.elementAt(index)} :'),
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
-                                            ),
+                                              Text(
+                                                  '  ${replaseingNumbersEnToFa(addCommasToNumber((reportController.resultGetMapShow.values.elementAt(index))))}'),
+                                            ],
                                           ),
-                                          Text(
-                                              '  ${replaseingNumbersEnToFa(addCommasToNumber((reportController.resultGetMapShow.values.elementAt(index))))}'),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
+                                        );
+                                      },
+                                    )),
                               ),
                             ],
                           ),
@@ -308,6 +330,7 @@ class _TodoListState extends State<TodoList> {
                                 Get.isDarkMode
                                     ? Get.changeThemeMode(ThemeMode.light)
                                     : Get.changeThemeMode(ThemeMode.dark);
+                                reportController.toggleTheme(true);
                               },
                               icon: Icon(Get.isDarkMode
                                   ? Icons.light_mode
@@ -334,52 +357,58 @@ class ReprtBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => BarChart(BarChartData(
-          titlesData: titlesData,
-          barTouchData: barTouchDatas,
-          maxY: 10,
-          borderData: FlBorderData(
-            show: false,
-          ),
-          barGroups: [
-            BarChartGroupData(x: 1, barRods: [
-              BarChartRodData(
-                  toY: reportController.totalMonthPayPriceInt.value <
-                          reportController.totalMonthGetPriceInt.value
-                      ? reportController.showMonthMaxPir
-                      : 10,
-                  fromY: 0,
-                  width: 8,
-                  color: Color.fromARGB(255, 252, 20, 20))
-            ]),
-            BarChartGroupData(x: 2, barRods: [
-              BarChartRodData(
-                  toY: reportController.totalMonthGetPriceInt.value <
-                          reportController.totalMonthPayPriceInt.value
-                      ? reportController.showMonthMaxPir
-                      : 10,
-                  fromY: 0,
-                  width: 8,
-                  color: Color.fromARGB(255, 8, 230, 0))
-            ]),
-            BarChartGroupData(x: 3, barRods: [
-              BarChartRodData(
-                toY: reportController.monthTurnoverPir.value < 0
-                    ? 0
-                    : reportController.monthTurnoverPir.value,
-                fromY: 0,
-                width: 8,
-                color: const Color.fromARGB(255, 5, 165, 170),
-              )
-            ]),
-          ],
-          alignment: BarChartAlignment.spaceAround,
-          gridData: FlGridData(
-            show: true,
-            verticalInterval: 20,
-          ))),
-    );
+    return Obx(() => BarChart(
+          BarChartData(
+              titlesData: titlesData,
+              barTouchData: barTouchDatas,
+              maxY: 10,
+              borderData: FlBorderData(
+                show: false,
+              ),
+              barGroups: [
+                BarChartGroupData(x: 1, barRods: [
+                  BarChartRodData(
+                      toY: reportController.totalMonthPayPriceInt.value == 0
+                          ? 0
+                          : reportController.totalMonthPayPriceInt.value <
+                                  reportController.totalMonthGetPriceInt.value
+                              ? reportController.showMonthMaxPir.value
+                              : 10,
+                      fromY: 0,
+                      width: 8,
+                      color: Color.fromARGB(255, 252, 20, 20))
+                ]),
+                BarChartGroupData(x: 2, barRods: [
+                  BarChartRodData(
+                      toY: reportController.totalMonthPayPriceInt.value == 0
+                          ? 0
+                          : reportController.totalMonthGetPriceInt.value <
+                                  reportController.totalMonthPayPriceInt.value
+                              ? reportController.showMonthMaxPir.value
+                              : 10,
+                      fromY: 0,
+                      width: 8,
+                      color: Color.fromARGB(255, 8, 230, 0))
+                ]),
+                BarChartGroupData(x: 3, barRods: [
+                  BarChartRodData(
+                    toY: reportController.monthTurnoverPir.value <= 0
+                        ? 0
+                        : reportController.monthTurnoverPir.value <= 10
+                            ? reportController.monthTurnoverPir.value
+                            : 0,
+                    fromY: 0,
+                    width: 8,
+                    color: const Color.fromARGB(255, 5, 165, 170),
+                  )
+                ]),
+              ],
+              alignment: BarChartAlignment.spaceAround,
+              gridData: FlGridData(
+                show: true,
+                verticalInterval: 20,
+              )),
+        ));
     //
   }
 
@@ -414,42 +443,42 @@ class ReprtBarChart extends StatelessWidget {
     Widget text;
     switch (value.toInt()) {
       case 1:
-        text = Text(
-          reportController.totalMonthPayPriceShow.value,
-          style: style,
-        );
+        text = Obx(() => Text(
+              reportController.totalMonthPayPriceShow.value,
+              style: style,
+            ));
         break;
       case 2:
-        text = Text(
-          reportController.totalMonthGetPriceShow.value,
-          style: style,
-        );
+        text = Obx(() => Text(
+              reportController.totalMonthGetPriceShow.value,
+              style: style,
+            ));
         break;
       case 3:
-        text = Row(
-          children: [
-            Text(
-              reportController.monthTurnover.value,
-              style: style,
-            ),
-            SizedBox(
-              width: 5,
-            ),
-            Icon(
-              (reportController.totalMonthGetPriceInt.value -
-                          reportController.totalMonthPayPriceInt.value) >
-                      0
-                  ? Icons.keyboard_double_arrow_up_outlined
-                  : Icons.keyboard_double_arrow_down_outlined,
-              color: (reportController.totalMonthGetPriceInt.value -
-                          reportController.totalMonthPayPriceInt.value) >
-                      0
-                  ? Colors.green
-                  : Colors.red,
-              size: 14,
-            ),
-          ],
-        );
+        text = Obx(() => Row(
+              children: [
+                Text(
+                  reportController.monthTurnover.value,
+                  style: style,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Icon(
+                  (reportController.totalMonthGetPriceInt.value -
+                              reportController.totalMonthPayPriceInt.value) >
+                          0
+                      ? Icons.keyboard_double_arrow_up_outlined
+                      : Icons.keyboard_double_arrow_down_outlined,
+                  color: (reportController.totalMonthGetPriceInt.value -
+                              reportController.totalMonthPayPriceInt.value) >
+                          0
+                      ? Colors.green
+                      : Colors.red,
+                  size: 14,
+                ),
+              ],
+            ));
 
         break;
       default:
