@@ -24,13 +24,14 @@ class MoneyModellAdapter extends TypeAdapter<MoneyModell> {
       frome: fields[5] as String,
       listOfcat: fields[6] as ListOfcat,
       resultAsset: fields[7] as String,
+      id: fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, MoneyModell obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(1)
       ..write(obj.price)
       ..writeByte(2)
@@ -44,7 +45,9 @@ class MoneyModellAdapter extends TypeAdapter<MoneyModell> {
       ..writeByte(6)
       ..write(obj.listOfcat)
       ..writeByte(7)
-      ..write(obj.resultAsset);
+      ..write(obj.resultAsset)
+      ..writeByte(8)
+      ..write(obj.id);
   }
 
   @override
@@ -76,13 +79,14 @@ class AddNewPayAdapter extends TypeAdapter<AddNewPay> {
       frome: fields[5] as String,
       listOfcat: fields[6] as ListOfcat,
       resultAsset: fields[7] as String,
+      id: fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, AddNewPay obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(1)
       ..write(obj.price)
       ..writeByte(2)
@@ -96,7 +100,9 @@ class AddNewPayAdapter extends TypeAdapter<AddNewPay> {
       ..writeByte(6)
       ..write(obj.listOfcat)
       ..writeByte(7)
-      ..write(obj.resultAsset);
+      ..write(obj.resultAsset)
+      ..writeByte(8)
+      ..write(obj.id);
   }
 
   @override
@@ -128,13 +134,14 @@ class AddNewGetAdapter extends TypeAdapter<AddNewGet> {
       frome: fields[5] as String,
       listOfcat: fields[6] as ListOfcat,
       resultAsset: fields[7] as String,
+      id: fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, AddNewGet obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(1)
       ..write(obj.price)
       ..writeByte(2)
@@ -148,7 +155,9 @@ class AddNewGetAdapter extends TypeAdapter<AddNewGet> {
       ..writeByte(6)
       ..write(obj.listOfcat)
       ..writeByte(7)
-      ..write(obj.resultAsset);
+      ..write(obj.resultAsset)
+      ..writeByte(8)
+      ..write(obj.id);
   }
 
   @override
@@ -180,13 +189,14 @@ class AddNewBudgetAdapter extends TypeAdapter<AddNewBudget> {
       frome: fields[5] as String,
       listOfcat: fields[6] as ListOfcat,
       resultAsset: fields[7] as String,
+      id: fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, AddNewBudget obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(1)
       ..write(obj.price)
       ..writeByte(2)
@@ -200,7 +210,9 @@ class AddNewBudgetAdapter extends TypeAdapter<AddNewBudget> {
       ..writeByte(6)
       ..write(obj.listOfcat)
       ..writeByte(7)
-      ..write(obj.resultAsset);
+      ..write(obj.resultAsset)
+      ..writeByte(8)
+      ..write(obj.id);
   }
 
   @override

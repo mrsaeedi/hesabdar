@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/services.dart';
 
 // تبدیل اعداد انگلیسی به فارسی
@@ -128,4 +131,20 @@ String replaceNumbersToMonth(String input) {
   }
 
   return input;
+}
+
+// macke unic id
+//todo change characters
+String generateUniqueId() {
+  DateTime now = DateTime.now();
+  int minute = now.minute;
+  int second = now.second;
+  int milliseconds = now.millisecondsSinceEpoch;
+  int random = Random().nextInt(10000); // یک عدد تصادفی
+  String randomLetter =
+      String.fromCharCode(Random().nextInt(26) + 97); // یک حرف لاتین تصادفی
+
+  String uniqueId = base64
+      .encode(utf8.encode('$minute$second$milliseconds$random$randomLetter'));
+  return uniqueId;
 }

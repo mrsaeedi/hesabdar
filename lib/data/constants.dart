@@ -7,4 +7,5 @@ class AllColors {
   static Color kWhite = Colors.white;
   static Color kdarck = Colors.black;
   static Color kgrey = Colors.grey;
+  static Color kListItems = Color.fromARGB(52, 165, 165, 165);
 }

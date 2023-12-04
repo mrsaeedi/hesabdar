@@ -18,14 +18,27 @@ class Hesabdart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      locale: const Locale("fa", "IR"),
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: Get.put(ReportController()).isdarkLight.value == true
-          ? ThemeMode.dark
-          : ThemeMode.light,
-      home: HomePage(),
-    );
+        debugShowCheckedModeBanner: false,
+        locale: const Locale("fa", "IR"),
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: Get.put(ReportController()).isdarkLight.value == true
+            ? ThemeMode.dark
+            : ThemeMode.light,
+        home: HomePage());
+    //  AnimatedSplashScreen(
+    //     duration: 2000,
+    //     splashTransition: SplashTransition.fadeTransition,
+    //     splash: Container(
+    //       height: 400,
+    //       child: Column(
+    //         mainAxisSize: MainAxisSize.min,
+    //         children: [
+    //           Image.asset('assets/images/self.png'),
+    //           Text('مدیریت شخصی'),
+    //         ],
+    //       ),
+    //     ),
+    //     nextScreen: HomePage()));
   }
 }

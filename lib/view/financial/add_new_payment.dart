@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:hesabdar/components/date_picker.dart';
 import 'package:hesabdar/components/number/number_separator.dart';
 import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
+import 'package:hesabdar/controller/financial_controllers/asset_controller.dart';
 import 'package:hesabdar/controller/financial_controllers/report_controller.dart';
 import 'package:hesabdar/controller/financial_controllers/category_items_controller.dart';
 import 'package:hesabdar/controller/home_page_controller.dart';
@@ -24,6 +25,7 @@ class NewPaymentPage extends StatelessWidget {
       Get.put(AddNewPeymentController());
 
   final ReportController reportController = Get.put(ReportController());
+  final AssetController assetController = Get.put(AssetController());
 
   final int selectedItem = controller.value.index;
   // Get.put(ResultPageController()).
@@ -51,7 +53,10 @@ class NewPaymentPage extends StatelessWidget {
                     widthOf(16),
                     //! dropdownButton for choose asset
                     InkWell(
-                      onTap: () => Get.to(MoneyAssetPage()),
+                      onTap: () {
+                        Get.to(MoneyAssetPage());
+                        assetController.isEditOrSelect = false;
+                      },
                       child: Container(
                           height: 65,
                           width: Get.width / 3,
@@ -67,7 +72,11 @@ class NewPaymentPage extends StatelessWidget {
                                 //
                                 Center(
                                     child: Text(addNewPeymentController
-                                        .selectedAsset.value)),
+                                                .selectedAsset.value ==
+                                            ''
+                                        ? 'از...*'
+                                        : addNewPeymentController
+                                            .selectedAsset.value)),
                             //  DropdownButton(
                             //         underline: SizedBox(),
                             //         elevation: 1,
@@ -181,51 +190,54 @@ class NewPaymentPage extends StatelessWidget {
   }
 
   editMoneyPaymentItem(index) async {
+    addNewPeymentController.assetsResult1(selectedItem, false);
+
     if (selectedItem == 0) {
-      await Hive.box<AddNewPay>('payBox').putAt(
-          index,
-          AddNewPay(
-              price: addNewPeymentController.controllerPrice.text,
-              time: addNewPeymentController.selectedTime.value.minute < 10
-                  ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-                  : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
-              date: addNewPeymentController.dateValue.value,
-              describtion: addNewPeymentController.describtionController.text,
-              frome: addNewPeymentController.addedPayData[index].frome,
-              listOfcat: ListOfcat(
-                  catIcon: Icons.new_label,
-                  name: addNewPeymentController.selectedCategoryName.value),
-              resultAsset: '11'));
+      addNewPeymentController.updatePayInHive(
+        from: addNewPeymentController.selectedAsset.value,
+        selectedItem: selectedItem,
+        id: addNewPeymentController.addedPayData[index].id,
+        price: addNewPeymentController.controllerPrice.text,
+        describtion: addNewPeymentController.describtionController.text,
+        resultAsset: addNewPeymentController.resultAsset.value,
+        time: addNewPeymentController.selectedTime.value.minute < 10
+            ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+            : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+        listOfCat: ListOfcat(
+            catIcon: Icons.new_label,
+            name: addNewPeymentController.selectedCategoryName.value),
+        date: addNewPeymentController.dateValue.value,
+      );
     } else if (selectedItem == 1) {
-      await Hive.box<AddNewGet>('getBox').putAt(
-          index,
-          AddNewGet(
-              price: addNewPeymentController.controllerPrice.text,
-              time: addNewPeymentController.selectedTime.value.minute < 10
-                  ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-                  : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
-              date: addNewPeymentController.dateValue.value,
-              describtion: addNewPeymentController.describtionController.text,
-              frome: addNewPeymentController.addedPayData[index].frome,
-              listOfcat: ListOfcat(
-                  catIcon: Icons.new_label,
-                  name: addNewPeymentController.selectedCategoryName.value),
-              resultAsset: '12'));
+      addNewPeymentController.updatePayInHive(
+        selectedItem: selectedItem,
+        id: addNewPeymentController.addGetMoney[index].id,
+        price: addNewPeymentController.controllerPrice.text,
+        describtion: addNewPeymentController.describtionController.text,
+        resultAsset: '11',
+        time: addNewPeymentController.selectedTime.value.minute < 10
+            ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+            : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+        listOfCat: ListOfcat(
+            catIcon: Icons.new_label,
+            name: addNewPeymentController.selectedCategoryName.value),
+        date: addNewPeymentController.dateValue.value,
+      );
     } else {
-      await Hive.box<AddNewBudget>('budgetBox').putAt(
-          index,
-          AddNewBudget(
-              price: addNewPeymentController.controllerPrice.text,
-              time: addNewPeymentController.selectedTime.value.minute < 10
-                  ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
-                  : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
-              date: addNewPeymentController.dateValue.value,
-              describtion: addNewPeymentController.describtionController.text,
-              frome: addNewPeymentController.addedPayData[index].frome,
-              listOfcat: ListOfcat(
-                  catIcon: Icons.new_label,
-                  name: addNewPeymentController.selectedCategoryName.value),
-              resultAsset: '13'));
+      addNewPeymentController.updatePayInHive(
+        selectedItem: selectedItem,
+        id: addNewPeymentController.addBudget[index].id,
+        price: addNewPeymentController.controllerPrice.text,
+        describtion: addNewPeymentController.describtionController.text,
+        resultAsset: '11',
+        time: addNewPeymentController.selectedTime.value.minute < 10
+            ? '۰${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}'
+            : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
+        listOfCat: ListOfcat(
+            catIcon: Icons.new_label,
+            name: addNewPeymentController.selectedCategoryName.value),
+        date: addNewPeymentController.dateValue.value,
+      );
     }
     addNewPeymentController.editIndex = index;
     addNewPeymentController.editMode = true;
@@ -233,7 +245,7 @@ class NewPaymentPage extends StatelessWidget {
   }
 
   addNewMoneyItem() async {
-    addNewPeymentController.assetsResult1();
+    addNewPeymentController.assetsResult1(selectedItem, false);
     if (selectedItem == 0) {
       await Hive.box<AddNewPay>('payBox').add(AddNewPay(
           price: addNewPeymentController.controllerPrice.text,
@@ -246,7 +258,8 @@ class NewPaymentPage extends StatelessWidget {
           listOfcat: ListOfcat(
               name: addNewPeymentController.selectedCategoryName.value,
               catIcon: Icons.new_label),
-          resultAsset: addNewPeymentController.resultAsset.value));
+          resultAsset: addNewPeymentController.resultAsset.value,
+          id: generateUniqueId()));
     }
     // add to get money data
     else if (selectedItem == 1) {
@@ -261,7 +274,8 @@ class NewPaymentPage extends StatelessWidget {
           listOfcat: ListOfcat(
               name: addNewPeymentController.selectedCategoryName.value,
               catIcon: Icons.new_label),
-          resultAsset: addNewPeymentController.resultAsset.value));
+          resultAsset: addNewPeymentController.resultAsset.value,
+          id: generateUniqueId()));
     }
     // add to budget
     else {
@@ -276,7 +290,8 @@ class NewPaymentPage extends StatelessWidget {
           listOfcat: ListOfcat(
               name: addNewPeymentController.selectedCategoryName.value,
               catIcon: Icons.new_label),
-          resultAsset: '1'));
+          resultAsset: '1',
+          id: generateUniqueId()));
     }
     addNewPeymentController.addMoneyItemToRxLists();
   }

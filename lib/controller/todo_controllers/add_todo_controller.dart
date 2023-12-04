@@ -63,55 +63,52 @@ class AddTodoController extends GetxController {
     selectedValue.value = value ?? 1;
   }
 
-  // void toggleTodoState(int index) {
-  //   notDoneList[index].isDone = true;
-  //   if (notDoneList[index].isDone) {
-  //     final todo = notDoneList.removeAt(index);
-  //     doneList.add(todo);
-  //   }
-  // }
-
-  // void toggleTodoStateDone(int index) {
-  //   doneList[index].isDone = false;
-  //   if (!doneList[index].isDone) {
-  //     final todo = doneList.removeAt(index);
-  //     notDoneList.add(todo);
-  //   }
-  // }
   final Box<AddTodoModel> todoBox = Hive.box<AddTodoModel>('todoBox');
   final Box<AddTodoModel> todoBoxDone = Hive.box<AddTodoModel>('todoDoneBox');
 
-  void updateItemInHive(int index, bool item) async {
+  void updateItemInHive(id, item) async {
     doneList.clear();
     notDoneList.clear();
     doneList.refresh();
     notDoneList.refresh();
-    if (index >= 0) {
-      if (item == false && index < todoBox.length) {
-        // خواندن عنصر مورد نظر از todoBox
-        AddTodoModel getItem = todoBox.getAt(index)!;
-        // حذف عنصر از todoBox
-        todoBox.deleteAt(index);
-        // افزودن عنصر به todoBoxDone
-        todoBoxDone.add(getItem);
-      } else if (item == true && index < todoBoxDone.length) {
-        // خواندن عنصر مورد نظر از todoBoxDone
-        AddTodoModel getItem = todoBoxDone.getAt(index)!;
-        // حذف عنصر از todoBoxDone
-        todoBoxDone.deleteAt(index);
-        // افزودن عنصر به todoBox
-        todoBox.add(getItem);
-      }
-      // ذخیره تغییرات در Hive
-      await Future.wait([todoBox.compact(), todoBoxDone.compact()]);
+
+    if (item == 1) {
+      // خواندن عنصر مورد نظر از todoBox
+      var itemTodo = todoBox.values.firstWhere(
+        (item) => item.id == id,
+      );
+
+      AddTodoModel getItem = todoBox.get(itemTodo.key)!;
+      // حذف عنصر از todoBox
+      todoBox.delete(itemTodo.key);
+      // افزودن عنصر به todoBoxDone
+      todoBoxDone.add(getItem);
+    } else if (item == 2) {
+      var itemTodoDone = todoBoxDone.values.firstWhere(
+        (item) => item.id == id,
+      );
+      // خواندن عنصر مورد نظر از todoBoxDone
+      AddTodoModel getItem = todoBoxDone.get(itemTodoDone.key)!;
+      // حذف عنصر از todoBoxDone
+      todoBoxDone.delete(itemTodoDone.key);
+      // افزودن عنصر به todoBox
+      todoBox.add(getItem);
     }
+    // ذخیره تغییرات در Hive
+    await Future.wait([todoBox.compact(), todoBoxDone.compact()]);
   }
 
-  deleteFromeHive(index, bool isTrue) {
-    if (isTrue) {
-      todoBoxDone.deleteAt(index);
-    } else {
-      todoBox.deleteAt(index);
+  deleteFromeHiveTodo(id, item) async {
+    if (item == 1) {
+      var itemToDelete = todoBox.values.firstWhere(
+        (item) => item.id == id,
+      );
+      await todoBox.delete(itemToDelete.key);
+    } else if (item == 2) {
+      var itemToDelete = todoBoxDone.values.firstWhere(
+        (item) => item.id == id,
+      );
+      await todoBoxDone.delete(itemToDelete.key);
     }
   }
 
@@ -143,33 +140,14 @@ class AddTodoController extends GetxController {
             isDone: isDone,
             date: date,
             time: time,
-            importance: importance));
+            importance: importance,
+            id: generateUniqueId()));
   }
-
-  // addItemToRxLists() {
-  //   // final items = Hive.box<AddTodoModel>('todoBox').values.toList();
-
-  //   Hive.box<AddTodoModel>('todoBox').values.forEach((element) {
-  //     if (element.date == dateToSaveTodo.value) {
-  //       if (element.isDone) {
-  //         doneList.add(element);
-  //       } else {
-  //         notDoneList.add(element);
-  //       }
-  //     }
-  //   });
-  // }
 
   @override
   void onInit() async {
     addTodosToRxListForShow();
-    //await addItemToRxLists();
-    // await prosesBar();
-    // addTodosToRxListForShow();
-    Hive.box<AddTodoModel>('todoBox').watch().listen((event) async {
-      //await addItemToRxLists();
-      // await prosesBar();
-    });
+    Hive.box<AddTodoModel>('todoBox').watch().listen((event) async {});
 
     super.onInit();
   }

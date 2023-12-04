@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 part 'money.g.dart';
 
 @HiveType(typeId: 0)
-class MoneyModell {
+class MoneyModell extends HiveObject {
   @HiveField(1)
   String price;
   @HiveField(2)
@@ -18,6 +18,8 @@ class MoneyModell {
   ListOfcat listOfcat;
   @HiveField(7)
   String resultAsset;
+  @HiveField(8)
+  String id;
 
   MoneyModell(
       {required this.price,
@@ -26,44 +28,45 @@ class MoneyModell {
       required this.describtion,
       required this.frome,
       required this.listOfcat,
-      required this.resultAsset});
+      required this.resultAsset,
+      required this.id});
 }
 
 @HiveType(typeId: 4)
 class AddNewPay extends MoneyModell {
-  AddNewPay({
-    required super.price,
-    required super.time,
-    required super.date,
-    required super.describtion,
-    required super.frome,
-    required super.listOfcat,
-    required super.resultAsset,
-  });
+  AddNewPay(
+      {required super.price,
+      required super.time,
+      required super.date,
+      required super.describtion,
+      required super.frome,
+      required super.listOfcat,
+      required super.resultAsset,
+      required super.id});
 }
 
 @HiveType(typeId: 5)
 class AddNewGet extends MoneyModell {
-  AddNewGet({
-    required super.price,
-    required super.time,
-    required super.date,
-    required super.describtion,
-    required super.frome,
-    required super.listOfcat,
-    required super.resultAsset,
-  });
+  AddNewGet(
+      {required super.price,
+      required super.time,
+      required super.date,
+      required super.describtion,
+      required super.frome,
+      required super.listOfcat,
+      required super.resultAsset,
+      required super.id});
 }
 
 @HiveType(typeId: 6)
 class AddNewBudget extends MoneyModell {
-  AddNewBudget({
-    required super.price,
-    required super.time,
-    required super.date,
-    required super.describtion,
-    required super.frome,
-    required super.listOfcat,
-    required super.resultAsset,
-  });
+  AddNewBudget(
+      {required super.price,
+      required super.time,
+      required super.date,
+      required super.describtion,
+      required super.frome,
+      required super.listOfcat,
+      required super.resultAsset,
+      required super.id});
 }

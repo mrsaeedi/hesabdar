@@ -8,7 +8,7 @@ import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 class NoteController extends GetxController {
   int selectedIndex = 0;
   bool noteEditMode = false;
-  RxList noteCategory = [].obs;
+  RxList<String> noteCategory = <String>[].obs;
   var selectedCategory = ''.obs;
   String selectedCategoryshow = '';
   RxList<NoteModel> showNotes = <NoteModel>[].obs;
@@ -40,19 +40,46 @@ class NoteController extends GetxController {
     });
   }
 
-  updateNoteInHive({index, title, describtion, date, catNote}) {
-    Hive.box<NoteModel>('noteBox').putAt(
-        index,
-        NoteModel(
-            title: title,
-            contents: describtion,
-            category: catNote,
-            date: date));
+  void updateNoteInHive({id, title, describtion, date, catNote}) async {
+    var box = Hive.box<NoteModel>('noteBox');
+    var itemToUpdate = box.values.firstWhere(
+      (item) => item.id == id,
+    );
+    itemToUpdate.title = title;
+    itemToUpdate.contents = describtion;
+    itemToUpdate.category = catNote;
+    itemToUpdate.date = date;
+    itemToUpdate.id = id;
+    await box.put(itemToUpdate.key, itemToUpdate);
   }
 
-  deleteFromeHive(index) async {
-    Hive.box<NoteModel>('noteBox').deleteAt(index);
-    showNotes.removeAt(index);
+  deleteFromeHive(id) async {
+    var box = Hive.box<NoteModel>('noteBox');
+    var itemToDelete = box.values.firstWhere(
+      (item) => item.id == id,
+    );
+    await box.delete(itemToDelete.key);
+  }
+//! یک روش برای حذف یک ایتم خاص با اسم یا هرچیزی هر چندتا که باشه
+  // void deleteFromHive(String value) {
+  //   var box = Hive.box<NoteModel>('noteBox');
+
+  //   var itemsToDelete =
+  //       box.values.where((item) => item.title == value).toList();
+
+  //   for (var item in itemsToDelete) {
+  //     box.delete(item.key);
+  //   }
+  // }
+//!
+  void deleteNoteCatFromHive(String value) async {
+    var box = Hive.box<NoteModel>('noteBox');
+
+    var itemsToDelete =
+        box.values.where((item) => item.category == value).toList();
+    for (var item in itemsToDelete) {
+      await box.delete(item.key);
+    }
   }
 
   @override
@@ -60,8 +87,8 @@ class NoteController extends GetxController {
     await addToNoteCat();
     await readNotesFroemHive('');
     Hive.box<NoteModel>('noteBox').watch().listen((event) async {
-      await readNotesFroemHive('');
-      await addToNoteCat();
+      //await readNotesFroemHive('');
+      // await addToNoteCat();
     });
 
     super.onInit();

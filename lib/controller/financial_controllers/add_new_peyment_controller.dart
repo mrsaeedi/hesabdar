@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/date_picker.dart';
@@ -12,40 +10,36 @@ import 'package:hive/hive.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
 class AddNewPeymentController extends GetxController {
-  RxList addedPayData = <MoneyModell>[].obs; // List of amount spent
-  RxList addGetMoney = <MoneyModell>[].obs; // List of received amount
-  RxList addBudget = <MoneyModell>[].obs; // Registered budget list
+  RxList<MoneyModell> addedPayData =
+      <MoneyModell>[].obs; // List of amount spent
+  RxList<MoneyModell> addGetMoney =
+      <MoneyModell>[].obs; // List of received amount
+  RxList<MoneyModell> addBudget = <MoneyModell>[].obs; // Registered budget list
   // RxString selectedAsset = ''.obs;
   RxInt selectedAssetIndex = 0.obs;
   RxString resultAsset = '0'.obs;
-  final int selectedItem = controller.value.index;
 
-  RxString selectedAsset = 'از'.obs;
+  RxString selectedAsset = ''.obs;
 
-  Future<void> assetsResult1() async {
+  Future<void> assetsResult1(int selectedItem, bool isEdit) async {
     resultAsset.value = '0';
     var assetsBox = Hive.box<MoneyAssets>('assetsBox');
     for (var element in assetsBox.values) {
       if (selectedAsset.value == element.name) {
         int price = int.parse(replaseingNumbersFaToEn(controllerPrice.text));
-        if (selectedItem == 0) {
-          element.inventory -= price;
-          resultAsset.value = element.inventory.toString();
-        } else if (selectedItem == 1) {
-          element.inventory += price;
-          resultAsset.value = (element.inventory + price).toString();
+        if (isEdit) {
+        } else {
+          if (selectedItem == 0) {
+            element.inventory -= price;
+            resultAsset.value = element.inventory.toString();
+          } else if (selectedItem == 1) {
+            element.inventory += price;
+            resultAsset.value = (element.inventory).toString();
+          }
         }
+
         await assetsBox.putAt(selectedAssetIndex.value, element);
       }
-    }
-  }
-
-  final RxInt openIndex = RxInt(-1);
-  void onTap(int index) {
-    if (openIndex.value == index) {
-      openIndex.value = -1;
-    } else {
-      openIndex.value = index;
     }
   }
 
@@ -71,7 +65,6 @@ class AddNewPeymentController extends GetxController {
   RxString dateValue =
       '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month.toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}'
           .obs;
-  // '${getPersianWeekDay(addNewPeymentController.pickedDateSelected.value)} __ ${replaseingNumersEnToFa(pickedDate.year.toString())}/${pickedDate.month < 10 ? replaseingNumersEnToFa('0${pickedDate.month.toString()}') : replaseingNumersEnToFa(pickedDate.month.toString())}/${pickedDate.day < 10 ? replaseingNumersEnToFa('0${pickedDate.day.toString()}') : replaseingNumersEnToFa(pickedDate.day.toString())}'
 
   Rx<IconData?> selectedCategoryIcon = Rx<IconData?>(null);
   RxString selectedCategoryName = categoryNameTitle.obs;
@@ -89,6 +82,62 @@ class AddNewPeymentController extends GetxController {
   RxString dateToSave =
       '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month.toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}'
           .obs;
+
+  void updatePayInHive(
+      {selectedItem,
+      id,
+      price,
+      describtion,
+      date,
+      resultAsset,
+      listOfCat,
+      from,
+      time}) async {
+    var boxPay = Hive.box<AddNewPay>('payBox');
+    var boxGet = Hive.box<AddNewGet>('getBox');
+    var boxBudget = Hive.box<AddNewBudget>('budgetBox');
+
+    if (selectedItem == 0) {
+      var itemToDeletePay = boxPay.values.firstWhere(
+        (item) => item.id == id,
+      );
+      itemToDeletePay.listOfcat = listOfCat;
+      itemToDeletePay.frome = from;
+      itemToDeletePay.price = price;
+      itemToDeletePay.describtion = describtion;
+      itemToDeletePay.resultAsset = resultAsset;
+      itemToDeletePay.time = time;
+      itemToDeletePay.date = date;
+      itemToDeletePay.id = id;
+      await boxPay.put(itemToDeletePay.key, itemToDeletePay);
+    } else if (selectedItem == 1) {
+      var itemToDeleteGet = boxGet.values.firstWhere(
+        (item) => item.id == id,
+      );
+      itemToDeleteGet.listOfcat = listOfCat;
+      itemToDeleteGet.frome = from;
+      itemToDeleteGet.price = price;
+      itemToDeleteGet.describtion = describtion;
+      itemToDeleteGet.resultAsset = resultAsset;
+      itemToDeleteGet.date = time;
+      itemToDeleteGet.date = date;
+      itemToDeleteGet.id = id;
+      await boxGet.put(itemToDeleteGet.key, itemToDeleteGet);
+    } else {
+      var itemToDeleteBudget = boxBudget.values.firstWhere(
+        (item) => item.id == id,
+      );
+      itemToDeleteBudget.listOfcat = listOfCat;
+      itemToDeleteBudget.frome = from;
+      itemToDeleteBudget.price = price;
+      itemToDeleteBudget.describtion = describtion;
+      itemToDeleteBudget.resultAsset = resultAsset;
+      itemToDeleteBudget.date = time;
+      itemToDeleteBudget.date = date;
+      itemToDeleteBudget.id = id;
+      await boxBudget.put(itemToDeleteBudget.key, itemToDeleteBudget);
+    }
+  }
 
   void addMoneyItemToRxLists() {
     addedPayData.clear();
@@ -126,6 +175,28 @@ class AddNewPeymentController extends GetxController {
         totalBudget.add(int.parse(replaseingNumbersFaToEn(element.price)));
       }
     });
+  }
+
+  deleteMoneyItems(selectedItem, id) async {
+    var boxPay = Hive.box<AddNewPay>('payBox');
+    var boxGet = Hive.box<AddNewGet>('getBox');
+    var boxBudget = Hive.box<AddNewBudget>('budgetBox');
+    if (selectedItem == 0) {
+      var itemToDeletePay = boxPay.values.firstWhere(
+        (item) => item.id == id,
+      );
+      await boxPay.delete(itemToDeletePay.key);
+    } else if (selectedItem == 1) {
+      var itemToDeleteGet = boxGet.values.firstWhere(
+        (item) => item.id == id,
+      );
+      await boxGet.delete(itemToDeleteGet.key);
+    } else {
+      var itemToDeleteBudget = boxBudget.values.firstWhere(
+        (item) => item.id == id,
+      );
+      await boxBudget.delete(itemToDeleteBudget.key);
+    }
   }
 
   @override

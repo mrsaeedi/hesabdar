@@ -23,13 +23,14 @@ class AddTodoModelAdapter extends TypeAdapter<AddTodoModel> {
       date: fields[4] as String,
       time: fields[5] as String,
       importance: fields[6] as int,
+      id: fields[7] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, AddTodoModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(1)
       ..write(obj.title)
       ..writeByte(2)
@@ -41,7 +42,9 @@ class AddTodoModelAdapter extends TypeAdapter<AddTodoModel> {
       ..writeByte(5)
       ..write(obj.time)
       ..writeByte(6)
-      ..write(obj.importance);
+      ..write(obj.importance)
+      ..writeByte(7)
+      ..write(obj.id);
   }
 
   @override

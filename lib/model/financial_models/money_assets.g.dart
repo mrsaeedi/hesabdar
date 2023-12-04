@@ -15,21 +15,19 @@ class MoneyAssetsAdapter extends TypeAdapter<MoneyAssets> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return MoneyAssets(
-        name: fields[1] as String,
-        inventory: fields[2] as int,
-        transactionList: fields[3] as List);
+      name: fields[1] as String,
+      inventory: fields[2] as int,
+    );
   }
 
   @override
   void write(BinaryWriter writer, MoneyAssets obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(2)
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.inventory)
-      ..writeByte(3)
-      ..write(obj.transactionList);
+      ..write(obj.inventory);
   }
 
   @override

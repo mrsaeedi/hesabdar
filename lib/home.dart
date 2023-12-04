@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hesabdar/components/date_picker.dart';
+import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/components/papular_components.dart';
+import 'package:hesabdar/components/total_pay_get.dart';
+import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
 import 'package:hesabdar/controller/home_page_controller.dart';
 import 'package:hesabdar/controller/note_controllers.dart/note_controller.dart';
+import 'package:hesabdar/controller/todo_controllers/add_todo_controller.dart';
 import 'package:hesabdar/data/constants.dart';
 import 'package:hesabdar/view/notes/add_note.dart';
 import 'package:hesabdar/view/todos/add_todo.dart';
 import 'package:hesabdar/view/todos/all_todos.dart';
 import 'package:hesabdar/view/profile/profile_screen.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'view/financial/result_page.dart';
 import 'view/notes/note_list.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
-  final RxInt selectedIndexButtomNav = 0.obs;
+  final RxInt selectedIndexButtomNav = 1.obs;
   final int indexof = 0;
   final List pages = [RsultPage(), ToDoPage(), NoteListPage(), ProfilePage()];
   void onSelectedPage(int index) {
@@ -112,6 +118,9 @@ class FloatAddButton extends StatelessWidget {
           ),
           onPressed: () {
             if (navIndex.value == 1) {
+              Get.put(AddTodoController()).dateValueTodo.value =
+                  '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month.toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}';
+
               Get.to(AddTodo());
             } else if (navIndex.value == 2) {
               Get.put(NoteController()).selectedCategory.value = '';

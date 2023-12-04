@@ -13,7 +13,6 @@ class RsultPage extends StatelessWidget {
       Get.put(ResultPageController());
   final AddNewPeymentController addNewPeymentController =
       Get.put(AddNewPeymentController());
-
   RsultPage({super.key});
   @override
   Widget build(BuildContext context) {
@@ -83,7 +82,6 @@ class RsultPage extends StatelessWidget {
                                   addNewPeymentController.sumPay.value)),
                               style: TextStyle(fontSize: 18, color: Colors.red),
                             )),
-                        ElevatedButton(onPressed: () {}, child: Text('data'))
                       ],
                     ),
                   ),

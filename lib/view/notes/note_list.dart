@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/papular_components.dart' show truncateText;
+import 'package:hesabdar/data/constants.dart';
 import 'package:hesabdar/view/notes/add_note.dart';
 import 'package:hive/hive.dart';
 import '../../controller/note_controllers.dart/note_controller.dart';
@@ -16,6 +17,7 @@ class _NoteListPageState extends State<NoteListPage> {
   final NoteController noteController = Get.put(NoteController());
   @override
   void initState() {
+    noteController.selectedCategoryshow = '';
     noteController.readNotesFroemHive('');
     noteController.addToNoteCat();
 
@@ -73,6 +75,7 @@ class _NoteListPageState extends State<NoteListPage> {
                               child: TextButton(
                                 onPressed: () {
                                   setState(() {
+                                    //_catindex = index;
                                     noteController.selectedCategoryshow =
                                         noteController.noteCategory[index];
                                     noteController.readNotesFroemHive(
@@ -86,7 +89,10 @@ class _NoteListPageState extends State<NoteListPage> {
                                 ),
                                 onLongPress: () {
                                   Get.dialog(AlertDialog(
-                                    title: Text('حذف شود؟'),
+                                    content: Text(
+                                        'تمام زیر دسته ها حذف خواهند، شد آیا مطئن هستید؟'),
+                                    title: Text(
+                                        noteController.noteCategory[index]),
                                     actions: [
                                       TextButton(
                                           onPressed: () {
@@ -94,10 +100,18 @@ class _NoteListPageState extends State<NoteListPage> {
                                           },
                                           child: Text('لغو')),
                                       TextButton(
-                                          onPressed: () {
-                                            Hive.box<String>('noteCatBox')
+                                          onPressed: () async {
+                                            noteController
+                                                .deleteNoteCatFromHive(
+                                                    noteController
+                                                        .noteCategory[index]);
+                                            await Hive.box<String>('noteCatBox')
                                                 .deleteAt(index);
                                             noteController.addToNoteCat();
+
+                                            noteController
+                                                .readNotesFroemHive('');
+
                                             Get.back();
                                           },
                                           child: Text('حذف')),
@@ -140,6 +154,8 @@ class _NoteListPageState extends State<NoteListPage> {
                           itemCount: noteController.showNotes.length,
                           itemBuilder: (context, index) {
                             return Card(
+                              elevation: 0,
+                              color: AllColors.kListItems,
                               child: ListTile(
                                 subtitle: Text(
                                   maxLines: 1,
@@ -162,8 +178,12 @@ class _NoteListPageState extends State<NoteListPage> {
                                     textCancel: 'لغو',
                                     textConfirm: 'حذف',
                                     onConfirm: () async {
-                                      await noteController
-                                          .deleteFromeHive(index);
+                                      noteController.deleteFromeHive(
+                                        noteController.showNotes[index].id,
+                                      );
+                                      noteController.readNotesFroemHive(
+                                          noteController.selectedCategoryshow);
+
                                       Get.back();
                                     },
                                   );

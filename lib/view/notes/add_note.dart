@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/controller/note_controllers.dart/note_controller.dart';
 import 'package:hesabdar/model/note_mode/note_model.dart';
 import 'package:hive/hive.dart';
@@ -22,23 +23,26 @@ class _AddNewNoteState extends State<AddNewNote> {
       child: Scaffold(
         body: SingleChildScrollView(
           child: Column(
-            //crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               TextButton(
                   onPressed: () async {
                     if (noteController.noteTitle.text.isNotEmpty) {
                       noteController.noteEditMode
-                          ? await noteController.updateNoteInHive(
-                              index: noteController.selectedIndex,
+                          ? noteController.updateNoteInHive(
+                              id: noteController
+                                  .showNotes[noteController.selectedIndex].id,
                               title: noteController.noteTitle.text,
                               describtion: noteController.noteContent.text,
                               catNote: noteController.selectedCategory.value,
                               date: noteController.dateToSave.value)
-                          : addNoteToHive();
-
+                          : await addNoteToHive();
+                      noteController.selectedCategoryshow = '';
+                      noteController.addToNoteCat();
                       noteController.showNotes.refresh();
                       noteController.noteEditMode = false;
                       Get.back();
+                      noteController.readNotesFroemHive('');
+                      noteController.addToNoteCat();
                       noteController.noteCategory.refresh();
                     } else {
                       Get.snackbar('عنوان خالی است!', 'لطفاً عنوانی وارد کنید',
@@ -87,7 +91,6 @@ class _AddNewNoteState extends State<AddNewNote> {
                                         EdgeInsets.symmetric(horizontal: 10)),
                               ),
                             ),
-
                             //----------------------------
                             Padding(
                               padding:
@@ -247,6 +250,7 @@ class _AddNewNoteState extends State<AddNewNote> {
         title: noteController.noteTitle.text,
         contents: noteController.noteContent.text,
         category: noteController.selectedCategory.value,
-        date: noteController.dateToSave.value));
+        date: noteController.dateToSave.value,
+        id: generateUniqueId()));
   }
 }

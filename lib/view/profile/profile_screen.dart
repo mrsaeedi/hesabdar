@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/components/number/number_separator.dart';
+import 'package:hesabdar/controller/financial_controllers/asset_controller.dart';
 import 'package:hesabdar/controller/financial_controllers/report_controller.dart';
 import 'package:hesabdar/view/financial/money_asset_page.dart';
-import 'package:hive/hive.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -17,6 +17,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final ReportController reportController = Get.put(ReportController());
+  final AssetController assetController = Get.put(AssetController());
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             reportController.allPaymentResult();
                           });
                         },
-                        icon: Icon(Icons.arrow_back_ios)),
+                        icon: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.black,
+                        )),
                     //
                     Obx(
                       () => Text(
@@ -62,7 +66,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             reportController.allPaymentResult();
                           });
                         },
-                        icon: Icon(Icons.arrow_forward_ios)),
+                        icon: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.black,
+                        )),
                   ],
                 ),
               ),
@@ -76,13 +83,15 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               Card(
                 child: ListTile(
-                  title: Text('مدیریت منابع مالی'),
-                  trailing: Icon(
-                    Icons.arrow_forward_ios,
-                    size: 16,
-                  ),
-                  onTap: () => Get.to(MoneyAssetPage()),
-                ),
+                    title: Text('مدیریت منابع مالی'),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                    ),
+                    onTap: () {
+                      Get.to(MoneyAssetPage());
+                      assetController.isEditOrSelect = true;
+                    }),
               ),
               Card(
                 child: Column(

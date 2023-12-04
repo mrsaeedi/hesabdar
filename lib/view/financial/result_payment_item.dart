@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hesabdar/components/date_picker.dart';
 import 'package:hesabdar/components/number/change_number_to_persion.dart';
+import 'package:hesabdar/components/number/number_separator.dart';
 import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
 import 'package:hesabdar/data/constants.dart';
-import 'package:hesabdar/model/financial_models/money.dart';
-import 'package:hive/hive.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'add_new_payment.dart';
 
@@ -51,7 +50,7 @@ class _CardItemGetState extends State<CardItemGet> {
                               title: '',
                               middleText: '',
                               onCancel: () async {
-                                await deleteMoneyItems(index);
+                                await deleteMoneyItemsPage(index);
                                 addNewPeymentController.addMoneyItemToRxLists();
                               },
                               textCancel: 'حذف',
@@ -75,10 +74,13 @@ class _CardItemGetState extends State<CardItemGet> {
                                   Text(
                                     // pric or how mauch payed or get money
                                     (widget.selectedItem == 0)
-                                        ? '${addNewPeymentController.addedPayData[index].price}'
+                                        ? addNewPeymentController
+                                            .addedPayData[index].price
                                         : (widget.selectedItem == 1)
-                                            ? '${addNewPeymentController.addGetMoney[index].price}'
-                                            : '${addNewPeymentController.addBudget[index].price}',
+                                            ? addNewPeymentController
+                                                .addGetMoney[index].price
+                                            : addNewPeymentController
+                                                .addBudget[index].price,
                                     style: TextStyle(
                                         fontSize: 17,
                                         color: (widget.selectedItem == 0)
@@ -94,16 +96,16 @@ class _CardItemGetState extends State<CardItemGet> {
                                     // frome...
                                     (widget.selectedItem == 0)
                                         ? addNewPeymentController
-                                            .addedPayData[index].listOfcat.name
+                                            .addedPayData[index].listOfcat.name!
                                         : (widget.selectedItem == 1)
                                             ? addNewPeymentController
                                                 .addGetMoney[index]
                                                 .listOfcat
-                                                .name
+                                                .name!
                                             : addNewPeymentController
                                                 .addBudget[index]
                                                 .listOfcat
-                                                .name,
+                                                .name!,
                                     style: Get.textTheme.bodyMedium,
                                   ),
                                 ],
@@ -115,10 +117,13 @@ class _CardItemGetState extends State<CardItemGet> {
                                   Text(
                                     // frome...
                                     (widget.selectedItem == 0)
-                                        ? '${addNewPeymentController.addedPayData[index].frome}'
+                                        ? addNewPeymentController
+                                            .addedPayData[index].frome
                                         : (widget.selectedItem == 1)
-                                            ? '${addNewPeymentController.addGetMoney[index].frome}'
-                                            : '${addNewPeymentController.addBudget[index].frome}',
+                                            ? addNewPeymentController
+                                                .addGetMoney[index].frome
+                                            : addNewPeymentController
+                                                .addBudget[index].frome,
                                     style: Get.textTheme.bodyMedium,
                                   ),
                                   SizedBox(
@@ -138,11 +143,17 @@ class _CardItemGetState extends State<CardItemGet> {
                                       Text(
                                         // time...
                                         (widget.selectedItem == 0)
-                                            ? '${addNewPeymentController.addedPayData[index].time ?? ''}'
+                                            ? addNewPeymentController
+                                                .addedPayData[index].time
                                             : (widget.selectedItem == 1)
-                                                ? '${addNewPeymentController.addGetMoney[index].time ?? ''}'
-                                                : '${addNewPeymentController.addBudget[index].time ?? ''}',
+                                                ? addNewPeymentController
+                                                    .addGetMoney[index].time
+                                                : addNewPeymentController
+                                                    .addBudget[index].time,
                                         style: Get.textTheme.bodySmall,
+                                      ),
+                                      SizedBox(
+                                        width: 3,
                                       ),
                                       Icon(
                                         //tiem icon
@@ -155,9 +166,9 @@ class _CardItemGetState extends State<CardItemGet> {
                                   Text(
                                     // result...
                                     (widget.selectedItem == 0)
-                                        ? '${addNewPeymentController.addedPayData[index].resultAsset ?? '0'}: باقی مانده '
+                                        ? '${replaseingNumbersEnToFa(addCommasToNumber(int.parse(addNewPeymentController.addedPayData[index].resultAsset)))} :باقی مانده '
                                         : (widget.selectedItem == 1)
-                                            ? '${addNewPeymentController.addGetMoney[index].resultAsset ?? '0'}: باقی مانده '
+                                            ? '${replaseingNumbersEnToFa(addCommasToNumber(int.parse(addNewPeymentController.addGetMoney[index].resultAsset)))} :باقی مانده '
                                             : '',
                                     style: Get.textTheme.bodySmall,
                                   ),
@@ -235,21 +246,28 @@ class _CardItemGetState extends State<CardItemGet> {
         ));
   }
 
-  deleteMoneyItems(index) async {
+  deleteMoneyItemsPage(index) async {
     if (widget.selectedItem == 0) {
-      await Hive.box<AddNewPay>('payBox').deleteAt(index);
-      // await addNewPeymentController.addedPayData.removeAt(index);
+      await addNewPeymentController.deleteMoneyItems(
+          0, addNewPeymentController.addedPayData[index].id);
+      // await .removeAt(index);
     } else if (widget.selectedItem == 1) {
-      await Hive.box<AddNewGet>('getBox').deleteAt(index);
+      await addNewPeymentController.deleteMoneyItems(
+          1, addNewPeymentController.addGetMoney[index].id);
+
       // await addNewPeymentController.addGetMoney.removeAt(index);
     } else if (widget.selectedItem == 2) {
-      await Hive.box<AddNewBudget>('budgetBox').deleteAt(index);
+      await addNewPeymentController.deleteMoneyItems(
+          2, addNewPeymentController.addBudget[index].id);
+
       // await addNewPeymentController.addBudget.removeAt(index);
     }
   }
 
   editMoneyItemsFillForms(index) {
     if (widget.selectedItem == 0) {
+      addNewPeymentController.dateValue.value =
+          addNewPeymentController.addedPayData[index].date;
       addNewPeymentController.controllerPrice.text =
           addNewPeymentController.addedPayData[index].price;
       addNewPeymentController.describtionController.text =
@@ -257,10 +275,12 @@ class _CardItemGetState extends State<CardItemGet> {
       addNewPeymentController.selectedAsset.value =
           addNewPeymentController.addedPayData[index].frome;
       addNewPeymentController.selectedCategoryName.value =
-          addNewPeymentController.addedPayData[index].listOfcat.name;
+          addNewPeymentController.addedPayData[index].listOfcat.name!;
       addNewPeymentController.selectedCategoryIcon.value =
           addNewPeymentController.addedPayData[index].listOfcat.catIcon;
     } else if (widget.selectedItem == 1) {
+      addNewPeymentController.dateValue.value =
+          addNewPeymentController.addGetMoney[index].date;
       addNewPeymentController.controllerPrice.text =
           addNewPeymentController.addGetMoney[index].price;
       addNewPeymentController.describtionController.text =
@@ -268,10 +288,12 @@ class _CardItemGetState extends State<CardItemGet> {
       addNewPeymentController.selectedAsset.value =
           addNewPeymentController.addGetMoney[index].frome;
       addNewPeymentController.selectedCategoryName.value =
-          addNewPeymentController.addGetMoney[index].listOfcat.name;
+          addNewPeymentController.addGetMoney[index].listOfcat.name!;
       addNewPeymentController.selectedCategoryIcon.value =
           addNewPeymentController.addGetMoney[index].listOfcat.catIcon;
     } else {
+      addNewPeymentController.dateValue.value =
+          addNewPeymentController.addBudget[index].date;
       addNewPeymentController.controllerPrice.text =
           addNewPeymentController.addBudget[index].price;
       addNewPeymentController.describtionController.text =
@@ -279,12 +301,12 @@ class _CardItemGetState extends State<CardItemGet> {
       addNewPeymentController.selectedAsset.value =
           addNewPeymentController.addBudget[index].frome;
       addNewPeymentController.selectedCategoryName.value =
-          addNewPeymentController.addBudget[index].listOfcat.name;
+          addNewPeymentController.addBudget[index].listOfcat.name!;
       addNewPeymentController.selectedCategoryIcon.value =
           addNewPeymentController.addBudget[index].listOfcat.catIcon;
     }
-    addNewPeymentController.dateValue.value =
-        '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month.toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}';
+    // addNewPeymentController.dateValue.value =
+    //     '${getPersianWeekDay(Jalali.now()).toString()} __ ${replaseingNumbersEnToFa(Jalali.now().year.toString())}/${Jalali.now().month < 10 ? replaseingNumbersEnToFa('0${Jalali.now().month.toString()}') : replaseingNumbersEnToFa(Jalali.now().month.toString())}/${Jalali.now().day < 10 ? replaseingNumbersEnToFa('0${Jalali.now().day.toString()}') : replaseingNumbersEnToFa(Jalali.now().day.toString())}';
     addNewPeymentController.editIndex = index;
     addNewPeymentController.editMode = true;
     Get.to(() => NewPaymentPage());

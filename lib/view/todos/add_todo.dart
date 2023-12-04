@@ -53,42 +53,69 @@ class AddTodo extends StatelessWidget {
               Obx(() => Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 5.0, horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('اولویت:', style: Get.textTheme.bodyLarge),
-                        RadioMenuButton(
-                            style: ButtonStyle(
-                              iconColor:
-                                  MaterialStateProperty.resolveWith<Color?>(
-                                      (Set<MaterialState> states) {
-                                return Colors.red; // رنگ برای وضعیت انتخاب شده
-                              }),
-                            ),
-                            value: 1,
-                            groupValue: addTodoController.selectedValue.value,
-                            onChanged: (value) {
-                              addTodoController.handleRadioValueChange(value);
-                            },
-                            child: Text('اضطراری',
-                                style: Get.textTheme.bodyMedium)),
-                        RadioMenuButton(
-                            value: 2,
-                            groupValue: addTodoController.selectedValue.value,
-                            onChanged: (value) {
-                              addTodoController.handleRadioValueChange(value);
-                            },
-                            child:
-                                Text('مهم', style: Get.textTheme.bodyMedium)),
-                        RadioMenuButton(
-                            value: 3,
-                            groupValue: addTodoController.selectedValue.value,
-                            onChanged: (value) {
-                              addTodoController.handleRadioValueChange(value);
-                            },
-                            child: Text('معمولی',
-                                style: Get.textTheme.bodyMedium)),
-                      ],
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(6)),
+                          border: Border.all(
+                              width: 1,
+                              style: BorderStyle.solid,
+                              color: Colors.grey)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          RadioMenuButton(
+                              style: ButtonStyle(
+                                iconColor:
+                                    MaterialStateProperty.resolveWith<Color?>(
+                                        (Set<MaterialState> states) {
+                                  return Colors
+                                      .red; // رنگ برای وضعیت انتخاب شده
+                                }),
+                              ),
+                              value: 1,
+                              groupValue: addTodoController.selectedValue.value,
+                              onChanged: (value) {
+                                addTodoController.handleRadioValueChange(value);
+                              },
+                              child: Text(
+                                'اضطراری',
+                                style: Get.textTheme.bodyMedium,
+                              )),
+                          Icon(
+                            Icons.flag,
+                            color: Colors.blue,
+                            size: 16,
+                          ),
+                          RadioMenuButton(
+                              value: 2,
+                              groupValue: addTodoController.selectedValue.value,
+                              onChanged: (value) {
+                                addTodoController.handleRadioValueChange(value);
+                              },
+                              child: Text(
+                                'مهم',
+                                style: Get.textTheme.bodyMedium,
+                              )),
+                          Icon(
+                            Icons.flag,
+                            color: Colors.blue,
+                            size: 16,
+                          ),
+                          RadioMenuButton(
+                              value: 3,
+                              groupValue: addTodoController.selectedValue.value,
+                              onChanged: (value) {
+                                addTodoController.handleRadioValueChange(value);
+                              },
+                              child: Text('معمولی',
+                                  style: Get.textTheme.bodyMedium)),
+                          Icon(
+                            Icons.flag,
+                            color: Colors.blue,
+                            size: 16,
+                          ),
+                        ],
+                      ),
                     ),
                   )),
               Obx(
@@ -154,7 +181,8 @@ class AddTodo extends StatelessWidget {
                               : '${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.minute.toString())}: ${replaseingNumbersEnToFa(addNewPeymentController.selectedTime.value.hour.toString())}',
 
                           //  category: category,
-                          importance: addTodoController.selectedValue.value));
+                          importance: addTodoController.selectedValue.value,
+                          id: generateUniqueId()));
                       Get.back();
                       await Get.put(ReportController()).allResultTodo();
                       addTodoController.addTodosToRxListForShow();
@@ -276,23 +304,24 @@ class TimeTodoChoose extends StatelessWidget {
             ? '0${addTodoController.selectedTime.value.minute}: ${addTodoController.selectedTime.value.hour}'
             : '${addTodoController.selectedTime.value.minute}: ${addTodoController.selectedTime.value.hour}',
         ontap: () async {
-          var picked = await showPersianTimePicker(
-            context: context,
-            initialTime: TimeOfDay.now(),
-            builder: (BuildContext context, Widget? child) {
-              return Directionality(
-                textDirection: TextDirection.rtl,
-                child: child!,
-              );
-            },
-          );
-
-          // final TimeOfDay? timeOfDay = await showTimePicker(
-          //     context: context,
-          //     initialTime: addTodoController.selectedTime.value,
-          //     initialEntryMode: TimePickerEntryMode.dial);
-          if (picked != null) {
-            addTodoController.selectedTime.value = picked;
+          final TimeOfDay? timeOfDay = await showTimePicker(
+              context: context,
+              initialTime: addTodoController.selectedTime.value,
+              initialEntryMode: TimePickerEntryMode.dial);
+          // var picked = await showPersianTimePicker(
+          //   context: context,
+          //   initialTime: TimeOfDay.now(),
+          //   builder: (BuildContext context, Widget? child) {
+          //     return Directionality(
+          //       textDirection: TextDirection.rtl,
+          //       child: child!,
+          //     );
+          //   },
+          // );
+          if (timeOfDay != null) {
+            addTodoController.selectedTime.value = timeOfDay;
+          } else {
+            addTodoController.selectedTime.value = TimeOfDay.now();
           }
         },
       ),
