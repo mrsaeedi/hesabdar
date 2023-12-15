@@ -26,19 +26,5 @@ class Hesabdart extends StatelessWidget {
             ? ThemeMode.dark
             : ThemeMode.light,
         home: HomePage());
-    //  AnimatedSplashScreen(
-    //     duration: 2000,
-    //     splashTransition: SplashTransition.fadeTransition,
-    //     splash: Container(
-    //       height: 400,
-    //       child: Column(
-    //         mainAxisSize: MainAxisSize.min,
-    //         children: [
-    //           Image.asset('assets/images/self.png'),
-    //           Text('مدیریت شخصی'),
-    //         ],
-    //       ),
-    //     ),
-    //     nextScreen: HomePage()));
   }
 }

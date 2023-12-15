@@ -184,31 +184,31 @@ class ListOfCatItems extends StatelessWidget {
                                 controller: editingController,
                               ))),
                       //  choose icon for items
-                      Expanded(
-                        flex: 2,
-                        child: Obx(() => DropdownButton(
-                              hint: Text('آیکون'),
-                              underline: SizedBox(),
-                              elevation: 1,
-                              isExpanded: true,
-                              padding: EdgeInsets.all(10),
-                              value: catController.selectedIcon.value,
-                              items: [
-                                ...catController.assetsOfIcons
-                                    .map<DropdownMenuItem<IconData>>(
-                                  (IconData value) {
-                                    return DropdownMenuItem(
-                                      value: value,
-                                      child: Icon(value),
-                                    );
-                                  },
-                                )
-                              ],
-                              onChanged: (newvalue) {
-                                catController.upDateSelectedIcon(newvalue!);
-                              },
-                            )),
-                      )
+                      // Expanded(
+                      //   flex: 2,
+                      //   child: Obx(() => DropdownButton(
+                      //         hint: Text('آیکون'),
+                      //         underline: SizedBox(),
+                      //         elevation: 1,
+                      //         isExpanded: true,
+                      //         padding: EdgeInsets.all(10),
+                      //         value: catController.selectedIcon.value,
+                      //         items: [
+                      //           ...catController.assetsOfIcons
+                      //               .map<DropdownMenuItem<IconData>>(
+                      //             (IconData value) {
+                      //               return DropdownMenuItem(
+                      //                 value: value,
+                      //                 child: Icon(value),
+                      //               );
+                      //             },
+                      //           )
+                      //         ],
+                      //         onChanged: (newvalue) {
+                      //           catController.upDateSelectedIcon(newvalue!);
+                      //         },
+                      //       )),
+                      // )
                     ],
                   ),
                   // add changes and show result
@@ -285,8 +285,7 @@ class AddNewItemToCatList extends StatelessWidget {
           textCancel: 'لغو',
           textConfirm: 'ذخیره',
           onConfirm: () {
-            if (addTextController.text.isNotEmpty &&
-                catController.selectedIcon.value != null) {
+            if (addTextController.text.isNotEmpty) {
               selectedItem == 1
                   ? catController.addMoneyCatToGetList(
                       addTextController.text, index!)
@@ -309,7 +308,7 @@ class AddNewItemToCatList extends StatelessWidget {
             } else {
               Get.showSnackbar(
                 GetSnackBar(
-                  message: 'لطفا متن و آیکون را انتخاب کنید',
+                  message: 'لطفا نام را وارد کنید',
                   icon: const Icon(
                     Icons.check,
                     color: Colors.green,
@@ -344,31 +343,31 @@ class AddNewItemToCatList extends StatelessWidget {
                     )),
               ),
               // choose icon for items
-              Expanded(
-                flex: 2,
-                child: Obx(() => DropdownButton(
-                      hint: Text('آیکون'),
-                      underline: SizedBox(),
-                      elevation: 2,
-                      isExpanded: true,
-                      padding: EdgeInsets.all(10),
-                      value: catController.selectedIcon.value,
-                      items: [
-                        ...catController.assetsOfIcons
-                            .map<DropdownMenuItem<IconData>>(
-                          (IconData value) {
-                            return DropdownMenuItem(
-                              value: value,
-                              child: Icon(value),
-                            );
-                          },
-                        )
-                      ],
-                      onChanged: (newvalue) {
-                        catController.upDateSelectedIcon(newvalue!);
-                      },
-                    )),
-              )
+              // Expanded(
+              //   flex: 2,
+              //   child: Obx(() => DropdownButton(
+              //         hint: Text('آیکون'),
+              //         underline: SizedBox(),
+              //         elevation: 2,
+              //         isExpanded: true,
+              //         padding: EdgeInsets.all(10),
+              //         value: catController.selectedIcon.value,
+              //         items: [
+              //           ...catController.assetsOfIcons
+              //               .map<DropdownMenuItem<IconData>>(
+              //             (IconData value) {
+              //               return DropdownMenuItem(
+              //                 value: value,
+              //                 child: Icon(value),
+              //               );
+              //             },
+              //           )
+              //         ],
+              //         onChanged: (newvalue) {
+              //           catController.upDateSelectedIcon(newvalue!);
+              //         },
+              //       )),
+              // )
             ],
           ),
           // add changes and show result

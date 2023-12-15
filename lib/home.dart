@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import 'package:hesabdar/components/date_picker.dart';
 import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/components/papular_components.dart';
-import 'package:hesabdar/components/total_pay_get.dart';
-import 'package:hesabdar/controller/financial_controllers/add_new_peyment_controller.dart';
 import 'package:hesabdar/controller/home_page_controller.dart';
 import 'package:hesabdar/controller/note_controllers.dart/note_controller.dart';
 import 'package:hesabdar/controller/todo_controllers/add_todo_controller.dart';
@@ -19,7 +17,7 @@ import 'view/notes/note_list.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
-  final RxInt selectedIndexButtomNav = 1.obs;
+  final RxInt selectedIndexButtomNav = 0.obs;
   final int indexof = 0;
   final List pages = [RsultPage(), ToDoPage(), NoteListPage(), ProfilePage()];
   void onSelectedPage(int index) {
@@ -106,7 +104,9 @@ class FloatAddButton extends StatelessWidget {
               children: [
                 Obx(() => Text(
                       getTitle().value,
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: const Color.fromARGB(255, 255, 255, 255)),
                     )),
                 widthOf(6),
                 Icon(

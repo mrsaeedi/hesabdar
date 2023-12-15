@@ -10,7 +10,6 @@ import 'package:hesabdar/data/constants.dart';
 import 'package:hesabdar/model/todo_models/add_todo_model.dart';
 import 'package:hesabdar/view/financial/add_new_payment.dart';
 import 'package:hive/hive.dart';
-import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import '../../components/date_picker.dart';
 
 class AddTodo extends StatelessWidget {
@@ -50,72 +49,55 @@ class AddTodo extends StatelessWidget {
                   TimeTodoChoose()
                 ],
               ),
-              Obx(() => Padding(
+              Obx(() => Container(
+                    margin: EdgeInsets.symmetric(horizontal: 8),
                     padding: const EdgeInsets.symmetric(
                         vertical: 5.0, horizontal: 20),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(6)),
-                          border: Border.all(
-                              width: 1,
-                              style: BorderStyle.solid,
-                              color: Colors.grey)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          RadioMenuButton(
-                              style: ButtonStyle(
-                                iconColor:
-                                    MaterialStateProperty.resolveWith<Color?>(
-                                        (Set<MaterialState> states) {
-                                  return Colors
-                                      .red; // رنگ برای وضعیت انتخاب شده
-                                }),
-                              ),
-                              value: 1,
-                              groupValue: addTodoController.selectedValue.value,
-                              onChanged: (value) {
-                                addTodoController.handleRadioValueChange(value);
-                              },
-                              child: Text(
-                                'اضطراری',
-                                style: Get.textTheme.bodyMedium,
-                              )),
-                          Icon(
-                            Icons.flag,
-                            color: Colors.blue,
-                            size: 16,
-                          ),
-                          RadioMenuButton(
-                              value: 2,
-                              groupValue: addTodoController.selectedValue.value,
-                              onChanged: (value) {
-                                addTodoController.handleRadioValueChange(value);
-                              },
-                              child: Text(
-                                'مهم',
-                                style: Get.textTheme.bodyMedium,
-                              )),
-                          Icon(
-                            Icons.flag,
-                            color: Colors.blue,
-                            size: 16,
-                          ),
-                          RadioMenuButton(
-                              value: 3,
-                              groupValue: addTodoController.selectedValue.value,
-                              onChanged: (value) {
-                                addTodoController.handleRadioValueChange(value);
-                              },
-                              child: Text('معمولی',
-                                  style: Get.textTheme.bodyMedium)),
-                          Icon(
-                            Icons.flag,
-                            color: Colors.blue,
-                            size: 16,
-                          ),
-                        ],
-                      ),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        border: Border.all(
+                            width: 1,
+                            style: BorderStyle.solid,
+                            color: Colors.grey)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        RadioMenuButton(
+                            style: ButtonStyle(
+                              iconColor:
+                                  MaterialStateProperty.resolveWith<Color?>(
+                                      (Set<MaterialState> states) {
+                                return Colors.red; // رنگ برای وضعیت انتخاب شده
+                              }),
+                            ),
+                            value: 1,
+                            groupValue: addTodoController.selectedValue.value,
+                            onChanged: (value) {
+                              addTodoController.handleRadioValueChange(value);
+                            },
+                            child: Text(
+                              'اضطراری',
+                              style: Get.textTheme.bodyMedium,
+                            )),
+                        RadioMenuButton(
+                            value: 2,
+                            groupValue: addTodoController.selectedValue.value,
+                            onChanged: (value) {
+                              addTodoController.handleRadioValueChange(value);
+                            },
+                            child: Text(
+                              'مهم',
+                              style: Get.textTheme.bodyMedium,
+                            )),
+                        RadioMenuButton(
+                            value: 3,
+                            groupValue: addTodoController.selectedValue.value,
+                            onChanged: (value) {
+                              addTodoController.handleRadioValueChange(value);
+                            },
+                            child: Text('معمولی',
+                                style: Get.textTheme.bodyMedium)),
+                      ],
                     ),
                   )),
               Obx(
