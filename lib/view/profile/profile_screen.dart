@@ -5,7 +5,9 @@ import 'package:hesabdar/components/number/change_number_to_persion.dart';
 import 'package:hesabdar/components/number/number_separator.dart';
 import 'package:hesabdar/controller/financial_controllers/asset_controller.dart';
 import 'package:hesabdar/controller/financial_controllers/report_controller.dart';
+import 'package:hesabdar/data/constants.dart';
 import 'package:hesabdar/view/financial/money_asset_page.dart';
+import 'package:url_launcher/url_launcher.dart' as luncher;
 import 'package:percent_indicator/percent_indicator.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -82,6 +84,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 height: 25,
               ),
               Card(
+                elevation: 0,
+                color: AllColors.kListItems,
                 child: ListTile(
                     title: Text('مدیریت منابع مالی'),
                     trailing: Icon(
@@ -94,6 +98,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     }),
               ),
               Card(
+                elevation: 0,
+                color: AllColors.kListItems,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -326,6 +332,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               Card(
+                elevation: 0,
+                color: AllColors.kListItems,
                 child: Column(
                   children: [
                     Padding(
@@ -349,7 +357,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ],
                 ),
-              )
+              ),
+              Card(
+                  elevation: 0,
+                  color: AllColors.kListItems,
+                  child: ListTile(
+                    title: Text('ارتباط یا گزارش اشکال'),
+                    onTap: () async {
+                      Uri uri = Uri.parse(
+                          'mailto:iran98hossein@gmail.com?subject=&body=');
+                      if (!await luncher.launchUrl(uri)) {
+                        debugPrint('Coud not launch the url');
+                      }
+                    },
+                  )),
             ]),
       )),
     );

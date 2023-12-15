@@ -71,6 +71,12 @@ class AppTheme {
       primaryColor: AllColors.primaryColor,
 // elevetedButtom style
       elevatedButtonTheme: MyButtonStyle.myElevetedButton,
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+          textStyle: MaterialStateProperty.all<TextStyle>(
+              TextStyle(color: Colors.amber, fontSize: 14)),
+        ),
+      ),
 // primery colors
       colorScheme: ColorScheme.fromSwatch(
         backgroundColor: Colors.white,

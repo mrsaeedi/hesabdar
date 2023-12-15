@@ -120,6 +120,10 @@ List<CategoresPayMoney> catPayData = [
       ListOfcat(name: 'لوازم ورزشی', catIcon: Icons.account_tree_rounded),
     ],
   ),
+  CategoresPayMoney(
+    name: 'غیره',
+    catList: [],
+  ),
 ];
 // دسته بندی دریافتی ها
 List<CategoresPayMoney> catGetData = <CategoresPayMoney>[

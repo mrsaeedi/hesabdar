@@ -90,7 +90,7 @@ class _NoteListPageState extends State<NoteListPage> {
                                 onLongPress: () {
                                   Get.dialog(AlertDialog(
                                     content: Text(
-                                        'تمام زیر دسته ها حذف خواهند، شد آیا مطئن هستید؟'),
+                                        'تمام زیر دسته ها حذف خواهند شد، آیا مطئن هستید؟'),
                                     title: Text(
                                         noteController.noteCategory[index]),
                                     actions: [
@@ -98,7 +98,10 @@ class _NoteListPageState extends State<NoteListPage> {
                                           onPressed: () {
                                             Get.back();
                                           },
-                                          child: Text('لغو')),
+                                          child: Text(
+                                            'لغو',
+                                            style: Get.textTheme.bodyMedium,
+                                          )),
                                       TextButton(
                                           onPressed: () async {
                                             noteController
@@ -114,7 +117,10 @@ class _NoteListPageState extends State<NoteListPage> {
 
                                             Get.back();
                                           },
-                                          child: Text('حذف')),
+                                          child: Text(
+                                            'حذف',
+                                            style: Get.textTheme.bodyMedium,
+                                          )),
                                     ],
                                   ));
                                 },

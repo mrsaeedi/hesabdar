@@ -140,28 +140,36 @@ class MoneyAssetPage extends StatelessWidget {
                             onCancel: () async {
                               await Future.delayed(Duration(milliseconds: 2));
                               bool confirmDelete = await Get.dialog(
-                                AlertDialog(
-                                  title: Text(assetController
-                                      .moneyAssetsList[index].name),
-                                  content: Text('آیا از حذف آیتم مطمئن هستید؟'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context,
-                                            false); // بستن دیالوگ تأیید حذف و ارسال مقدار false
-                                      },
-                                      child: Text('خیر'),
+                                    AlertDialog(
+                                      title: Text(assetController
+                                          .moneyAssetsList[index].name),
+                                      content:
+                                          Text('آیا از حذف آیتم مطمئن هستید؟'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context,
+                                                false); // بستن دیالوگ تأیید حذف و ارسال مقدار false
+                                          },
+                                          child: Text(
+                                            'خیر',
+                                            style: Get.textTheme.bodyMedium,
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context,
+                                                true); // بستن دیالوگ تأیید حذف و ارسال مقدار true
+                                          },
+                                          child: Text(
+                                            'بله',
+                                            style: Get.textTheme.bodyMedium,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context,
-                                            true); // بستن دیالوگ تأیید حذف و ارسال مقدار true
-                                      },
-                                      child: Text('بله'),
-                                    ),
-                                  ],
-                                ),
-                              );
+                                  ) ??
+                                  false;
 
                               // اگر کاربر تأیید کرده باشد، اقدام به حذف کنید
                               if (confirmDelete == true) {

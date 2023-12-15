@@ -12,7 +12,7 @@ import 'add_new_payment.dart';
 class CardItemGet extends StatefulWidget {
   final int selectedItem;
 
-  CardItemGet({
+  const CardItemGet({
     Key? key,
     required this.selectedItem,
   }) : super(key: key);
@@ -47,7 +47,7 @@ class _CardItemGetState extends State<CardItemGet> {
                       child: GestureDetector(
                         onLongPress: () {
                           Get.defaultDialog(
-                              title: '',
+                              title: 'حذف شود؟',
                               middleText: '',
                               onCancel: () async {
                                 await deleteMoneyItemsPage(index);
@@ -215,7 +215,7 @@ class _CardItemGetState extends State<CardItemGet> {
                               : (widget.selectedItem == 1
                                   ? 'درآمد جدید'
                                   : 'بودجه جدید'),
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                         Icon(
                           Icons.add,

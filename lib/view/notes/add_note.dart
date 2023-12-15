@@ -151,7 +151,7 @@ class _AddNewNoteState extends State<AddNewNote> {
                               }).toList(),
                               // افزودن گزینه برای افزودن دسته جدید
                               DropdownMenuItem(
-                                value: 'دسته جدید',
+                                value: ' دسته جدید ',
                                 child: TextButton.icon(
                                   icon: Icon(
                                     Icons.add_circle_outline_outlined,
