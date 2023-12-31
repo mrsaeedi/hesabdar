@@ -1,16 +1,27 @@
-# hesabdar
+#  Hesabdar
 
-A new Flutter project.
+**Description:**
 
-## Getting Started
+### A simple and lightweight application for recording expenses, daily tasks, and notes,
+This application is developed using Getx state management and Hive database.
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+**Features:**
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* ️Registering daily expenses and reporting daily and monthly expenses💸
+*  Registering daily tasks based on priority and monthly reporting based on priority ☑️
+*  Record notes using custom categories ✍️
+*  Dark and light theme ☀️ 🌚
+*  Persian calendar and timing for it 📆
+*  Ability to register and add financial resources 💳
+
+***
+
+
+**Screenshots:**
+
+![مدیریت شخصی](https://github.com/mrsaeedi/hesabdar/assets/84645441/fbd57700-3140-44c3-864b-d3b3d5606a07)
+
+
+
